@@ -36,7 +36,6 @@ public class Server implements Runnable {
 
                 listClients.add(client);
                 new Thread(client).start();
-                sendMessageToAllClients(new Message(new User(null, null, null), "A client entered", new Date()));
             }
 
         } catch(Exception e) {

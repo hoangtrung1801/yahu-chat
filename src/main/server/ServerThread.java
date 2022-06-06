@@ -1,17 +1,18 @@
 package main.server;
 
 import main.model.Message;
+import main.model.User;
 import main.utils.Constants;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
+import java.util.Date;
 
 public class ServerThread implements Runnable {
 
     Server server;
     Socket socket;
-//    DataInputStream din;
-//    DataOutputStream dout;
     ObjectInputStream ois;
     ObjectOutputStream oos;
 
@@ -20,6 +21,10 @@ public class ServerThread implements Runnable {
     public ServerThread(Socket socket, Server server) {
         this.socket = socket;
         this.server = server;
+
+        SwingUtilities.invokeLater(() -> {
+            server.sendMessageToAllClients(new Message(new User(null, null, null), "A client entered", new Date()));
+        });
     }
 
     @Override

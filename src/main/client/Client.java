@@ -4,15 +4,15 @@ import com.formdev.flatlaf.FlatLightLaf;
 import main.model.Message;
 import main.model.User;
 import main.utils.Constants;
-import main.utils.MessageUtil;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Date;
 
@@ -107,7 +107,7 @@ public class Client extends JFrame implements Runnable {
 
     void appendMessageToGui(Message message) {
         if(messageArea != null) {
-            messageArea.append(MessageUtil.messageToString(message));
+            messageArea.append(message.toString());
         }
     }
 

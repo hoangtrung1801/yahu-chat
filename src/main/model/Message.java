@@ -6,6 +6,8 @@ import java.util.Date;
 
 public class Message implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String id;
     private User user;
     private String message;
@@ -15,6 +17,11 @@ public class Message implements Serializable {
         this.user = user;
         this.message = message;
         this.timestamp = timestamp;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + getTimestamp().toString() + "] " + getUser().getEmail() + ": " + getMessage() + "\n";
     }
 
     public String getId() {
