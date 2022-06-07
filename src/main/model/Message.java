@@ -21,7 +21,7 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return "[" + getTimestamp().toString() + "] " + getUser().getEmail() + ": " + getMessage() + "\n";
+        return "[" + getTimestamp().toString() + "] " + getUser().getUsername() + ": " + getMessage() + "\n";
     }
 
     public String getId() {

@@ -23,7 +23,7 @@ public class ServerThread implements Runnable {
         this.server = server;
 
         SwingUtilities.invokeLater(() -> {
-            server.sendMessageToAllClients(new Message(new User(null, null, null), "A client entered", new Date()));
+            server.sendMessageToAllClients(new Message(new User(-1, null, null), "A client entered", new Date()));
         });
     }
 

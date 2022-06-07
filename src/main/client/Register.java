@@ -11,25 +11,25 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class Login {
+public class Register {
 
     int WIDTH = 300;
     int HEIGHT = 400;
 
     JFrame frame;
     JPanel panel;
-    JLabel lUsername, lPassword, lTitle, lRegisterButton;
-    JTextField tUsername, tPassword;
-    JButton bLogin;
+    JLabel lUsername, lPassword, lConfirmPassword, lTitle;
+    JTextField tUsername, tPassword, tConfirmPassword;
+    JButton bRegister;
 
-    public Login() {
+    public Register() {
         frame = new JFrame();
         panel = new JPanel();
         panel.setLayout(new MigLayout(
                 "align center, insets 0 20 0 20"
         ));
 
-        lTitle = new JLabel("LOGIN");
+        lTitle = new JLabel("REGISTER");
         lTitle.setFont(new Font("Arial", Font.BOLD, 32));
         lTitle.setHorizontalAlignment(JLabel.CENTER);
         lTitle.setPreferredSize(new Dimension(WIDTH, 40));
@@ -38,35 +38,29 @@ public class Login {
         lUsername = new JLabel("Username: ");
         tUsername = new JTextField();
 
-        panel.add(lUsername, "width 30%, alignx right");
+        panel.add(lUsername, "width 30%, alignx left");
         panel.add(tUsername, "width 70%, wrap 10px");
 
         lPassword = new JLabel("Password: ");
         tPassword = new JPasswordField();
 
-        panel.add(lPassword, "width 30%, alignx right");
+        panel.add(lPassword, "width 30%, alignx left");
         panel.add(tPassword, "width 70%, wrap 10px");
 
-        bLogin = new JButton("Login");
-        bLogin.addActionListener(new ActionListener() {
+        lConfirmPassword = new JLabel("Confirm password: ");
+        tConfirmPassword = new JPasswordField();
+
+        panel.add(lConfirmPassword, "width 30%, alignx left");
+        panel.add(tConfirmPassword, "width 70%, wrap 10px");
+
+        bRegister = new JButton("Register");
+        bRegister.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                login();
+                register();
             }
         });
-        panel.add(bLogin, "span, align center, wrap 16px");
-
-        lRegisterButton = new JLabel("You have not registered");
-        lRegisterButton.setForeground(Color.blue.darker());
-        lRegisterButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        lRegisterButton.setText("<html><a href='#'>You have not register ?</a></html>");
-        lRegisterButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                showRegisterGUI();
-            }
-        });
-        panel.add(lRegisterButton, "span, align center, wrap");
+        panel.add(bRegister, "span, align center, wrap");
 
         frame.setContentPane(panel);
 
@@ -76,34 +70,42 @@ public class Login {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
-    void login() {
+    void register() {
         String username = tUsername.getText();
         String password = tPassword.getText();
+        String confirmPassword = tConfirmPassword.getText();
 
-        if(User.validateUser(username, password)) {
-            ApplicationContext.setUser(User.getUser(username));
-            loginSuccess();
+        // validate username, password
+        if(username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            System.out.println("Please type full information");
+            return;
+        }
+
+        // validate if have same username in database
+        if(User.getUser(username) != null)  {
+            System.out.println("Username is used");
+            return;
+        }
+
+        // create new user
+        if(password.equals(confirmPassword)) {
+            if(User.newUser(username, password)) {
+                registerSuccess();
+            }
         } else {
-            System.out.println("Username or password is incorrect");
+            System.out.println("Password and confirm password is not the same");
         }
     }
 
-    void loginSuccess() {
+    void registerSuccess() {
+        JOptionPane.showMessageDialog(frame, "You registered successfull");
         frame.dispose();
-        new Thread(new Client()).start();
-    }
-
-    void showRegisterGUI() {
-        Register register = new Register();
-        register.frame.toFront();
-        register.frame.requestFocus();
-        register.frame.setAlwaysOnTop(true);
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             FlatLightLaf.setup();
-            new Login();
+            new Register();
         });
     }
 }

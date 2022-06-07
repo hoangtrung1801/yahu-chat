@@ -118,7 +118,7 @@ public class Client extends JFrame implements Runnable {
                 String messageBody = inputField.getText();
                 inputField.setText("");
 
-                sendMessageToServer(new Message(new User("hoangtrung1801", "", ""), messageBody, new Date()));
+                sendMessageToServer(new Message(new User(0, "hoangtrung1801", "123456"), messageBody, new Date()));
             }
         }
     }
