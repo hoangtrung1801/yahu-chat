@@ -19,16 +19,18 @@ public class Server implements Runnable {
     public boolean isRun = true;
 
     public Server() {
-//        init();
+        try {
+            server = new ServerSocket(Constants.PORT);
+            System.out.println("Sever start ...");
+            listClients = new ArrayList<>();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void run() {
         try {
-            server = new ServerSocket(Constants.PORT);
-            System.out.println("Sever start ...");
-
-            listClients = new ArrayList<>();
             while(isRun) {
                 Socket socket = server.accept();
                 ServerThread client = new ServerThread(socket, this);
@@ -45,7 +47,13 @@ public class Server implements Runnable {
 
     public void sendMessageToAllClients(Message message) {
         for(ServerThread st : listClients) {
-            st.sendMessageToClient(message);
+            st.sendMessageToClient(Constants.SEND_MESSAGE, message);
+        }
+    }
+
+    public void notifyUseEntered(User user) {
+        for(ServerThread st: listClients) {
+            st.sendTextToClient(Constants.NOTIFY_USER_ENTERED, user.getUsername() + " entered!");
         }
     }
 

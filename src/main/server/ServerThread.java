@@ -21,10 +21,6 @@ public class ServerThread implements Runnable {
     public ServerThread(Socket socket, Server server) {
         this.socket = socket;
         this.server = server;
-
-        SwingUtilities.invokeLater(() -> {
-            server.sendMessageToAllClients(new Message(new User(-1, null, null), "A client entered", new Date()));
-        });
     }
 
     @Override
@@ -42,6 +38,8 @@ public class ServerThread implements Runnable {
                 String typeMessage = ois.readUTF();
                 if(typeMessage.equals(Constants.SEND_MESSAGE)) {
                     receiveMessageFromClient();
+                } else if(typeMessage.equals(Constants.NOTIFY_USER_ENTERED)) {
+                    notifyUserEntered();
                 }
             }
 
@@ -55,15 +53,35 @@ public class ServerThread implements Runnable {
         server.sendMessageToAllClients(message);
     }
 
-    void sendMessageToClient(Message message){
+    void notifyUserEntered() throws IOException, ClassNotFoundException {
+        User user = (User) ois.readObject();
+        server.notifyUseEntered(user);
+    }
+
+    void sendMessageToClient(String typeMessage, Message message){
+        if(typeMessage.equals(Constants.SEND_MESSAGE)) {
+            try {
+                oos.writeUTF(Constants.SEND_MESSAGE);
+                oos.flush();
+
+                oos.writeObject(message);
+                oos.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    void sendTextToClient(String type, String text) {
         try {
-            oos.writeUTF(Constants.SEND_MESSAGE);
+            oos.writeUTF(type);
             oos.flush();
 
-            oos.writeObject(message);
+            oos.writeUTF(text);
             oos.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }

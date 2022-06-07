@@ -2,6 +2,7 @@ package main.model;
 
 import java.io.Serializable;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Message implements Serializable {
@@ -21,7 +22,13 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return "[" + getTimestamp().toString() + "] " + getUser().getUsername() + ": " + getMessage() + "\n";
+        if(user == null) {
+//            return user.getUsername() + " entered!";
+            return "A client entered";
+        }
+
+        String timeFormat = new SimpleDateFormat("HH:mm").format(timestamp);
+        return "[" + timeFormat + "] " + user.getUsername() + ": " + message + "\n";
     }
 
     public String getId() {

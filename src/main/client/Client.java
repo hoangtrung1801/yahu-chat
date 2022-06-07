@@ -45,6 +45,7 @@ public class Client extends JFrame implements Runnable {
             oos.flush();
             ois = new ObjectInputStream(socket.getInputStream());
 
+            notifyUserEntered();
             while(true) {
                 while(ois.available() == 0) {
                     Thread.sleep(1);
@@ -52,26 +53,49 @@ public class Client extends JFrame implements Runnable {
 
                 String typeMessage = ois.readUTF();
                 if(typeMessage.equals(Constants.SEND_MESSAGE)) {
-                    receiveMessageFromServer();
+                    receiveMessage();
+                } else if(typeMessage.equals(Constants.NOTIFY_USER_ENTERED)) {
+                    String text = ois.readUTF();
+                    appendTextToGUI(text);
                 }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+                ois.close();
+                oos.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    void receiveMessageFromServer() throws IOException, InterruptedException, ClassNotFoundException {
+    void receiveMessage() throws IOException, InterruptedException, ClassNotFoundException {
         Message message = (Message) ois.readObject();
-        appendMessageToGui(message);
+        appendMessageToGUI(message);
     }
 
-    void sendMessageToServer(Message message) {
+    void sendMessage(Message message) {
         try {
             oos.writeUTF(Constants.SEND_MESSAGE);
             oos.flush();
 
             oos.writeObject(message);
+            oos.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void notifyUserEntered() {
+        try {
+            oos.writeUTF(Constants.NOTIFY_USER_ENTERED);
+            oos.flush();
+
+            oos.writeObject(ApplicationContext.getUser());
             oos.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,9 +129,17 @@ public class Client extends JFrame implements Runnable {
         setLocationRelativeTo(null);
     }
 
-    void appendMessageToGui(Message message) {
+    void appendMessageToGUI(Message message) {
         if(messageArea != null) {
             messageArea.append(message.toString());
+            if(!message.toString().endsWith("\n")) messageArea.append("\n");
+        }
+    }
+
+    void appendTextToGUI(String text) {
+        if(messageArea != null) {
+            messageArea.append(text);
+            if(!text.endsWith("\n")) messageArea.append("\n");
         }
     }
 
@@ -118,7 +150,7 @@ public class Client extends JFrame implements Runnable {
                 String messageBody = inputField.getText();
                 inputField.setText("");
 
-                sendMessageToServer(new Message(new User(0, "hoangtrung1801", "123456"), messageBody, new Date()));
+                sendMessage(new Message(ApplicationContext.getUser(), messageBody, new Date()));
             }
         }
     }
