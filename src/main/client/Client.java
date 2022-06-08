@@ -2,11 +2,13 @@ package main.client;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import main.model.Message;
-import main.model.User;
-import main.utils.Constants;
+import main.utilities.MessageUtil;
+import main.utilities.TextAttributeCustom;
+import main.utilities.Constants;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Client extends JFrame implements Runnable {
@@ -23,9 +26,12 @@ public class Client extends JFrame implements Runnable {
     ObjectOutputStream oos;
 
     JPanel panel;
-    JTextArea messageArea;
+//    JTextArea messageArea;
+    JTextPane messageArea;
     JScrollPane messageAreaScroll;
     JTextField inputField;
+
+    Document messageDocument;
 
     @Override
     public void run() {
@@ -56,7 +62,7 @@ public class Client extends JFrame implements Runnable {
                     receiveMessage();
                 } else if(typeMessage.equals(Constants.NOTIFY_USER_ENTERED)) {
                     String text = ois.readUTF();
-                    appendTextToGUI(text);
+                    appendTextUserEntered(text);
                 }
             }
 
@@ -104,12 +110,12 @@ public class Client extends JFrame implements Runnable {
 
     void createGUI() {
         panel = new JPanel(new MigLayout());
-        messageArea = new JTextArea();
+        messageArea = new JTextPane();
+        messageDocument = messageArea.getDocument();
         messageAreaScroll = new JScrollPane(messageArea);
         inputField = new JTextField();
 
-        // Message Area
-        messageArea.setLineWrap(true);
+        // editor pane
         messageArea.setEditable(false);
         messageArea.setBackground(Color.white);
         messageAreaScroll.setPreferredSize(new Dimension(Constants.GUI_WIDTH, (int) (Constants.GUI_HEIGHT * 0.9)));
@@ -130,16 +136,26 @@ public class Client extends JFrame implements Runnable {
     }
 
     void appendMessageToGUI(Message message) {
-        if(messageArea != null) {
-            messageArea.append(message.toString());
-            if(!message.toString().endsWith("\n")) messageArea.append("\n");
+        try {
+            if (messageArea != null) {
+                // [hh:mm] username > text
+                ArrayList<String> messageComps = MessageUtil.getMessageStringComps(message);
+                messageDocument.insertString(messageDocument.getLength(), messageComps.get(0), TextAttributeCustom.getAttrTimestamp());
+                messageDocument.insertString(messageDocument.getLength(), messageComps.get(1), TextAttributeCustom.getAttrUsername());
+                messageDocument.insertString(messageDocument.getLength(), messageComps.get(2), TextAttributeCustom.getAttrMessage());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    void appendTextToGUI(String text) {
-        if(messageArea != null) {
-            messageArea.append(text);
-            if(!text.endsWith("\n")) messageArea.append("\n");
+    void appendTextUserEntered(String text) {
+        try {
+            if(messageArea != null) {
+                messageDocument.insertString(messageDocument.getLength(), text + "\n", TextAttributeCustom.getAttrUserEntered());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

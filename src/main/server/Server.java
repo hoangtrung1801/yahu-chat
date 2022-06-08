@@ -2,13 +2,11 @@ package main.server;
 
 import main.model.Message;
 import main.model.User;
-import main.utils.Constants;
+import main.utilities.Constants;
 
-import javax.swing.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Server implements Runnable {

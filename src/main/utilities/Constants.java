@@ -1,4 +1,4 @@
-package main.utils;
+package main.utilities;
 
 public class Constants {
     public static String SEND_MESSAGE = "send message";

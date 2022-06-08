@@ -2,12 +2,10 @@ package main.server;
 
 import main.model.Message;
 import main.model.User;
-import main.utils.Constants;
+import main.utilities.Constants;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.Date;
 
 public class ServerThread implements Runnable {
 
