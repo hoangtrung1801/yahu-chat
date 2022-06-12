@@ -1,5 +1,6 @@
 package main.server;
 
+import main.model.FileMessage;
 import main.model.Message;
 import main.model.User;
 import main.utilities.Constants;
@@ -45,13 +46,19 @@ public class Server implements Runnable {
 
     public void sendMessageToAllClients(Message message) {
         for(ServerThread st : listClients) {
-            st.sendMessageToClient(Constants.SEND_MESSAGE, message);
+//            st.sendMessageToClient(Constants.SEND_MESSAGE, message);
         }
     }
 
     public void notifyUseEntered(User user) {
         for(ServerThread st: listClients) {
             st.sendTextToClient(Constants.NOTIFY_USER_ENTERED, user.getUsername() + " entered!");
+        }
+    }
+
+    public void sendFileMessageToAllClients(FileMessage fileMessage) {
+        for(ServerThread st : listClients) {
+            st.sendFileMessageToClient(fileMessage);
         }
     }
 

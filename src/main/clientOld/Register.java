@@ -1,4 +1,4 @@
-package main.client;
+package main.clientOld;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import main.model.User;
@@ -98,12 +98,6 @@ public class Register {
     void registerSuccess() {
         JOptionPane.showMessageDialog(frame, "You registered successfull");
         frame.dispose();
-    }
-
-    void show() {
-        frame.toFront();
-        frame.setVisible(true);
-        frame.requestFocus();
     }
 
     public static void main(String[] args) {

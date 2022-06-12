@@ -1,4 +1,4 @@
-package main.client;
+package main.clientOld;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import main.model.User;
@@ -19,11 +19,7 @@ public class Login {
     JTextField tUsername, tPassword;
     JButton bLogin;
 
-    ChatClient client;
-
-    public Login(ChatClient client) {
-        this.client = client;
-
+    public Login() {
         frame = new JFrame();
         panel = new JPanel();
         panel.setLayout(new MigLayout(
@@ -83,7 +79,7 @@ public class Login {
 
         frame.setContentPane(panel);
 
-        frame.setVisible(true);
+//        frame.setVisible(true);
         frame.setSize(WIDTH, HEIGHT);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -103,19 +99,20 @@ public class Login {
 
     void loginSuccess() {
         frame.dispose();
-        client.loginSuccess();
-//        new Thread(new Client()).start();
+        new Thread(new Client()).start();
     }
 
     void showRegisterGUI() {
         Register register = new Register();
-        register.show();
+        register.frame.toFront();
+        register.frame.requestFocus();
+        register.frame.setAlwaysOnTop(true);
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             FlatLightLaf.setup();
-            new Login(null);
+            new Login();
         });
     }
 }
