@@ -76,8 +76,8 @@ public class ClientConnection extends SocketHandlerBase {
         sendData(textMessage);
     }
 
-    public void sendTextMessage(ChatGUI chatGUI, String message) {
-        String textMessage = Helper.pack(Constants.TEXT_MESSAGE_EVENT, String.valueOf(client.getUser().getUserId()), message);
+    public void sendTextMessage(User targetUser, String message) {
+        String textMessage = Helper.pack(Constants.TEXT_MESSAGE_EVENT, String.valueOf(client.getUser().getUserId()), targetUser.getUserId()+"", message);
         sendData(textMessage);
     }
 
@@ -120,10 +120,18 @@ public class ClientConnection extends SocketHandlerBase {
 
     private void onReceiveTextMessage(String received) {
         ArrayList<String> data = Helper.unpack(received);
-        String senderName = data.get(1);
-        String textMessage = data.get(2);
+        int senderID = Integer.parseInt(data.get(1));
+        int receiverID = Integer.parseInt(data.get(2));
+        String message = data.get(3);
 
-//        client.clientGUI.appendTextMessage(senderName, textMessage);
+        User sender = User.getUserWithID(senderID);
+        User receiver = User.getUserWithID(receiverID);
+
+        for(ChatGUI chatGUI: ApplicationContext.getClientGUI().chatManager) {
+            if(chatGUI.targetUser.getUserId() == receiverID) {
+                chatGUI.appendTextMessage(ApplicationContext.getUser().getUsername(), message);
+            }
+        }
     }
 
     private void onOnlineUsersEvent(String received) {

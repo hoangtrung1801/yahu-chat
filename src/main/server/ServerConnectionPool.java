@@ -62,6 +62,13 @@ public class ServerConnectionPool {
         return  null;
     }
 
+    public ServerConnection findWithUserID(int userID) {
+        for(ServerConnection sc: connectionManager) {
+            if(sc.user.getUserId() == userID) return sc;
+        }
+        return null;
+    }
+
     public void broadcastOnlineUsers() {
 //        connectionManager.stream().map(sc -> sc.user.getUserId()+"").collect(Collectors.toList()).forEach(s -> System.out.println(s));
         System.out.println("BROADCAST EVENT - online users");

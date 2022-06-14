@@ -145,9 +145,9 @@ public class ChatGUI extends JFrame {
         }
     }
 
-    public void appendTextMessage(String senderName, String textMessage) {
+    public void appendTextMessage(String name, String textMessage) {
         try {
-            messageDocument.insertString(messageDocument.getLength(), senderName.toUpperCase() + ": " + textMessage, null);
+            messageDocument.insertString(messageDocument.getLength(), name + ": " + textMessage, null);
             insertEndlineDocument();
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,7 +160,7 @@ public class ChatGUI extends JFrame {
         inputField.setText("");
 
 //        client.clientConnection.sendTextMessage(textMessage);
-        ApplicationContext.getClientConnection().sendTextMessage(this, textMessage);
+        ApplicationContext.getClientConnection().sendTextMessage(targetUser, textMessage);
     }
 
     private void sendFileMessage() {

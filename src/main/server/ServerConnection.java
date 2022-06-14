@@ -74,19 +74,16 @@ public class ServerConnection extends SocketHandlerBase implements Runnable {
     private void onReceiveTextMessage(String received) {
         // unpack received string
         ArrayList<String> messageData = Helper.unpack(received);
-        String senderName = messageData.get(1);
-//        String receiverName = messageData.get(2);
-//        String textMessage = messageData.get(3);
-        String textMessage = messageData.get(2);
+        int senderID = Integer.parseInt(messageData.get(1));
+        int receiverID = Integer.parseInt(messageData.get(2));
+//        String message = messageData.get(3);
 
         // send message data to receiver and sender
-//        ServerConnection sender = ChatServer.connectionPool.findWithName(senderName);
-//        sender.sendData(received);
-//
-//        ServerConnection receiver = ChatServer.connectionPool.findWithName(receiverName);
-//        receiver.sendData(received);
+        ServerConnection sender = ChatServer.connectionPool.findWithUserID(senderID);
+        sender.sendData(received);
 
-//        sendData(received);
+        ServerConnection receiver = ChatServer.connectionPool.findWithUserID(receiverID);
+        receiver.sendData(received);
     }
 
     private void onReceiveFileMessage(String received) {
