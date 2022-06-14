@@ -1,127 +1,143 @@
 package main.client;
 
+import com.formdev.flatlaf.FlatLightLaf;
+import main.model.User;
 import main.utilities.Constants;
 import net.miginfocom.layout.CC;
+import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
+import java.util.ArrayList;
 
 public class ClientGUI extends JFrame {
+    public static void main(String[] args) {
+        FlatLightLaf.setup();
+        new ClientGUI(null);
+    }
 
     ChatClient client;
 
-    JPanel panel, sendPanel, actionPanel;
-    JTextPane messageArea;
-    JScrollPane messageAreaScroll;
-    JTextField inputField;
-    JButton sendMessageBtn, sendFileBtn;
+    JPanel panel, userPanel, onlineUserPanel;
 
-    Document messageDocument;
+    ArrayList<ChatGUI> chatManager;
 
     public ClientGUI(ChatClient client) {
         this.client = client;
+        chatManager = new ArrayList<>();
 
         MigLayout layout = new MigLayout(
-                "wrap, fill, debug",
-                "[]",
-                "[][][]"
+                new LC().width(String.valueOf(Constants.CLIENT_GUI_WIDTH)).height(String.valueOf(Constants.CLIENT_GUI_HEIGHT)).debug(1)
         );
         panel = new JPanel(layout);
 
-        // message area
-        messageArea = new JTextPane();
-        messageDocument = messageArea.getDocument();
-        messageAreaScroll = new JScrollPane(messageArea);
-
-        messageArea.setEditable(false);
-        messageArea.setBackground(Color.white);
-
-        panel.add(messageAreaScroll, new CC().width(String.valueOf(Constants.GUI_WIDTH)).height(String.valueOf(Constants.GUI_HEIGHT * 0.9)));
-
-
-        // action panel
-        actionPanel = new JPanel(new MigLayout("ins 0"));
-
-        sendFileBtn = new JButton("File");
-//        sendFileBtn.addActionListener(new sendFileAction());
-        actionPanel.add(sendFileBtn);
-
-        panel.add(actionPanel);
-
-        //
-        sendPanel = new JPanel(new MigLayout("ins 0"));
-
-        // Input field
-        inputField = new JTextField();
-        inputField.setPreferredSize(new Dimension((int) (Constants.GUI_WIDTH * 0.95), (int) (Constants.GUI_HEIGHT * 0.1)));
-        inputField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    sendTextMessage();
-                }
-            }
-        });
-
-        sendPanel.add(inputField, new CC().growX().height("100%"));
-
-        // send button
-        ImageIcon sendIcon = new ImageIcon("src/main/assets/send-icon.png");
-        sendMessageBtn = new JButton("SEND");
-        sendMessageBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sendTextMessage();
-            }
-        });
-
-        sendPanel.add(sendMessageBtn, new CC().height("100%"));
-        panel.add(sendPanel, new CC().width("100%").height("32px"));
+        initUserPanel();
+        initOnlineUserPanel();
 
         setContentPane(panel);
 
         setVisible(true);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        setSize(Constants.GUI_WIDTH, Constants.GUI_HEIGHT);
         pack();
         setLocationRelativeTo(null);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (JOptionPane.showConfirmDialog(panel,
+                        "Are you sure you want to close this window?", "Close Window?",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+                    System.exit(0);
+                }
+            }
+        });
     }
 
-    // -------------------------- Chat area --------------------------
-    public void appendTextUserEntered(String name) {
-        try {
-            messageDocument.insertString(messageDocument.getLength(), name.toUpperCase() + " entered", null);
-            insertEndlineDocument();
-        } catch (Exception e) {
-            e.printStackTrace();
+    // --------------------- initialize -------------------
+    private void initUserPanel() {
+        MigLayout layout = new MigLayout();
+        userPanel = new JPanel(layout);
+        userPanel.setBackground(Color.black);
+
+        panel.add(userPanel, new CC().wrap().width("100%").height("150px"));
+    }
+
+    private void initOnlineUserPanel() {
+        MigLayout layout = new MigLayout(new LC().debug(1));
+        onlineUserPanel = new JPanel(layout);
+
+//        for(int i=0;i<4;i++) {
+//            OnlineUserCell cell = new OnlineUserCell(new User(0, null));
+//            onlineUserPanel.add(cell, new CC().wrap().width("100%").height("70px"));
+//        }
+
+        panel.add(onlineUserPanel, new CC().wrap().width("100%"));
+    }
+
+
+
+    // --------------------------------------------------
+    public void updateOnlineUsersPanel() {
+        onlineUserPanel.removeAll();
+        for(User user : ApplicationContext.getClientConnection().onlineUsers) {
+            if(user.getUserId() == ApplicationContext.getUser().getUserId()) continue;
+            OnlineUserCell cell = new OnlineUserCell(user);
+            onlineUserPanel.add(cell, new CC().wrap().width("100%").height("70px"));
         }
+        onlineUserPanel.updateUI();
     }
 
-    public void appendTextMessage(String senderName, String textMessage) {
-        try {
-            messageDocument.insertString(messageDocument.getLength(), senderName.toUpperCase() + ": " + textMessage, null);
-            insertEndlineDocument();
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void openChatGUIWithUser(User user) {
+        ChatGUI chat = new ChatGUI(user);
+
+        chatManager.add(chat);
+        chat.setVisible(true);
+    }
+
+    class OnlineUserCell extends JPanel {
+
+        public User user;
+
+        public OnlineUserCell(User user) {
+            this.user = user;
+
+            MigLayout layout = new MigLayout("");
+            setLayout(layout);
+
+            JLabel lUsername = new JLabel(user.getUsername());
+            add(lUsername);
+
+            ImageIcon userIcon = new ImageIcon(getClass().getResource("/main/assets/user-icon.png"));
+            JLabel lUserIcon = new JLabel();
+            lUserIcon.setIcon(new ImageIcon(userIcon.getImage().getScaledInstance(32, 32, Image.SCALE_DEFAULT)));
+
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+            // hover
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    setBackground(Color.lightGray);
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    setBackground(UIManager.getColor("Panel.background"));
+                }
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    openChatGUIWithUser(user);
+                }
+            });
+
+            add(lUserIcon, new CC().dockWest().gapAfter("8px"));
         }
-    }
 
-    // -------------------------- Action --------------------------
-    void sendTextMessage() {
-        String textMessage = inputField.getText();
-        inputField.setText("");
-
-        client.clientConnection.sendTextMessage(textMessage);
-    }
-
-    private void insertEndlineDocument() throws BadLocationException {
-        messageDocument.insertString(messageDocument.getLength(), "\n", null);
     }
 }

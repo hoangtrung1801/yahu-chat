@@ -1,9 +1,13 @@
 package main.utilities;
 
+import main.server.ChatServer;
+import main.server.ServerConnection;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class SocketHandlerBase{
 
@@ -35,6 +39,16 @@ public class SocketHandlerBase{
         }
     }
 
+    public void broadcast(String received) {
+        ArrayList<String> data = Helper.unpack(received);
+
+        if(data.get(0).equals(Constants.NOTIFY_USER_ENTERED)) {
+            for(ServerConnection sc : ChatServer.connectionPool.connectionManager) {
+                sc.sendData(received);
+            }
+        }
+    }
+
     public boolean close() {
         try {
             socket.close();
@@ -45,5 +59,9 @@ public class SocketHandlerBase{
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean available() {
+        return socket.isConnected();
     }
 }

@@ -1,5 +1,8 @@
 package main.server;
 
+import main.utilities.Constants;
+import main.utilities.Helper;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -7,10 +10,10 @@ import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class ServerConnectionPool {
 
-    ChatServer server;
     ThreadPoolExecutor executor;
     public ArrayList<ServerConnection> connectionManager;
 
@@ -28,6 +31,14 @@ public class ServerConnectionPool {
 
     public boolean add(ServerConnection connection) {
         if(connectionManager.contains(connection)) return false;
+
+        try {
+            while (!connection.available()) {
+                Thread.sleep(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         connectionManager.add(connection);
         executor.execute(connection);
@@ -49,5 +60,14 @@ public class ServerConnectionPool {
             if(sc.clientName.equals(name)) return sc;
         }
         return  null;
+    }
+
+    public void broadcastOnlineUsers() {
+//        connectionManager.stream().map(sc -> sc.user.getUserId()+"").collect(Collectors.toList()).forEach(s -> System.out.println(s));
+        System.out.println("BROADCAST EVENT - online users");
+        String data = Helper.pack(Constants.ONLINE_USERS_EVENT, new ArrayList<String>(connectionManager.stream().map(sc -> sc.user.getUserId()+"").toList()));
+        for(ServerConnection sc : connectionManager) {
+            sc.sendData(data);
+        }
     }
 }

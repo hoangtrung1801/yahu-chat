@@ -90,7 +90,7 @@ public class Login {
         String password = tPassword.getText();
 
         if(User.validateUser(username, password)) {
-            ApplicationContext.setUser(User.getUser(username));
+            ApplicationContext.setUser(User.getUserWithUsername(username));
             loginSuccess();
         } else {
             System.out.println("Username or password is incorrect");

@@ -6,26 +6,26 @@ import main.utilities.SecurePassword;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class User implements Serializable {
 
+    public static String queryGetUserWithID = "EXEC get_user_with_userID @userID=?";
+    public static String queryGetUserWithUsername = "EXEC get_user_with_username @username=?";
+    public static String queryNewUser = "EXEC new_user @username=?, @password=?";
+
     private int userId;
     private String username;
-    private String password;
 
-    public User(int userId, String username, String password) {
+    public User(int userId, String username) {
         this.userId = userId;
         this.username = username;
-        this.password = password;
     }
 
     public static boolean validateUser(String username, String password) {
         try {
             DatabaseConnection dbCon = DatabaseConnection.connect();
 
-            String query = "EXEC get_user @username=?";
-            PreparedStatement stGetUser = dbCon.conn.prepareStatement(query);
+            PreparedStatement stGetUser = dbCon.conn.prepareStatement(queryGetUserWithUsername);
             stGetUser.setString(1, username);
 
             ResultSet rs = stGetUser.executeQuery();
@@ -46,8 +46,7 @@ public class User implements Serializable {
 
     public static boolean newUser(String username, String password) {
         try {
-            String query = "EXEC new_user @username=?, @password=?";
-            PreparedStatement stmt = DatabaseConnection.conn.prepareStatement(query);
+            PreparedStatement stmt = DatabaseConnection.conn.prepareStatement(queryNewUser);
 
             String hashedPassword = SecurePassword.hashPassword(password);
             stmt.setString(1, username);
@@ -61,10 +60,9 @@ public class User implements Serializable {
         return false;
     }
 
-    public static User getUser(String username) {
+    public static User getUserWithUsername(String username) {
         try {
-            String query = "EXEC get_user @username=?";
-            PreparedStatement st = DatabaseConnection.conn.prepareStatement(query);
+            PreparedStatement st = DatabaseConnection.conn.prepareStatement(queryGetUserWithUsername);
 
             st.setString(1, username);
             ResultSet rs = st.executeQuery();
@@ -72,7 +70,24 @@ public class User implements Serializable {
             // have no user like this
             if(!rs.next()) return null;
 
-            return new User(rs.getInt(1), rs.getString(2), rs.getString(3));
+            return new User(rs.getInt(1), rs.getString(2));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static User getUserWithID(int userID) {
+         try {
+            PreparedStatement st = DatabaseConnection.conn.prepareStatement(queryGetUserWithID);
+
+            st.setInt(1, userID);
+            ResultSet rs = st.executeQuery();
+
+            // have no user like this
+            if(!rs.next()) return null;
+
+            return new User(rs.getInt(1), rs.getString(2));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,14 +100,6 @@ public class User implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public int getUserId() {

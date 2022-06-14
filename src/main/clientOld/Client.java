@@ -104,7 +104,7 @@ public class Client extends JFrame implements Runnable {
         messageArea.setEditable(false);
         messageArea.setBackground(Color.white);
 
-        panel.add(messageAreaScroll, new CC().width(String.valueOf(Constants.GUI_WIDTH)).height(String.valueOf(Constants.GUI_HEIGHT * 0.9)));
+        panel.add(messageAreaScroll, new CC().width(String.valueOf(Constants.CHAT_GUI_WIDTH)).height(String.valueOf(Constants.CHAT_GUI_HEIGHT * 0.9)));
 
 
         // action panel
@@ -121,7 +121,7 @@ public class Client extends JFrame implements Runnable {
 
         // Input field
         inputField = new JTextField();
-        inputField.setPreferredSize(new Dimension((int) (Constants.GUI_WIDTH * 0.95), (int) (Constants.GUI_HEIGHT * 0.1)));
+        inputField.setPreferredSize(new Dimension((int) (Constants.CHAT_GUI_WIDTH * 0.95), (int) (Constants.CHAT_GUI_HEIGHT * 0.1)));
         inputField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {

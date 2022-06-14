@@ -9,7 +9,7 @@ public class Helper {
     /*
         "CLIENT_DATA_EVENT;clientName;key1;key2;key3"
         "CHAT_EVENT;senderName;receiverName;chatContent"
-        "ONLINE_LIST_EVENT;onlineName_1;onlineName_2;....;onlineName_n"
+        "ONLINE_LIST_EVENT;userID1;userID2;....;userIDn"
      */
     // https://viettuts.vn/java-new-features/varargs-trong-java
     public static String pack(String eventName, String... data) {

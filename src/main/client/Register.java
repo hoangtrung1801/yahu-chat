@@ -80,7 +80,7 @@ public class Register {
         }
 
         // validate if have same username in database
-        if(User.getUser(username) != null)  {
+        if(User.getUserWithUsername(username) != null)  {
             System.out.println("Username is used");
             return;
         }

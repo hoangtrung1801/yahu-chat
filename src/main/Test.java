@@ -1,9 +1,7 @@
 package main;
 
 import main.utilities.Constants;
-import net.miginfocom.layout.AC;
 import net.miginfocom.layout.CC;
-import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -17,7 +15,7 @@ public class Test extends JFrame {
         );
         JPanel panel = new JPanel(layout);
 
-        panel.add(new JEditorPane(), new CC().width(String.valueOf(Constants.GUI_WIDTH)).height(String.valueOf(Constants.GUI_HEIGHT * 0.9)));
+        panel.add(new JEditorPane(), new CC().width(String.valueOf(Constants.CHAT_GUI_WIDTH)).height(String.valueOf(Constants.CHAT_GUI_HEIGHT * 0.9)));
 
         JPanel actionPanel = new JPanel(new MigLayout());
         actionPanel.add(new JButton("B1"));
