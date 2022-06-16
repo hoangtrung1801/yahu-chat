@@ -44,6 +44,7 @@ public class ClientGUI extends JFrame {
 //        setSize(Constants.GUI_WIDTH, Constants.GUI_HEIGHT);
         pack();
         setLocationRelativeTo(null);
+        setTitle(ApplicationContext.getUser().getUsername());
 
         addWindowListener(new WindowAdapter() {
             @Override

@@ -9,9 +9,14 @@ import java.sql.ResultSet;
 
 public class User implements Serializable {
 
-    public static String queryGetUserWithID = "EXEC get_user_with_userID @userID=?";
-    public static String queryGetUserWithUsername = "EXEC get_user_with_username @username=?";
-    public static String queryNewUser = "EXEC new_user @username=?, @password=?";
+//    public static String queryGetUserWithID = "EXEC get_user_with_userID @userID=?";
+//    public static String queryGetUserWithUsername = "EXEC get_user_with_username @username=?";
+//    public static String queryNewUser = "EXEC new_user @username=?, @password=?";
+
+    public static String queryGetAllUsers = "CALL get_users()";
+    public static String queryGetUserWithID = "CALL  get_user_with_id(?)";
+    public static String queryGetUserWithUsername = "CALL get_user_with_username(?)";
+    public static String queryNewUser = "CALL create_user(?, ?)";
 
     private int userId;
     private String username;

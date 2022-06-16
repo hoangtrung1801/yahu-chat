@@ -58,6 +58,8 @@ public class ChatGUI extends JFrame {
         setLocationRelativeTo(null);
 //        setSize(Constants.GUI_WIDTH, Constants.GUI_HEIGHT);
 //        setVisible(true);
+
+        setTitle(ApplicationContext.getUser().getUsername() + " chat with " + targetUser.getUsername());
     }
 
     private void initInputPanel() {
