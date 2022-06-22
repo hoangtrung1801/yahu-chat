@@ -16,8 +16,6 @@ import java.awt.event.KeyEvent;
 
 public class ChatGUI extends JFrame {
 
-    public User targetUser;
-
     JPanel panel, sendPanel, actionPanel, targetUserPanel;
     JTextPane messageArea;
     JScrollPane messageAreaScroll;
@@ -29,8 +27,7 @@ public class ChatGUI extends JFrame {
     ChatGUIController controller;
 
     public ChatGUI(User targetUser) {
-        this.targetUser = targetUser;
-        controller = new ChatGUIController(this);
+        controller = new ChatGUIController(this, targetUser);
 
         initGUI();
     }
@@ -54,7 +51,7 @@ public class ChatGUI extends JFrame {
         setLocationRelativeTo(null);
 //        setVisible(true);
 
-        setTitle(ApplicationContext.getUser().getUsername() + " chat with " + targetUser.getUsername());
+        setTitle(ApplicationContext.getUser().getUsername() + " chat with " + controller.getTargetUser().getUsername());
     }
 
     private void initInputPanel() {
@@ -95,7 +92,7 @@ public class ChatGUI extends JFrame {
         sendFileBtn = new JButton("File");
         sendFileBtn.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)  {
                 controller.sendFileMessage();
             }
         });
@@ -125,7 +122,7 @@ public class ChatGUI extends JFrame {
         lUserIcon.setIcon(new ImageIcon(userIcon.getImage().getScaledInstance(32, 32, Image.SCALE_DEFAULT)));
         targetUserPanel.add(lUserIcon);
 
-        JLabel lUsername = new JLabel(targetUser.getUsername());
+        JLabel lUsername = new JLabel(controller.getTargetUser().getUsername());
         targetUserPanel.add(lUsername);
 
         panel.add(targetUserPanel, new CC().width(String.valueOf(Constants.CHAT_GUI_WIDTH)).height(String.valueOf(Constants.CHAT_GUI_HEIGHT * 0.1)));

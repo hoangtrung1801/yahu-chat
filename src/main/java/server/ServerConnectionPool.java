@@ -1,6 +1,7 @@
 package server;
 
 
+import model.User;
 import utilities.Constants;
 import utilities.Helper;
 
@@ -55,14 +56,21 @@ public class ServerConnectionPool {
 
     public ServerConnection findWithName(String name) {
         for(ServerConnection sc : connectionManager) {
-            if(sc.clientName.equals(name)) return sc;
+            if(sc.getClientName().equals(name)) return sc;
         }
         return  null;
     }
 
     public ServerConnection findWithUserID(int userID) {
         for(ServerConnection sc: connectionManager) {
-            if(sc.user.getId() == userID) return sc;
+            if(sc.getUser().getId() == userID) return sc;
+        }
+        return null;
+    }
+
+    public ServerConnection findWithUser(User user) {
+        for(ServerConnection sc: connectionManager) {
+            if(user.equals(sc.getUser())) return sc;
         }
         return null;
     }
@@ -70,7 +78,7 @@ public class ServerConnectionPool {
     public void broadcastOnlineUsers() {
         System.out.println("BROADCAST EVENT - online users");
         String data = Helper.pack(Constants.ONLINE_USERS_EVENT,
-                new ArrayList<String>(connectionManager.stream().map(sc -> sc.user.getId()+"").toList()));
+                new ArrayList<String>(connectionManager.stream().map(sc -> sc.getUser().getId()+"").toList()));
         for(ServerConnection sc : connectionManager) {
             sc.sendData(data);
         }

@@ -1,6 +1,8 @@
 package client;
 
+import dao.ConversationDAO;
 import dao.UserDAO;
+import dao.implement.ConversationDAOImpl;
 import dao.implement.UserDAOImpl;
 import model.User;
 
@@ -9,8 +11,10 @@ public class ApplicationContext {
     private static User user;
     private static ClientGUI clientGUI;
     private static ClientConnection clientConnection;
-    private static UserDAO userDAO;
     private static ChatClient chatClient;
+
+    private static UserDAO userDAO;
+    private static ConversationDAO conversationDAO;
 
     public static void setUser(User user) {
         ApplicationContext.user = user;
@@ -37,6 +41,7 @@ public class ApplicationContext {
     }
 
     public static UserDAO getUserDAO() {
+        if(userDAO == null) userDAO = new UserDAOImpl();
         return userDAO;
     }
 
@@ -50,5 +55,14 @@ public class ApplicationContext {
 
     public static void setChatClient(ChatClient chatClient) {
         ApplicationContext.chatClient = chatClient;
+    }
+
+    public static ConversationDAO getConversationDAO() {
+        if(conversationDAO == null) conversationDAO = new ConversationDAOImpl();
+        return conversationDAO;
+    }
+
+    public static void setConversationDAO(ConversationDAO conversationDAO) {
+        ApplicationContext.conversationDAO = conversationDAO;
     }
 }

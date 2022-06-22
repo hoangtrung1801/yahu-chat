@@ -77,7 +77,6 @@ public class ClientGUI extends JFrame {
     }
 
 
-
     // --------------------------------------------------
     public void updateOnlineUsersPanel() {
         onlineUserPanel.removeAll();
@@ -89,8 +88,8 @@ public class ClientGUI extends JFrame {
         onlineUserPanel.updateUI();
     }
 
-    private void openChatGUIWithUser(User user) {
-        ChatGUI chat = new ChatGUI(user);
+    private void openChatGUIWithUser(User targetUser) {
+        ChatGUI chat = new ChatGUI(targetUser);
 
         chatManager.add(chat);
         chat.setVisible(true);

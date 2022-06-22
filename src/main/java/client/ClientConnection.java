@@ -1,5 +1,6 @@
 package client;
 
+import model.Conversation;
 import model.User;
 import utilities.Constants;
 import utilities.Helper;
@@ -49,9 +50,7 @@ public class ClientConnection extends SocketHandlerBase {
 
                 System.out.println("RECEIVED: " + received);
                 String type = Helper.getReceivedType(received);
-                if (type.equals(Constants.NOTIFY_USER_ENTERED)) {
-                    onUserEntered(received);
-                } else if (type.equals(Constants.TEXT_MESSAGE_EVENT)) {
+                if (type.equals(Constants.TEXT_MESSAGE_EVENT)) {
                     onReceiveTextMessage(received);
                 } else if (type.equals(Constants.ONLINE_USERS_EVENT)) {
                     onOnlineUsersEvent(received);
@@ -78,16 +77,24 @@ public class ClientConnection extends SocketHandlerBase {
 //        sendData(textMessage);
 //    }
 
-    public void sendTextMessage(User targetUser, String message) {
+    public void sendTextMessage(Conversation conversation, String message) {
         /*
-            "TEXT_MESSAGE_EVENT;senderId;receiverId;message"
+//            "TEXT_MESSAGE_EVENT;senderId;receiverId;message"
+            "TEXT_MESSAGE_EVENT;conversationId;message"
          */
-        String textMessage = Helper.pack(Constants.TEXT_MESSAGE_EVENT,
-                ApplicationContext.getUser().getId()+"",
-                targetUser.getId()+"",
+//        String textMessage = Helper.pack(Constants.TEXT_MESSAGE_EVENT,
+//                ApplicationContext.getUser().getId()+"",
+//                targetUser.getId()+"",
+//                message
+//        );
+        String textMessage = Helper.pack(
+                Constants.TEXT_MESSAGE_EVENT,
+                conversation.getId()+"",
                 message
         );
         sendData(textMessage);
+
+        // save on database
     }
 
     public void sendFileMessage(File file) {
@@ -120,28 +127,22 @@ public class ClientConnection extends SocketHandlerBase {
 
 
     // ----------------------- LISTENER -------------------
-    private void onUserEntered(String received) {
-        ArrayList<String> data = Helper.unpack(received);
-        String senderName = data.get(1);
-
-//        ApplicationContext.getClientGUI().app
-//        client.clientGUI.appendTextUserEntered(senderName);
-    }
-
     private void onReceiveTextMessage(String received) {
-        ArrayList<String> data = Helper.unpack(received);
-        int senderID = Integer.parseInt(data.get(1));
-        int receiverID = Integer.parseInt(data.get(2));
-        String message = data.get(3);
-
-        User sender = ApplicationContext.getUserDAO().readById(senderID);
-        User receiver = ApplicationContext.getUserDAO().readById(receiverID);
-
-        for(ChatGUI chatGUI: ApplicationContext.getClientGUI().chatManager) {
-            if(chatGUI.targetUser.getId() == receiverID) {
-                chatGUI.appendTextMessage(ApplicationContext.getUser().getUsername(), message);
-            }
-        }
+//        ArrayList<String> data = Helper.unpack(received);
+//        int senderID = Integer.parseInt(data.get(1));
+//        int receiverID = Integer.parseInt(data.get(2));
+//        String message = data.get(3);
+//
+//        User sender = ApplicationContext.getUserDAO().readById(senderID);
+////        User receiver = ApplicationContext.getUserDAO().readById(receiverID);
+//
+//        for(ChatGUI chatGUI: ApplicationContext.getClientGUI().chatManager) {
+//            if(chatGUI.controller.getTargetUser().getId() == senderID || chatGUI.controller.getTargetUser().getId() == receiverID
+//                    || ApplicationContext.getUser().getId() == senderID || ApplicationContext.getUser().getId() == receiverID
+//            ) {
+//                chatGUI.appendTextMessage(sender.getUsername(), message);
+//            }
+//        }
     }
 
     private void onOnlineUsersEvent(String received) {

@@ -1,7 +1,11 @@
 package server;
 
+import dao.ConversationDAO;
 import dao.UserDAO;
+import dao.implement.ConversationDAOImpl;
 import dao.implement.UserDAOImpl;
+import model.Conversation;
+import model.GroupMember;
 import model.User;
 import utilities.Constants;
 import utilities.Helper;
@@ -9,17 +13,21 @@ import utilities.SocketHandlerBase;
 
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class ServerConnection extends SocketHandlerBase implements Runnable {
 
-    public String clientName;
-    public User user;
+    private String clientName;
+    private User user;
 
     UserDAO userDAO;
+    ConversationDAO conversationDAO;
 
     public ServerConnection(Socket socket) {
         super(socket);
         userDAO = new UserDAOImpl();
+        conversationDAO = new ConversationDAOImpl();
     }
 
     @Override
@@ -65,17 +73,26 @@ public class ServerConnection extends SocketHandlerBase implements Runnable {
     }
 
     private void onReceiveTextMessage(String received) {
+        System.out.println(received);
         // unpack received string
-        ArrayList<String> messageData = Helper.unpack(received);
-        int senderID = Integer.parseInt(messageData.get(1));
-        int receiverID = Integer.parseInt(messageData.get(2));
+//        ArrayList<String> messageData = Helper.unpack(received);
 
-        // send message data to receiver and sender
-        ServerConnection sender = ChatServer.connectionPool.findWithUserID(senderID);
-        sender.sendData(received);
+//        int conversationId = Integer.parseInt(messageData.get(2));
+//        Conversation conversation = conversationDAO.readById(conversationId);
+//        Set<GroupMember> gm = conversation.getGroupMembers();
+//        List<User> usersInConversation = gm.stream().map(e -> e.getUser()).toList();
 
-        ServerConnection receiver = ChatServer.connectionPool.findWithUserID(receiverID);
-        receiver.sendData(received);
+//        for(GroupMember gm : conversation.getGroupMembers()) {
+//            // check if user in connection pool was in conversation
+//            if(gm.getConversation().getId() == conversationId) {
+//                ServerConnection con = ChatServer.connectionPool.findWithUser(gm.getUser());
+//                System.out.print(con.getUser().getUsername() + ", ");
+////                con.sendData(received);
+//            }
+//        }
+
+        // process save message
+//        Conversation conversation = conversationDAO.reajd
     }
 
     private void onReceiveFileMessage(String received) {
@@ -94,5 +111,21 @@ public class ServerConnection extends SocketHandlerBase implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

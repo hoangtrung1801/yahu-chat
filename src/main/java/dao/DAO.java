@@ -14,4 +14,6 @@ public interface DAO<T, K> {
     T update(T entity);
 
     T delete(T entity);
+
+//    void persist(T entity);
 }

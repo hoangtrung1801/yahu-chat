@@ -6,6 +6,19 @@ import java.time.Instant;
 @Entity
 @Table(name = "group_member")
 public class GroupMember {
+
+    public GroupMember() {
+        id = new GroupMemberId();
+    }
+
+    public GroupMember(User user, Conversation conversation, Instant joinedDatetime, Instant leftDatetime) {
+        this.id = new GroupMemberId();
+        this.user = user;
+        this.conversation = conversation;
+        this.joinedDatetime = joinedDatetime;
+        this.leftDatetime = leftDatetime;
+    }
+
     @EmbeddedId
     private GroupMemberId id;
 
@@ -19,10 +32,10 @@ public class GroupMember {
     @JoinColumn(name = "conversation_id", nullable = false)
     private Conversation conversation;
 
-    @Column(name = "joined_datetime")
+    @Column(name = "joined_datetime", nullable = false)
     private Instant joinedDatetime;
 
-    @Column(name = "left_datetime", nullable = false)
+    @Column(name = "left_datetime")
     private Instant leftDatetime;
 
     public GroupMemberId getId() {
