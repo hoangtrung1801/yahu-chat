@@ -23,6 +23,7 @@ public class SocketHandlerBase{
             this.socket = socket;
 
             this.dos = new DataOutputStream(socket.getOutputStream());
+            dos.flush();
             this.din = new DataInputStream(socket.getInputStream());
         } catch (Exception e) {
             e.printStackTrace();
@@ -30,6 +31,7 @@ public class SocketHandlerBase{
     }
 
     public void sendData(String data) {
+        System.out.println("SENT " + data);
         try {
             dos.writeUTF(data);
             dos.flush();

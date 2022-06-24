@@ -8,6 +8,8 @@ public class Constants {
     public static String NOTIFY_USER_ENTERED = "NOTIFY_USER_ENTERED";
     public static String NOTIFY_USER_EXISTED = "NOTIFY_USER_EXISTED";
 
+    public static String TEST = "TEST";
+
     public static int CHAT_GUI_WIDTH = 800;
     public static int CHAT_GUI_HEIGHT = 600;
     public static int CLIENT_GUI_WIDTH = 300;

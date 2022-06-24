@@ -33,7 +33,11 @@ public class ConversationDAOImpl implements ConversationDAO {
 
     @Override
     public Conversation readById(Integer id) {
-        return entityManager.find(Conversation.class, id);
+        HibernateUtils.beginTransaction();
+        Conversation conversation = entityManager.find(Conversation.class, id);
+        HibernateUtils.commitTransaction();
+
+        return conversation;
     }
 
     @Override
@@ -83,5 +87,12 @@ public class ConversationDAOImpl implements ConversationDAO {
 //
 //        ConversationDAO conversationDAO = new ConversationDAOImpl();
 //        conversationDAO.findConversationWithUsers(user1, user2);
+
+        ConversationDAO conversationDAO = new ConversationDAOImpl();
+        Conversation conversation = conversationDAO.readById(4);
+        System.out.println(conversation.getConversationName());
+
+        Conversation conversation1 = conversationDAO.readById(16);
+        System.out.println(conversation1.getConversationName());
     }
 }

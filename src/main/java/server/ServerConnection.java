@@ -26,6 +26,7 @@ public class ServerConnection extends SocketHandlerBase implements Runnable {
 
     public ServerConnection(Socket socket) {
         super(socket);
+
         userDAO = new UserDAOImpl();
         conversationDAO = new ConversationDAOImpl();
     }
@@ -47,6 +48,8 @@ public class ServerConnection extends SocketHandlerBase implements Runnable {
                     onReceiveTextMessage(received);
                 } else if(type.equals(Constants.FILE_MESSAGE_EVENT)) {
 //                        onReceiveFileMessage(received);
+                } else if(type.equals(Constants.TEST)) {
+                    sendData(received.toUpperCase());
                 }
             } catch (Exception e) {
                 isRunning = false;
@@ -73,21 +76,24 @@ public class ServerConnection extends SocketHandlerBase implements Runnable {
     }
 
     private void onReceiveTextMessage(String received) {
-        System.out.println(received);
         // unpack received string
-//        ArrayList<String> messageData = Helper.unpack(received);
+        ArrayList<String> messageData = Helper.unpack(received);
 
-//        int conversationId = Integer.parseInt(messageData.get(2));
-//        Conversation conversation = conversationDAO.readById(conversationId);
-//        Set<GroupMember> gm = conversation.getGroupMembers();
-//        List<User> usersInConversation = gm.stream().map(e -> e.getUser()).toList();
+        System.out.println("Begin get conversation");
+        int conversationId = Integer.parseInt(messageData.get(2));
+        Conversation conversation = conversationDAO.readById(conversationId);
+
+        System.out.println(conversation.getConversationName());
+        System.out.println("Done");
+
+        // test
+//        ChatServer.connectionPool.broadcastOnlineUsers();
 
 //        for(GroupMember gm : conversation.getGroupMembers()) {
 //            // check if user in connection pool was in conversation
 //            if(gm.getConversation().getId() == conversationId) {
 //                ServerConnection con = ChatServer.connectionPool.findWithUser(gm.getUser());
-//                System.out.print(con.getUser().getUsername() + ", ");
-////                con.sendData(received);
+//                con.sendData(received);
 //            }
 //        }
 

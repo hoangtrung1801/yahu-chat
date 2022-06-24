@@ -13,13 +13,17 @@ import java.io.FileInputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ClientConnection extends SocketHandlerBase {
+public class ClientConnection extends SocketHandlerBase implements Runnable {
 
     Thread listener;
     ArrayList<User> onlineUsers;
 
     public ClientConnection() {
-        ApplicationContext.setClientConnection(this);
+    }
+
+    @Override
+    public void run() {
+         ApplicationContext.setClientConnection(this);
 
         try {
             // connect to server
@@ -27,8 +31,9 @@ public class ClientConnection extends SocketHandlerBase {
             System.out.println("Connected to " + Constants.URL + ":" + Constants.PORT + "...");
 
             // init input and output stream
-            din = new DataInputStream(socket.getInputStream());
             dos = new DataOutputStream(socket.getOutputStream());
+            dos.flush();
+            din = new DataInputStream(socket.getInputStream());
 
             // listen
             listener = new Thread(this::listen);
