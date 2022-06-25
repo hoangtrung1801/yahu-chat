@@ -1,14 +1,8 @@
 package client;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import model.User;
-import utilities.Constants;
-import utilities.Helper;
 
 import javax.swing.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.net.Socket;
 
 public class ChatClient {
 
@@ -21,6 +15,7 @@ public class ChatClient {
 //
 //            socket = new Socket(Constants.URL, Constants.PORT);
 //            System.out.println("Connected to " + Constants.URL + ":" + Constants.PORT + "...");
+
 //
 //            dos = new DataOutputStream(socket.getOutputStream());
 //            din = new DataInputStream(socket.getInputStream());

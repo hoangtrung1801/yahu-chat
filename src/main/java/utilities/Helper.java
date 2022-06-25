@@ -2,6 +2,8 @@ package utilities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
 
 public class Helper {
 
@@ -16,7 +18,7 @@ public class Helper {
         return eventName + Constants.SEPARATE_MARKER + String.join(Constants.SEPARATE_MARKER, data);
     }
 
-    public static String pack(String eventName, ArrayList<String> data) {
+    public static String pack(String eventName, List<String> data) {
         return eventName + Constants.SEPARATE_MARKER + String.join(Constants.SEPARATE_MARKER, data);
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     public UserDAOImpl() {
         entityManager = HibernateUtils.getEntityManager();
@@ -17,20 +17,12 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public List<User> read() {
-        HibernateUtils.beginTransaction();
-        List<User> users = entityManager.createQuery("SELECT a FROM User a", User.class).getResultList();
-        HibernateUtils.commitTransaction();
-
-        return users;
+        return entityManager.createQuery("SELECT a FROM User a", User.class).getResultList();
     }
 
     @Override
     public User readById(Integer id) {
-        HibernateUtils.beginTransaction();
-        User user = entityManager.find(User.class, id);
-        HibernateUtils.commitTransaction();
-
-        return user;
+        return entityManager.find(User.class, id);
     }
 
     @Override
@@ -53,15 +45,8 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User findWithUsername(String username) {
-        try {
-            HibernateUtils.beginTransaction();
-            User user = (User) entityManager.createQuery("SELECT e FROM User e WHERE e.username = :username")
-                    .setParameter("username", username)
-                    .getSingleResult();
-            HibernateUtils.commitTransaction();
-            return user;
-        } catch (Exception e) {
-            return null;
-        }
+        return (User) entityManager.createQuery("SELECT e FROM User e WHERE e.username = :username")
+                .setParameter("username", username)
+                .getSingleResult();
     }
 }

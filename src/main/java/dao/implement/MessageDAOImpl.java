@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 public class MessageDAOImpl implements MessageDAO {
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
     
     public MessageDAOImpl() {
         entityManager = HibernateUtils.getEntityManager();
@@ -16,11 +16,7 @@ public class MessageDAOImpl implements MessageDAO {
     
     @Override
     public List<Message> read() {
-        HibernateUtils.beginTransaction();
-
         List<Message> messages = entityManager.createQuery("SELECT e FROM Message e", Message.class).getResultList();
-
-        HibernateUtils.commitTransaction();
         return messages;
     }
 
@@ -32,9 +28,7 @@ public class MessageDAOImpl implements MessageDAO {
     @Override
     public Message create(Message entity) {
         HibernateUtils.beginTransaction();
-
         entityManager.persist(entity);
-
         HibernateUtils.commitTransaction();
         return entity;
     }

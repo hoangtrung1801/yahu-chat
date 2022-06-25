@@ -1,6 +1,5 @@
 package dao;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 public interface DAO<T, K> {
@@ -14,6 +13,4 @@ public interface DAO<T, K> {
     T update(T entity);
 
     T delete(T entity);
-
-//    void persist(T entity);
 }

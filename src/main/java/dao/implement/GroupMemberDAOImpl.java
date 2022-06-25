@@ -2,7 +2,6 @@ package dao.implement;
 
 import dao.GroupMemberDAO;
 import model.GroupMember;
-import model.GroupMemberId;
 import utilities.HibernateUtils;
 
 import javax.persistence.EntityManager;
@@ -10,7 +9,7 @@ import java.util.List;
 
 public class GroupMemberDAOImpl implements GroupMemberDAO {
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     public GroupMemberDAOImpl() {
         entityManager = HibernateUtils.getEntityManager();
@@ -18,12 +17,7 @@ public class GroupMemberDAOImpl implements GroupMemberDAO {
 
     @Override
     public List<GroupMember> read() {
-        HibernateUtils.beginTransaction();
-
-        List<GroupMember> groupMembers = entityManager.createQuery("SELECT e FROM GroupMember e", GroupMember.class).getResultList();
-
-        HibernateUtils.commitTransaction();
-        return groupMembers;
+        return entityManager.createQuery("SELECT e FROM GroupMember e", GroupMember.class).getResultList();
     }
 
     @Override

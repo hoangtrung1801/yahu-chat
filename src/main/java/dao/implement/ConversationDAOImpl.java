@@ -1,34 +1,25 @@
 package dao.implement;
 
 import dao.ConversationDAO;
-import dao.UserDAO;
 import model.Conversation;
 import model.GroupMember;
 import model.User;
 import utilities.HibernateUtils;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ConversationDAOImpl implements ConversationDAO {
-    private EntityManager entityManager;
-//    private EntityManagerFactory entityManagerFactory;
+    private final EntityManager entityManager;
 
     public ConversationDAOImpl() {
         entityManager = HibernateUtils.getEntityManager();
-//        entityManagerFactory = HibernateUtils.getEntityManagerFactory();
     }
 
     @Override
     public List<Conversation> read() {
-        HibernateUtils.beginTransaction();
-        List<Conversation> conversations = entityManager.createQuery("SELECT e FROM Conversation e", Conversation.class).getResultList();
-        HibernateUtils.commitTransaction();
-
-        return conversations;
+        return entityManager.createQuery("SELECT e FROM Conversation e", Conversation.class).getResultList();
     }
 
     @Override
@@ -63,21 +54,15 @@ public class ConversationDAOImpl implements ConversationDAO {
 
     @Override
     public Conversation findConversationWithUsers(User... users) {
-        HibernateUtils.beginTransaction();
         List<Conversation> conversations = entityManager.createQuery("SELECT e FROM Conversation e", Conversation.class).getResultList();
-        Conversation result = conversations.stream().reduce(null, (con1, con2) -> {
+
+        return conversations.stream().reduce(null, (con1, con2) -> {
             // check if in group members of conversion had all users (input)
             Set<GroupMember> gm = con2.getGroupMembers();
-            List<User> userFromGM = gm.stream().map(groupMember -> groupMember.getUser()).collect(Collectors.toList());
+            List<User> userFromGM = gm.stream().map(GroupMember::getUser).toList();
 
             return userFromGM.containsAll(List.of(users)) ? con2 : con1;
         });
-
-//        if(result != null)
-//            System.out.println(result.getConversationName() + " " + result.getId());
-        HibernateUtils.commitTransaction();
-
-        return result;
     }
 
     public static void main(String[] args) {
