@@ -9,8 +9,6 @@ import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Objects;
@@ -29,7 +27,9 @@ public class ChatGUI extends JFrame {
 
     public ChatGUI(User targetUser) {
         controller = new ChatGUIController(this, targetUser);
+
         initGUI();
+        controller.showMessagesSentBefore();
     }
 
     private void initGUI() {
@@ -80,6 +80,7 @@ public class ChatGUI extends JFrame {
         sendPanel.add(sendMessageBtn, new CC().height("100%"));
         panel.add(sendPanel, new CC().width(String.valueOf(Constants.CHAT_GUI_WIDTH)).height("32px"));
     }
+
     private void initActionPanel() {
         // action panel
         actionPanel = new JPanel(new MigLayout("ins 0"));
@@ -118,16 +119,12 @@ public class ChatGUI extends JFrame {
         panel.add(targetUserPanel, new CC().width(String.valueOf(Constants.CHAT_GUI_WIDTH)).height(String.valueOf(Constants.CHAT_GUI_HEIGHT * 0.1)));
     }
 
-    // -------------------------- Chat area --------------------------
-//    public void appendTextUserEntered(String name) {
-//        try {
-//            messageDocument.insertString(messageDocument.getLength(), name.toUpperCase() + " entered", null);
-//            insertEndlineDocument();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private boolean isAvailable() {
 
+        return false;
+    }
+
+    // -------------------------- Chat area --------------------------
     public void appendTextMessage(String name, String textMessage) {
         try {
             messageDocument.insertString(messageDocument.getLength(), name + ": " + textMessage, null);
@@ -136,7 +133,6 @@ public class ChatGUI extends JFrame {
             e.printStackTrace();
         }
     }
-
 
     // ------------------------------------------------------------
     private void insertEndlineDocument() throws BadLocationException {

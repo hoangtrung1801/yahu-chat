@@ -67,7 +67,7 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         User senderUser = userDAO.readById(userId);
 
         if(chatGUI == null) return;
-        chatGUI.appendTextMessage(senderUser.getUsername(), message);
+        chatGUI.controller.showTextMessage(senderUser.getUsername(), message);
     }
 
     // --------------- ACTION -----------------

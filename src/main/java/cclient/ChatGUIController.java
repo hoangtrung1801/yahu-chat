@@ -4,15 +4,15 @@ import dao.ConversationDAO;
 import dao.implement.ConversationDAOImpl;
 import model.Conversation;
 import model.GroupMember;
+import model.Message;
 import model.User;
 
 import javax.swing.*;
 import java.io.File;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
 
 public class ChatGUIController {
 
@@ -21,7 +21,7 @@ public class ChatGUIController {
 
     public ChatGUI gui;
 
-    private ConversationDAO conversationDAO;
+    private final ConversationDAO conversationDAO;
 
     public ChatGUIController(ChatGUI gui, User targetUser) {
         this.gui = gui;
@@ -65,6 +65,17 @@ public class ChatGUIController {
 //            client.clientConnection.sendFileMessage(file);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void showTextMessage(String username, String textMessage) {
+        gui.appendTextMessage(username, textMessage);
+    }
+
+    public void showMessagesSentBefore() {
+        Set<Message> messages = conversation.getMessages();
+        for(Message message: messages) {
+            gui.appendTextMessage(message.getUser().getUsername(), message.getMessageText());
         }
     }
 
