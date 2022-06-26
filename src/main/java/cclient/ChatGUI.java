@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Objects;
 
 public class ChatGUI extends JFrame {
 
@@ -74,12 +75,7 @@ public class ChatGUI extends JFrame {
         // send button
         ImageIcon sendIcon = new ImageIcon("/assets/send-icon.png");
         sendMessageBtn = new JButton("SEND");
-        sendMessageBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.sendTextMessage();
-            }
-        });
+        sendMessageBtn.addActionListener(e -> controller.sendTextMessage());
 
         sendPanel.add(sendMessageBtn, new CC().height("100%"));
         panel.add(sendPanel, new CC().width(String.valueOf(Constants.CHAT_GUI_WIDTH)).height("32px"));
@@ -89,12 +85,7 @@ public class ChatGUI extends JFrame {
         actionPanel = new JPanel(new MigLayout("ins 0"));
 
         sendFileBtn = new JButton("File");
-        sendFileBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e)  {
-                controller.sendFileMessage();
-            }
-        });
+        sendFileBtn.addActionListener(e -> controller.sendFileMessage());
         actionPanel.add(sendFileBtn);
 
         panel.add(actionPanel);
@@ -116,7 +107,7 @@ public class ChatGUI extends JFrame {
         MigLayout layout = new MigLayout();
         targetUserPanel = new JPanel(layout);
 
-        ImageIcon userIcon = new ImageIcon(getClass().getResource("/assets/user-icon.png"));
+        ImageIcon userIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/assets/user-icon.png")));
         JLabel lUserIcon = new JLabel();
         lUserIcon.setIcon(new ImageIcon(userIcon.getImage().getScaledInstance(32, 32, Image.SCALE_DEFAULT)));
         targetUserPanel.add(lUserIcon);
@@ -128,14 +119,14 @@ public class ChatGUI extends JFrame {
     }
 
     // -------------------------- Chat area --------------------------
-    public void appendTextUserEntered(String name) {
-        try {
-            messageDocument.insertString(messageDocument.getLength(), name.toUpperCase() + " entered", null);
-            insertEndlineDocument();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public void appendTextUserEntered(String name) {
+//        try {
+//            messageDocument.insertString(messageDocument.getLength(), name.toUpperCase() + " entered", null);
+//            insertEndlineDocument();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void appendTextMessage(String name, String textMessage) {
         try {

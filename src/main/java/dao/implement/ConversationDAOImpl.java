@@ -64,20 +64,4 @@ public class ConversationDAOImpl implements ConversationDAO {
             return userFromGM.containsAll(List.of(users)) ? con2 : con1;
         });
     }
-
-    public static void main(String[] args) {
-//        UserDAO userDAO = new UserDAOImpl();
-//        User user1 = userDAO.readById(5);
-//        User user2 = userDAO.readById(9);
-//
-//        ConversationDAO conversationDAO = new ConversationDAOImpl();
-//        conversationDAO.findConversationWithUsers(user1, user2);
-
-        ConversationDAO conversationDAO = new ConversationDAOImpl();
-        Conversation conversation = conversationDAO.readById(4);
-        System.out.println(conversation.getConversationName());
-
-        Conversation conversation1 = conversationDAO.readById(16);
-        System.out.println(conversation1.getConversationName());
-    }
 }

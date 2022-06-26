@@ -54,7 +54,7 @@ public class ClientConnection extends ConnectionBase implements Runnable {
             listOnlineUsers.add(userDAO.readById(id));
         }
 
-        ChatClient.clientGUI.updateOnlineUsersPanel(listOnlineUsers);;
+        ChatClient.clientGUI.updateOnlineUsersPanel(listOnlineUsers);
     }
 
     private void textMessageEvent(String data) {
@@ -66,11 +66,15 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         ChatGUI chatGUI = ChatClient.clientGUI.controller.findChatGUI(conversationId);
         User senderUser = userDAO.readById(userId);
 
+        if(chatGUI == null) return;
         chatGUI.appendTextMessage(senderUser.getUsername(), message);
     }
 
     // --------------- ACTION -----------------
     public void sendUserEnteredEvent() {
+        /*
+            ONLINE_USERS_EVENT;userId
+         */
         sendData(Helper.pack(Constants.ONLINE_USERS_EVENT, ChatClient.user.getId()+""));
     }
 

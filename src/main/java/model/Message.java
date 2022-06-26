@@ -6,6 +6,13 @@ import java.time.Instant;
 @Entity
 @Table(name = "message")
 public class Message {
+    public Message() {}
+
+    public Message(String messageText, Instant sentDatetime) {
+        this.messageText = messageText;
+        this.sentDatetime = sentDatetime;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "message_id", nullable = false)
@@ -20,6 +27,18 @@ public class Message {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conversation_id")
     private Conversation conversation;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Integer getId() {
         return id;

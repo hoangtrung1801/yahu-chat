@@ -16,12 +16,12 @@ import java.util.List;
 
 public class ChatGUIController {
 
-    private ConversationDAO conversationDAO;
-
     private User targetUser;
     private Conversation conversation;
 
     public ChatGUI gui;
+
+    private ConversationDAO conversationDAO;
 
     public ChatGUIController(ChatGUI gui, User targetUser) {
         this.gui = gui;

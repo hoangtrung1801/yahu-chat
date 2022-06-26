@@ -42,6 +42,9 @@ public class ChatServer {
     }
 
     public static void sendOnlineUsersEvent() {
+        /*
+            ONLINE_USERS_EVENT;userId1;userId2;...;userIdN
+         */
         String data = Helper.pack(
                 Constants.ONLINE_USERS_EVENT,
                 connectionManager

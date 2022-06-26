@@ -1,12 +1,6 @@
 package cclient;
 
 import model.User;
-import utilities.Constants;
-
-import javax.swing.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.net.Socket;
 
 public class ChatClient {
 
