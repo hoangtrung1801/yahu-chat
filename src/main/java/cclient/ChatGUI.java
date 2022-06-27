@@ -1,27 +1,50 @@
 package cclient;
 
+import com.formdev.flatlaf.FlatLightLaf;
+import dao.UserDAO;
+import dao.implement.UserDAOImpl;
 import model.User;
 import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
+import org.imgscalr.Scalr;
 import utilities.Constants;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class ChatGUI extends JFrame {
+    public static void main(String[] args) throws BadLocationException, IOException {
+        FlatLightLaf.setup();
+        UserDAO userDAO = new UserDAOImpl();
+        ChatClient.user = userDAO.readById(5);
+
+        User targetUser = userDAO.readById(8);
+
+        ChatGUI chatGUI = new ChatGUI(targetUser);
+        chatGUI.setVisible(true);
+
+//        File imgFile = new File("C:\\Users\\Dell\\Pictures\\269003412_341278631172520_1652515031521655571_n.jpg");
+//        BufferedImage bufferedImage = ImageIO.read(imgFile);
+    }
 
     JPanel panel, sendPanel, actionPanel, targetUserPanel;
     JTextPane messageArea;
     JScrollPane messageAreaScroll;
     JTextField inputField;
-    JButton sendMessageBtn, sendFileBtn;
+    JButton sendMessageBtn, sendFileBtn, sendImageBtn;
 
-    Document messageDocument;
+    StyledDocument messageDocument;
 
     public ChatGUIController controller;
 
@@ -73,7 +96,7 @@ public class ChatGUI extends JFrame {
         sendPanel.add(inputField, new CC().growX().height("100%"));
 
         // send button
-        ImageIcon sendIcon = new ImageIcon("/assets/send-icon.png");
+//        ImageIcon sendIcon = new ImageIcon("/assets/send-icon.png");
         sendMessageBtn = new JButton("SEND");
         sendMessageBtn.addActionListener(e -> controller.sendTextMessage());
 
@@ -89,13 +112,24 @@ public class ChatGUI extends JFrame {
         sendFileBtn.addActionListener(e -> controller.sendFileMessage());
         actionPanel.add(sendFileBtn);
 
+        sendImageBtn = new JButton("Image");
+        // show file chooser
+        sendImageBtn.addActionListener(e -> {
+            JFileChooser fileChooser = new FileChooserImage();
+            if(fileChooser.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
+                File fileChosen = fileChooser.getSelectedFile();
+                controller.sendImageFile(fileChosen);
+            }
+        });
+        actionPanel.add(sendImageBtn);
+
         panel.add(actionPanel);
     }
 
     private void initMessageArea() {
         // message area
         messageArea = new JTextPane();
-        messageDocument = messageArea.getDocument();
+        messageDocument = (StyledDocument) messageArea.getDocument();
         messageAreaScroll = new JScrollPane(messageArea);
 
         messageArea.setEditable(false);
@@ -119,11 +153,6 @@ public class ChatGUI extends JFrame {
         panel.add(targetUserPanel, new CC().width(String.valueOf(Constants.CHAT_GUI_WIDTH)).height(String.valueOf(Constants.CHAT_GUI_HEIGHT * 0.1)));
     }
 
-    private boolean isAvailable() {
-
-        return false;
-    }
-
     // -------------------------- Chat area --------------------------
     public void appendTextMessage(String name, String textMessage) {
         try {
@@ -134,8 +163,72 @@ public class ChatGUI extends JFrame {
         }
     }
 
+    public void appendImage(String name, BufferedImage bufferedImage) {
+        try {
+            appendTextMessage(name, "sent a image");
+
+            Style style = messageDocument.addStyle("image", null);
+
+            SimpleAttributeSet attr = new SimpleAttributeSet();
+            StyleConstants.setAlignment(attr, StyleConstants.ALIGN_CENTER);
+
+            ImageIcon imageIcon = new ImageIcon(Scalr.resize(bufferedImage, 300));
+
+            StyleConstants.setIcon(style, imageIcon);
+            messageDocument.insertString(messageDocument.getLength(), "\t", style);
+            insertEndlineDocument();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // ------------------------------------------------------------
     private void insertEndlineDocument() throws BadLocationException {
         messageDocument.insertString(messageDocument.getLength(), "\n", null);
+    }
+
+    // ------------------------------------------------------------
+    class FileChooserImage extends JFileChooser {
+        JLabel img;
+        String[] extensions = {"jpg", "png", "gif", "jpeg"};
+
+        public FileChooserImage() {
+            super();
+
+            img = new JLabel();
+            img.setPreferredSize(new Dimension(180, 180));
+            this.setAccessory(img);
+
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("image extension", extensions);
+            this.setFileFilter(filter);
+
+            this.addPropertyChangeListener(evt -> {
+                SwingWorker<Image, Void> worker = new SwingWorker<>() {
+                    @Override
+                    protected Image doInBackground() throws Exception {
+                        if (evt.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) {
+                            File f = getSelectedFile();
+                            BufferedImage bim = ImageIO.read(f);
+
+                            return Scalr.resize(bim, 180);
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        try {
+                            Image i = get(1L, TimeUnit.NANOSECONDS);
+                            if (i == null) return;
+                            img.setIcon(new ImageIcon(i));
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                };
+                worker.execute();
+            });
+        }
     }
 }

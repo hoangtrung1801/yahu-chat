@@ -1,5 +1,6 @@
 package sserver;
 
+import com.sun.jdi.event.ExceptionEvent;
 import dao.ConversationDAO;
 import dao.MessageDAO;
 import dao.UserDAO;
@@ -14,6 +15,11 @@ import shared.ConnectionBase;
 import utilities.Constants;
 import utilities.Helper;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.net.Socket;
 import java.time.Instant;
 import java.util.List;
@@ -35,7 +41,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         boolean isRunning = true;
         while(isRunning) {
             try {
@@ -48,7 +54,27 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                     userEnteredEvent(data);
                 } else if(type.equals(Constants.TEXT_MESSAGE_EVENT)) {
                     textMesageEvent(data);
+                } else if(type.equals(Constants.IMAGE_MESSAGE_EVENT)) {
+//                    imageMessageEvent(data);
+                    System.out.println("image message event");
+                    List<String> dataAr = Helper.unpack(data);
+                    ByteArrayOutputStream boas = new ByteArrayOutputStream();
+
+                    int size = Integer.parseInt(dataAr.get(3));
+                    int bytes;
+                    byte[] buffer = new byte[4 * 1024];
+
+//                    byte[] buffer = new byte[size];
+//                    din.read(buffer, 0, size);
+
+                    while (size > 0 && (bytes = din.read(buffer, 0, (int) Math.min(buffer.length, size))) != -1) {
+                        boas.write(buffer, 0, bytes);
+                        size -= bytes;
+                    }
+
+                   imageMessageEvent(data, ImageIO.read(new ByteArrayInputStream(buffer)));
                 }
+                System.out.println("Next ...");
             } catch (Exception e) {
                 e.printStackTrace();
                 isRunning = false;
@@ -85,6 +111,30 @@ public class ServerConnection extends ConnectionBase implements Runnable {
         for(GroupMember gm: gms) {
             User user = gm.getUser();
             ChatServer.connectionManager.findWithUser(user).sendData(data);
+        }
+    }
+
+    public void imageMessageEvent(String data, BufferedImage bufferedImage) {
+        try {
+//            String t = din.readUTF();
+//            System.out.println(t);
+//            List<String> dataAr = Helper.unpack(data);
+//            ByteArrayOutputStream boas = new ByteArrayOutputStream();
+
+//            int size = Integer.parseInt(dataAr.get(3));
+////            byte[] buffer = new byte[4 * 1024];
+//            byte[] buffer = new byte[size];
+//            int bytes;
+//            din.read(buffer, 0, size);
+
+//            while (size > 0 && (bytes = din.read(buffer, 0, (int) Math.min(buffer.length, size))) != -1) {
+//                System.out.println("get data image ... ");
+//                boas.write(buffer, 0, bytes);
+//                size -= bytes;
+//            }
+//            System.out.println(size + " , " + boas.size());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

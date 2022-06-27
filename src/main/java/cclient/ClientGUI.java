@@ -1,6 +1,8 @@
 package cclient;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import dao.UserDAO;
+import dao.implement.UserDAOImpl;
 import model.User;
 import net.miginfocom.layout.CC;
 import net.miginfocom.layout.LC;
@@ -14,13 +16,20 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class ClientGUI extends JFrame {
     public static void main(String[] args) {
+        UserDAO userDAO = new UserDAOImpl();
+        ChatClient.user = userDAO.readById(5);
+
         FlatLightLaf.setup();
-        new ClientGUI();
+        ClientGUI clientGUI = new ClientGUI();
+
+        User friend1 = userDAO.readById(8);
+        clientGUI.updateOnlineUsersPanel(new ArrayList<User>(Arrays.asList(friend1)));
     }
 
     public ClientGUIController controller;

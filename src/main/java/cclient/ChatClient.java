@@ -1,5 +1,6 @@
 package cclient;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import model.User;
 
 public class ChatClient {
@@ -27,20 +28,7 @@ public class ChatClient {
     }
 
     public static void main(String[] args) {
-//        new ChatClient().loginSuccess(null);
+        FlatLightLaf.setup();
         new ChatClient();
-//        try {
-//            Socket socket = new Socket(Constants.URL, Constants.PORT);
-//            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-//            DataInputStream din = new DataInputStream(socket.getInputStream());
-//
-//            dos.writeUTF("Hello");
-//
-//            socket.close();
-//            dos.close();
-//            din.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 }

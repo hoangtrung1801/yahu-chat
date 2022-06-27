@@ -8,6 +8,11 @@ import shared.ConnectionBase;
 import utilities.Constants;
 import utilities.Helper;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,6 +89,38 @@ public class ClientConnection extends ConnectionBase implements Runnable {
          */
         String data = Helper.pack(Constants.TEXT_MESSAGE_EVENT, conversation.getId()+"", ChatClient.user.getId()+"", message);
         sendData(data);
+    }
+
+    public void sendImageInConversation(Conversation conversation, BufferedImage bufferedImage) {
+        /*
+            IMAGE_MESSAGE_EVENT;conversationId;userId(sender);sizeFile
+            bufferedImage
+         */
+        try {
+
+
+            // convert bufferedImage to byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "jpg", baos);
+            ByteArrayInputStream bios = new ByteArrayInputStream(baos.toByteArray());
+
+            // send event
+            sendData(Helper.pack(Constants.IMAGE_MESSAGE_EVENT, conversation.getId()+"", ChatClient.user.getId()+"", baos.size()+""));
+
+            // send file
+            byte[] buffer = new byte[4 * 1024];
+            int len = 0;
+            while((len = bios.read(buffer)) != -1) {
+                dos.write(buffer, 0 , len);
+                dos.flush();
+            }
+            System.out.println("Done transfer image");
+
+//            byte[] bytes = baos.toByteArray();
+//            System.out.println("size of image : " + bytes.length);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

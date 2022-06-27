@@ -7,8 +7,11 @@ import model.GroupMember;
 import model.Message;
 import model.User;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -63,6 +66,15 @@ public class ChatGUIController {
                 fileChosen = fileChooser.getSelectedFile();
             }
 //            client.clientConnection.sendFileMessage(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendImageFile(File imageFile) {
+        try {
+            BufferedImage bufferedImage = ImageIO.read(imageFile);
+            ChatClient.connection.sendImageInConversation(conversation, bufferedImage);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,7 +5,6 @@ import utilities.Helper;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class ChatServer {
@@ -30,7 +29,7 @@ public class ChatServer {
             while(isRunning) {
                 Socket clientSocket = server.accept();
                 ServerConnection connection = new ServerConnection(clientSocket);
-                System.out.println("NEW CLITENT ENTERED");
+                System.out.println("NEW CLIENT ENTERED");
 
                 connectionManager.add(connection);
                 new Thread(connection).start();

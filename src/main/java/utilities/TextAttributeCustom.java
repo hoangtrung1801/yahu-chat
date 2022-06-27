@@ -11,7 +11,6 @@ public class TextAttributeCustom {
     public static SimpleAttributeSet getAttrTimestamp() {
         SimpleAttributeSet attr = new SimpleAttributeSet();
         StyleConstants.setForeground(attr, Color.lightGray);
-
         return attr;
     }
 
