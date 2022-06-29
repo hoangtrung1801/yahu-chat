@@ -58,23 +58,21 @@ public class ServerConnection extends ConnectionBase implements Runnable {
 //                    imageMessageEvent(data);
                     System.out.println("image message event");
                     List<String> dataAr = Helper.unpack(data);
-                    ByteArrayOutputStream boas = new ByteArrayOutputStream();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
                     int size = Integer.parseInt(dataAr.get(3));
                     int bytes;
                     byte[] buffer = new byte[4 * 1024];
 
-//                    byte[] buffer = new byte[size];
-//                    din.read(buffer, 0, size);
-
                     while (size > 0 && (bytes = din.read(buffer, 0, (int) Math.min(buffer.length, size))) != -1) {
-                        boas.write(buffer, 0, bytes);
+                        baos.write(buffer, 0, bytes);
                         size -= bytes;
                     }
 
-                   imageMessageEvent(data, ImageIO.read(new ByteArrayInputStream(buffer)));
+//                    imageMessageEvent(data, ImageIO.read(new ByteArrayInputStream(buffer)));
+//                    imageMessageEvent(data, new ByteArrayInputStream(baos.toByteArray()));
+                    imageMessageEvent(data, baos);
                 }
-                System.out.println("Next ...");
             } catch (Exception e) {
                 e.printStackTrace();
                 isRunning = false;
@@ -114,25 +112,26 @@ public class ServerConnection extends ConnectionBase implements Runnable {
         }
     }
 
-    public void imageMessageEvent(String data, BufferedImage bufferedImage) {
+    public void imageMessageEvent(String data, ByteArrayOutputStream baos) {
         try {
-//            String t = din.readUTF();
-//            System.out.println(t);
-//            List<String> dataAr = Helper.unpack(data);
-//            ByteArrayOutputStream boas = new ByteArrayOutputStream();
+            List<String> dataAr = Helper.unpack(data);
+            int conversationId = Integer.parseInt(dataAr.get(1));
 
-//            int size = Integer.parseInt(dataAr.get(3));
-////            byte[] buffer = new byte[4 * 1024];
-//            byte[] buffer = new byte[size];
-//            int bytes;
-//            din.read(buffer, 0, size);
+            Conversation conversation = conversationDAO.readById(conversationId);
 
-//            while (size > 0 && (bytes = din.read(buffer, 0, (int) Math.min(buffer.length, size))) != -1) {
-//                System.out.println("get data image ... ");
-//                boas.write(buffer, 0, bytes);
-//                size -= bytes;
-//            }
-//            System.out.println(size + " , " + boas.size());
+            Set<GroupMember> gms = conversation.getGroupMembers();
+            for(GroupMember gm: gms) {
+                User user = gm.getUser();
+                ServerConnection userConnection = ChatServer.connectionManager.findWithUser(user);
+//                ChatServer.connectionManager.findWithUser(user).dos.
+
+                // send event
+                userConnection.sendData(data);
+
+                // send file
+                userConnection.dos.write(baos.toByteArray());
+                userConnection.dos.flush();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

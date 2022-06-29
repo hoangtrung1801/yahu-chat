@@ -9,7 +9,6 @@ import utilities.Constants;
 import utilities.Helper;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,6 +39,22 @@ public class ClientConnection extends ConnectionBase implements Runnable {
                     userEnteredEvent(data);
                 } else if(type.equals(Constants.TEXT_MESSAGE_EVENT)) {
                     textMessageEvent(data);
+                } else if(type.equals(Constants.IMAGE_MESSAGE_EVENT)) {
+                    System.out.println("client image message event");
+                    List<String> dataAr = Helper.unpack(data);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                    int size = Integer.parseInt(dataAr.get(3));
+                    int bytes;
+                    byte[] buffer = new byte[4 * 1024];
+
+                    while (size > 0 && (bytes = din.read(buffer, 0, Math.min(buffer.length, size))) != -1) {
+                        baos.write(buffer, 0, bytes);
+                        size -= bytes;
+                    }
+
+
+                    imageMessageEvent(data, baos);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -65,14 +80,30 @@ public class ClientConnection extends ConnectionBase implements Runnable {
     private void textMessageEvent(String data) {
         List<String> dataAr = Helper.unpack(data);
         int conversationId = Integer.parseInt(dataAr.get(1));
-        int userId = Integer.parseInt(dataAr.get(2));
+        int senderId = Integer.parseInt(dataAr.get(2));
         String message = dataAr.get(3);
 
         ChatGUI chatGUI = ChatClient.clientGUI.controller.findChatGUI(conversationId);
-        User senderUser = userDAO.readById(userId);
+        User senderUser = userDAO.readById(senderId);
 
         if(chatGUI == null) return;
         chatGUI.controller.showTextMessage(senderUser.getUsername(), message);
+    }
+
+    private void imageMessageEvent(String data, ByteArrayOutputStream baos) {
+        List<String> dataAr = Helper.unpack(data);
+        int conversationId = Integer.parseInt(dataAr.get(1));
+        int senderId = Integer.parseInt(dataAr.get(2));
+
+        ChatGUI chatGUI = ChatClient.clientGUI.controller.findChatGUI(conversationId);
+        User senderUser = userDAO.readById(senderId);
+
+        if(chatGUI == null) return;
+        try {
+            chatGUI.appendImage(senderUser.getUsername(), ImageIO.read(new ByteArrayInputStream(baos.toByteArray())));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // --------------- ACTION -----------------
@@ -97,8 +128,6 @@ public class ClientConnection extends ConnectionBase implements Runnable {
             bufferedImage
          */
         try {
-
-
             // convert bufferedImage to byte array
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(bufferedImage, "jpg", baos);
@@ -109,15 +138,11 @@ public class ClientConnection extends ConnectionBase implements Runnable {
 
             // send file
             byte[] buffer = new byte[4 * 1024];
-            int len = 0;
+            int len;
             while((len = bios.read(buffer)) != -1) {
                 dos.write(buffer, 0 , len);
                 dos.flush();
             }
-            System.out.println("Done transfer image");
-
-//            byte[] bytes = baos.toByteArray();
-//            System.out.println("size of image : " + bytes.length);
         } catch (Exception e) {
             e.printStackTrace();
         }
