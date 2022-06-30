@@ -69,8 +69,6 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                         size -= bytes;
                     }
 
-//                    imageMessageEvent(data, ImageIO.read(new ByteArrayInputStream(buffer)));
-//                    imageMessageEvent(data, new ByteArrayInputStream(baos.toByteArray()));
                     imageMessageEvent(data, baos);
                 }
             } catch (Exception e) {
@@ -116,6 +114,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
         try {
             List<String> dataAr = Helper.unpack(data);
             int conversationId = Integer.parseInt(dataAr.get(1));
+            byte[] buffer = baos.toByteArray();
 
             Conversation conversation = conversationDAO.readById(conversationId);
 
@@ -123,7 +122,6 @@ public class ServerConnection extends ConnectionBase implements Runnable {
             for(GroupMember gm: gms) {
                 User user = gm.getUser();
                 ServerConnection userConnection = ChatServer.connectionManager.findWithUser(user);
-//                ChatServer.connectionManager.findWithUser(user).dos.
 
                 // send event
                 userConnection.sendData(data);
