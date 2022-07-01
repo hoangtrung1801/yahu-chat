@@ -2,7 +2,7 @@ package dao.implement;
 
 import dao.UserDAO;
 import model.User;
-import utilities.HibernateUtils;
+import utility.HibernateUtils;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -45,8 +45,9 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User findWithUsername(String username) {
-        return (User) entityManager.createQuery("SELECT e FROM User e WHERE e.username = :username")
-                .setParameter("username", username)
-                .getSingleResult();
+        List users = entityManager.createQuery("SELECT user from User user where user.username = :username")
+                .setParameter("username", username).getResultList();
+        if(users.isEmpty()) return null;
+        return (User) users.get(0);
     }
 }

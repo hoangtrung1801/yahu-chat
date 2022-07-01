@@ -1,6 +1,4 @@
-package utilities;
-
-import org.hibernate.Transaction;
+package utility;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

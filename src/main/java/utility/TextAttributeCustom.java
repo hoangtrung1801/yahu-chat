@@ -1,10 +1,8 @@
-package utilities;
+package utility;
 
 import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
-import java.util.Random;
 
 public class TextAttributeCustom {
 

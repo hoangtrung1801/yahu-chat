@@ -3,13 +3,12 @@ package client;
 import dao.UserDAO;
 import dao.implement.UserDAOImpl;
 import model.User;
-import utilities.SecurePassword;
-
-import javax.swing.*;
+import utility.SecurePassword;
 
 public class RegisterController {
 
-    Register gui;
+    private Register gui;
+
     UserDAO userDAO;
 
     public RegisterController(Register gui) {

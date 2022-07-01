@@ -1,7 +1,5 @@
 package client;
 
-import com.formdev.flatlaf.FlatLightLaf;
-import model.User;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;

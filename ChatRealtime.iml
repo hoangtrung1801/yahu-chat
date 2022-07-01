@@ -13,7 +13,7 @@
         <setting name="provider-name" value="Hibernate" />
         <datasource-mapping>
           <factory-entry name="ChatRealtime" value="d255f4f7-2bc8-4ce3-85b3-d20fa101c529" />
-          <factory-entry name="default" value="48177331-0659-4d50-aaf3-cd9a95b52bfc" />
+          <factory-entry name="default" value="1234d016-89e2-4e21-a5e8-369aa1abad7e" />
         </datasource-mapping>
         <naming-strategy-map />
         <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/main/resources/META-INF/persistence.xml" />
@@ -53,5 +53,6 @@
     <orderEntry type="library" name="Maven: com.miglayout:miglayout:3.7.4" level="project" />
     <orderEntry type="library" name="Maven: com.formdev:flatlaf:2.3" level="project" />
     <orderEntry type="library" name="Maven: org.imgscalr:imgscalr-lib:4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.modelmapper:modelmapper:3.1.0" level="project" />
   </component>
 </module>

@@ -3,15 +3,18 @@ package client;
 import dao.UserDAO;
 import dao.implement.UserDAOImpl;
 import model.User;
-import utilities.SecurePassword;
+import utility.SecurePassword;
 
 public class LoginController {
 
-    Login gui;
+    private Login gui;
+    private ChatClient chatClient;
+
     UserDAO userDAO;
 
-    public LoginController(Login gui) {
+    public LoginController(Login gui, ChatClient chatClient) {
         this.gui = gui;
+        this.chatClient = chatClient;
         userDAO = new UserDAOImpl();
     }
 
@@ -31,16 +34,12 @@ public class LoginController {
                 return;
             }
 
-            ApplicationContext.setUser(user);
-            loginSuccess();
+            gui.frame.dispose();
+            ChatClient.user = user;
+            chatClient.loginSuccess();
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    void loginSuccess() {
-        gui.frame.dispose();
-        gui.client.loginSuccess();
     }
 
     void showRegisterGUI() {

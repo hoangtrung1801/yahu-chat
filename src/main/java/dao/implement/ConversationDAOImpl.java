@@ -4,7 +4,7 @@ import dao.ConversationDAO;
 import model.Conversation;
 import model.GroupMember;
 import model.User;
-import utilities.HibernateUtils;
+import utility.HibernateUtils;
 
 import javax.persistence.EntityManager;
 import java.util.List;

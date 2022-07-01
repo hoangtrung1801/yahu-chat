@@ -1,14 +1,13 @@
 package shared;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ConnectionBase {
 
     protected Socket socket;
-    protected DataInputStream din;
-    protected DataOutputStream dos;
+    protected ObjectInputStream ois;
+    protected ObjectOutputStream oos;
 
     public ConnectionBase() {
 
@@ -20,9 +19,9 @@ public class ConnectionBase {
 
             while(!socket.isConnected()) Thread.sleep(1);
 
-            this.dos = new DataOutputStream(socket.getOutputStream());
-            dos.flush();
-            this.din = new DataInputStream(socket.getInputStream());
+            this.oos = new ObjectOutputStream(socket.getOutputStream());
+//            oos.flush();
+            this.ois = new ObjectInputStream(socket.getInputStream());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -34,10 +33,9 @@ public class ConnectionBase {
 
             while(!socket.isConnected()) Thread.sleep(1);
 
-            this.dos = new DataOutputStream(socket.getOutputStream());
-            dos.flush();
-            this.din = new DataInputStream(socket.getInputStream());
-
+            this.oos = new ObjectOutputStream(socket.getOutputStream());
+//            oos.flush();
+            this.ois = new ObjectInputStream(socket.getInputStream());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,8 +43,17 @@ public class ConnectionBase {
 
     public void sendData(String data) {
         try {
-            dos.writeUTF(data);
-            dos.flush();
+            oos.writeUTF(data);
+            oos.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendObject(Object data) {
+        try {
+            oos.writeObject(data);
+            oos.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,8 +62,8 @@ public class ConnectionBase {
     public void close() {
         try {
             socket.close();
-            din.close();
-            dos.close();
+            ois.close();
+            oos.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

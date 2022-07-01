@@ -1,9 +1,9 @@
-package sserver;
+package server;
 
 import model.User;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class ServerConnectionManager {
 
     private final ThreadPoolExecutor executor;
-    private final Set<ServerConnection> manager;
+    private final List<ServerConnection> manager;
 
     public ServerConnectionManager() {
         executor = new ThreadPoolExecutor(
@@ -22,8 +22,8 @@ public class ServerConnectionManager {
                 new ArrayBlockingQueue<>(8)
         );
 
-//        manager = new ArrayList<>();
-        manager = new HashSet<>();
+        manager = new ArrayList<>();
+//        manager = new HashSet<>();
     }
 
     public boolean add(ServerConnection connection) {
@@ -48,7 +48,7 @@ public class ServerConnectionManager {
         return null;
     }
 
-    public Set<ServerConnection> getManager() {
+    public List<ServerConnection> getManager() {
         return manager;
     }
 }

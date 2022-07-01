@@ -1,164 +1,190 @@
 package client;
 
+import dto.*;
 import model.Conversation;
+import model.Message;
+import model.MessageType;
 import model.User;
-import utilities.Constants;
-import utilities.Helper;
-import utilities.SocketHandlerBase;
+import org.modelmapper.ModelMapper;
+import shared.ConnectionBase;
+import utility.Constants;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.Socket;
-import java.util.ArrayList;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
-public class ClientConnection extends SocketHandlerBase implements Runnable {
-
-    Thread listener;
-    ArrayList<User> onlineUsers;
-
+public class ClientConnection extends ConnectionBase implements Runnable {
     public ClientConnection() {
+        super(Constants.URL, Constants.PORT);
+        sendUserEnteredEvent();
     }
 
     @Override
     public void run() {
-         ApplicationContext.setClientConnection(this);
-
-        try {
-            // connect to server
-            socket = new Socket(Constants.URL, Constants.PORT);
-            System.out.println("Connected to " + Constants.URL + ":" + Constants.PORT + "...");
-
-            // init input and output stream
-            dos = new DataOutputStream(socket.getOutputStream());
-            dos.flush();
-            din = new DataInputStream(socket.getInputStream());
-
-            // listen
-            listener = new Thread(this::listen);
-            listener.start();
-
-            notifyUserEntered();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void listen() {
         boolean isRunning = true;
 
         while(isRunning) {
             try {
-                System.out.println("Receving .... ");
-                String received = din.readUTF();
+                System.out.println("RECEIVING... ");
+                String type = ois.readUTF();
+                System.out.println("RECEIVED:  " + type);
 
-                System.out.println("RECEIVED: " + received);
-                String type = Helper.getReceivedType(received);
-                if (type.equals(Constants.TEXT_MESSAGE_EVENT)) {
-                    onReceiveTextMessage(received);
-                } else if (type.equals(Constants.ONLINE_USERS_EVENT)) {
-                    onOnlineUsersEvent(received);
+                if(type.equals(Constants.ONLINE_USERS_EVENT)) {
+                    userEnteredEvent();
+                } else if(type.equals(Constants.TEXT_MESSAGE_EVENT)) {
+                    textMessageEvent();
+                } else if(type.equals(Constants.IMAGE_MESSAGE_EVENT)) {
+                    imageMessageEvent();
+//                    System.out.println("client image message event");
+//                    List<String> dataAr = Helper.unpack(data);
+//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//
+//                    int size = Integer.parseInt(dataAr.get(3));
+//                    int bytes;
+//                    byte[] buffer = new byte[4 * 1024];
+//
+//                    while (size > 0 && (bytes = ois.read(buffer, 0, Math.min(buffer.length, size))) != -1) {
+//                        baos.write(buffer, 0, bytes);
+//                        size -= bytes;
+//                    }
+//
+//
+//                    imageMessageEvent(data, baos);
+                } else if(type.equals(Constants.FIND_CONVERSATION_WITH_USERS)) {
+                    findConversationWithUsers();
                 }
             } catch (Exception e) {
-                isRunning = false;
                 e.printStackTrace();
+                isRunning = false;
             }
         }
 
-        System.out.println("Socket close");
         close();
     }
 
-    // ----------------------- ACTION -------------------
-//    public void sendTextMessage(String message) {
-//        /*
-//            "TEXT_MESSAGE_EVENT;senderName;message"
-//         */
-//        String textMessage = Helper.pack(Constants.TEXT_MESSAGE_EVENT,
-//                ApplicationContext.getUser().getUsername(),
-//                message
-//        );
-//        sendData(textMessage);
-//    }
-
-    public void sendTextMessage(Conversation conversation, String message) {
-        /*
-//            "TEXT_MESSAGE_EVENT;senderId;receiverId;message"
-            "TEXT_MESSAGE_EVENT;conversationId;message"
-         */
-//        String textMessage = Helper.pack(Constants.TEXT_MESSAGE_EVENT,
-//                ApplicationContext.getUser().getId()+"",
-//                targetUser.getId()+"",
-//                message
-//        );
-        String textMessage = Helper.pack(
-                Constants.TEXT_MESSAGE_EVENT,
-                conversation.getId()+"",
-                message
-        );
-        sendData(textMessage);
-
-        // save on database
-    }
-
-    public void sendFileMessage(File file) {
+    // --------------- EVENT -----------------
+    private void userEnteredEvent() {
         try {
-            FileInputStream fis = new FileInputStream(file);
-            int count;
-            byte[] buffer = new byte[8192];
-
-            String fileMesasge = Helper.pack(Constants.FILE_MESSAGE_EVENT, ApplicationContext.getUser().getUsername());
-            sendData(fileMesasge);
-            dos.writeLong(file.length());
-            while((count = fis.read(buffer)) != -1) {
-                dos.write(buffer, 0, count);
-                dos.flush();
-            }
+            Set<UserDto> onlineUsers = (Set<UserDto>) ois.readObject();
+            ChatClient.clientGUI.updateOnlineUsersPanel(onlineUsers);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void notifyUserEntered() {
-        /*
-            NOTIFY_USER_ENTERED;userID;
-         */
-        User user = ApplicationContext.getUser();
-        String data = Helper.pack(Constants.NOTIFY_USER_ENTERED, user.getId()+"");
+    private void textMessageEvent() {
+        try {
+            MessageDto messageDto = (MessageDto) ois.readObject();
 
-        sendData(data);
+            ChatGUI chatGUI = ChatClient.clientGUI.controller.findChatGUI(messageDto.getConversation().getId());
+            chatGUI.controller.showTextMessage(messageDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    private void imageMessageEvent() {
+        try {
+            ImageMessageDto imageMessageDto = (ImageMessageDto) ois.readObject();
 
-    // ----------------------- LISTENER -------------------
-    private void onReceiveTextMessage(String received) {
-//        ArrayList<String> data = Helper.unpack(received);
-//        int senderID = Integer.parseInt(data.get(1));
-//        int receiverID = Integer.parseInt(data.get(2));
-//        String message = data.get(3);
+            ChatGUI chatGUI = ChatClient.clientGUI.controller.findChatGUI(imageMessageDto.getConversation().getId());
+            chatGUI.controller.showImageMessage(imageMessageDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void findConversationWithUsers() {
+        try {
+            ConversationDto conversationDto = (ConversationDto) ois.readObject();
+            List<MessageDto> messageDtos = (List<MessageDto>) ois.readObject();
+
+            ChatGUI chatGUI = ChatClient
+                    .clientGUI
+                    .controller
+                    .chatManager.get(
+                            ChatClient.clientGUI.controller.chatManager.size() - 1
+                    );
+
+            chatGUI.controller.setConversation(conversationDto);
+            chatGUI.controller.setMessagesSentBefore(messageDtos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // --------------- ACTION -----------------
+    public void sendUserEnteredEvent() {
+        /*
+            ONLINE_USERS_EVENT
+            userId
+         */
+        sendData(Constants.ONLINE_USERS_EVENT);
+        sendData(ChatClient.user.getId()+"");
+    }
+
+    public void sendMessageInConversation(ConversationDto conversation, String textMessage) {
+        /*
+            TEXT_MESSAGE_EVENT
+            MessageDto
+         */
+
+        sendData(Constants.TEXT_MESSAGE_EVENT);
+
+        ModelMapper modelMapper = new ModelMapper();
+        MessageDto messageDto = new MessageDto(null, textMessage, null, conversation, modelMapper.map(ChatClient.user, UserDto.class));
+        sendObject(messageDto);
+    }
+
+    public void sendImageInConversation(ConversationDto conversation, BufferedImage bufferedImage) {
+        /*
+            IMAGE_MESSAGE_EVENT
+            Message
+         */
+        try {
+            sendData(Constants.IMAGE_MESSAGE_EVENT);
+
+            ModelMapper modelMapper = new ModelMapper();
+            ImageMessageDto imageMessageDto = new ImageMessageDto(
+                    MessageType.IMAGE,
+                    "",
+                    bufferedImage,
+                    Instant.now(),
+                    conversation,
+                    modelMapper.map(ChatClient.user, UserDto.class)
+            );
+            sendObject(imageMessageDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        try {
+//            // convert bufferedImage to byte array
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            ImageIO.write(bufferedImage, "jpg", baos);
+//            ByteArrayInputStream bios = new ByteArrayInputStream(baos.toByteArray());
 //
-//        User sender = ApplicationContext.getUserDAO().readById(senderID);
-////        User receiver = ApplicationContext.getUserDAO().readById(receiverID);
+//            // send event
+//            sendData(Helper.pack(Constants.IMAGE_MESSAGE_EVENT, conversation.getId()+"", ChatClient.user.getId()+"", baos.size()+""));
 //
-//        for(ChatGUI chatGUI: ApplicationContext.getClientGUI().chatManager) {
-//            if(chatGUI.controller.getTargetUser().getId() == senderID || chatGUI.controller.getTargetUser().getId() == receiverID
-//                    || ApplicationContext.getUser().getId() == senderID || ApplicationContext.getUser().getId() == receiverID
-//            ) {
-//                chatGUI.appendTextMessage(sender.getUsername(), message);
+//            // send file
+//            byte[] buffer = new byte[4 * 1024];
+//            int len;
+//            while((len = bios.read(buffer)) != -1) {
+//                oos.write(buffer, 0 , len);
+//                oos.flush();
 //            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
 //        }
     }
 
-    private void onOnlineUsersEvent(String received) {
-        ArrayList<String> data = Helper.unpack(received);
-        ArrayList<User> list = new ArrayList<>();
-        for (String userID : data.subList(1, data.size())) {
-            User user = ApplicationContext.getUserDAO().readById(Integer.parseInt(userID));
-            list.add(user);
-        }
-
-        onlineUsers = list;
-        ApplicationContext.getClientGUI().updateOnlineUsersPanel();
+    public void sendFindConversationWithUsers(UserDto... users) {
+        sendData(Constants.FIND_CONVERSATION_WITH_USERS);
+        sendObject(Arrays.asList(users));
     }
 }
+

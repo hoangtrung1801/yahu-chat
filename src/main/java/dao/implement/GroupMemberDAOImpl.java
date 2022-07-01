@@ -2,7 +2,7 @@ package dao.implement;
 
 import dao.GroupMemberDAO;
 import model.GroupMember;
-import utilities.HibernateUtils;
+import utility.HibernateUtils;
 
 import javax.persistence.EntityManager;
 import java.util.List;

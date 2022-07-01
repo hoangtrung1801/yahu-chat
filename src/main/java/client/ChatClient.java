@@ -1,79 +1,33 @@
 package client;
 
 import com.formdev.flatlaf.FlatLightLaf;
-
-import javax.swing.*;
+import model.User;
 
 public class ChatClient {
 
-    public static void main(String[] args) {
-//
-//        try {
-//            Socket socket;
-//            DataInputStream din;
-//            DataOutputStream dos;
-//
-//            socket = new Socket(Constants.URL, Constants.PORT);
-//            System.out.println("Connected to " + Constants.URL + ":" + Constants.PORT + "...");
-
-//
-//            dos = new DataOutputStream(socket.getOutputStream());
-//            din = new DataInputStream(socket.getInputStream());
-//
-//            User user = ApplicationContext.getUserDAO().readById(5);
-//            ApplicationContext.setUser(user);
-//
-//            while(true) {
-//                try {
-//                    dos.writeUTF(Helper.pack(Constants.TEST, "hello"));
-//                    dos.flush();
-//
-//                    String received = din.readUTF();
-//                    System.out.println("RECEIVED : " + received);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    break;
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-        new ChatClient();
-    }
-
-    private String clientName;
+    public static User user;
+    public static ClientConnection connection;
+    public static ClientGUI clientGUI;
 
     public ChatClient() {
-        ApplicationContext.setChatClient(this);
-        SwingUtilities.invokeLater(() -> {
-            FlatLightLaf.setup();
-            new Login(this);
-        });
+        login();
     }
 
-    // -------------------------- Initialize --------------------------
-    private void init() {
-        initGUI();
-        initSocket();
+    private void login() {
+        new Login(this);
     }
 
-    private void initGUI() {
-        new ClientGUI(this);
-    }
-
-    private void initSocket() {
-        ClientConnection clientConnection = new ClientConnection();
-        new Thread(clientConnection).start();
-    }
-
-    public void closeClient() {
-        ApplicationContext.getClientConnection().close();
-    }
-
-    // ----------- Action ---------
     public void loginSuccess() {
-        init();
+
+        // when logging successfully
+        clientGUI = new ClientGUI();
+
+        connection = new ClientConnection();
+        new Thread(connection).start();
+    }
+
+    public static void main(String[] args) {
+        FlatLightLaf.setup();
+        new ChatClient();
     }
 }

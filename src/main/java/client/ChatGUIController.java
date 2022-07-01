@@ -1,50 +1,45 @@
 package client;
 
-import model.Conversation;
-import model.GroupMember;
-import model.GroupMemberId;
-import model.User;
-import utilities.Helper;
+import dto.ConversationDto;
+import dto.ImageMessageDto;
+import dto.MessageDto;
+import dto.UserDto;
+import model.Message;
+import model.MessageType;
+import org.modelmapper.ModelMapper;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.List;
 
 public class ChatGUIController {
 
-    private User targetUser;
-    private Conversation conversation;
-    ChatGUI gui;
+    private UserDto targetUser;
+    private ConversationDto conversation;
+    private List<MessageDto> messagesSentBefore;
 
-    public ChatGUIController(ChatGUI gui, User targetUser) {
+    public ChatGUI gui;
+
+    public ChatGUIController(ChatGUI gui, UserDto targetUser) {
         this.gui = gui;
         this.targetUser = targetUser;
-
-        // init conversation
-        conversation = ApplicationContext.getConversationDAO().findConversationWithUsers(
-                ApplicationContext.getUser(),
-                targetUser
-        );
-        if(conversation == null) {
-            Conversation newConversation = new Conversation();
-            newConversation.setConversationName(ApplicationContext.getUser().getUsername() + " and " + targetUser.getUsername());
-            conversation = ApplicationContext.getConversationDAO().create(newConversation);
-
-            GroupMember gmUser = new GroupMember(ApplicationContext.getUser(), conversation, Instant.now(), null);
-            GroupMember gmTargetUser = new GroupMember(targetUser, conversation, Instant.now(), null);
-
-            conversation.setGroupMembers(new HashSet<>(Arrays.asList(gmUser, gmTargetUser)));
-            conversation = ApplicationContext.getConversationDAO().update(conversation);
-        }
     }
+
+    public void initConversation() {
+        // init conversation
+        ModelMapper modelMapper = new ModelMapper();
+        UserDto userDto = modelMapper.map(ChatClient.user, UserDto.class);
+        ChatClient.connection.sendFindConversationWithUsers(userDto, targetUser);
+    }
+
     // -------------------------- Action --------------------------
     public void sendTextMessage() {
         String textMessage = gui.inputField.getText();
         gui.inputField.setText("");
 
-        ApplicationContext.getClientConnection().sendTextMessage(conversation, textMessage);
+        ChatClient.connection.sendMessageInConversation(conversation, textMessage);
     }
 
     public void sendFileMessage() {
@@ -60,19 +55,57 @@ public class ChatGUIController {
         }
     }
 
-    public User getTargetUser() {
+    public void sendImageFile(File imageFile) {
+        try {
+            BufferedImage bufferedImage = ImageIO.read(imageFile);
+            ChatClient.connection.sendImageInConversation(conversation, bufferedImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showTextMessage(MessageDto messageDto) {
+        gui.appendTextMessage(messageDto.getUser().getUsername(), messageDto.getMessageText());
+    }
+
+    public void showImageMessage(ImageMessageDto imageMessageDto) {
+        gui.appendImage(imageMessageDto.getUser().getUsername(), imageMessageDto.getImage());
+    }
+
+    public void showMessageSentBefore() {
+        for(MessageDto message: messagesSentBefore) {
+            switch (message.getMessageType()) {
+                case TEXT -> gui.appendTextMessage(message.getUser().getUsername(), message.getMessageText());
+                case IMAGE -> gui.appendImage(message.getUser().getUsername(), ((ImageMessageDto) message).getImage());
+            }
+
+        }
+    }
+
+
+    // -------------------------------------------------------------
+    public UserDto getTargetUser() {
         return targetUser;
     }
 
-    public void setTargetUser(User targetUser) {
+    public void setTargetUser(UserDto targetUser) {
         this.targetUser = targetUser;
     }
 
-    public Conversation getConversation() {
+    public ConversationDto getConversation() {
         return conversation;
     }
 
-    public void setConversation(Conversation conversation) {
+    public void setConversation(ConversationDto conversation) {
         this.conversation = conversation;
+    }
+
+    public List<MessageDto> getMessagesSentBefore() {
+        return messagesSentBefore;
+    }
+
+    public void setMessagesSentBefore(List<MessageDto> messagesSentBefore) {
+        this.messagesSentBefore = messagesSentBefore;
+        showMessageSentBefore();
     }
 }

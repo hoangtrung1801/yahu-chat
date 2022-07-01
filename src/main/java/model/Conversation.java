@@ -1,8 +1,10 @@
 package model;
 
+import org.hibernate.annotations.SortComparator;
+import org.hibernate.annotations.SortNatural;
+
 import javax.persistence.*;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "conversation")
@@ -16,7 +18,9 @@ public class Conversation{
     private String conversationName;
 
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL)
-    private Set<Message> messages = new LinkedHashSet<>();
+    @OrderBy("sentDatetime ASC")
+    @SortNatural
+    private List<Message> messages = new ArrayList<>();
 
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL)
     private Set<GroupMember> groupMembers = new LinkedHashSet<>();
@@ -37,11 +41,11 @@ public class Conversation{
         this.conversationName = conversationName;
     }
 
-    public Set<Message> getMessages() {
+    public List<Message> getMessages() {
         return messages;
     }
 
-    public void setMessages(Set<Message> messages) {
+    public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
 
@@ -53,4 +57,13 @@ public class Conversation{
         this.groupMembers = groupMembers;
     }
 
+    @Override
+    public String toString() {
+        return "Conversation{" +
+                "id=" + id +
+                ", conversationName='" + conversationName + '\'' +
+                ", messages=" + messages +
+                ", groupMembers=" + groupMembers +
+                '}';
+    }
 }

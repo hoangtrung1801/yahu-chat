@@ -2,7 +2,7 @@ package dao.implement;
 
 import dao.MessageDAO;
 import model.Message;
-import utilities.HibernateUtils;
+import utility.HibernateUtils;
 
 import javax.persistence.EntityManager;
 import java.util.List;

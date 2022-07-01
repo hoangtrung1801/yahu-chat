@@ -17,12 +17,10 @@ public class Login {
     JTextField tUsername, tPassword;
     JButton bLogin;
 
-    ChatClient client;
     LoginController controller;
 
-    public Login(ChatClient client) {
-        this.client = client;
-        controller = new LoginController(this);
+    public Login(ChatClient chatClient) {
+        controller = new LoginController(this, chatClient);
 
         frame = new JFrame();
         panel = new JPanel();

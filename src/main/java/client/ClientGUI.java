@@ -1,35 +1,28 @@
 package client;
 
-import com.formdev.flatlaf.FlatLightLaf;
-import model.User;
+import dto.UserDto;
 import net.miginfocom.layout.CC;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
-import utilities.Constants;
+import utility.Constants;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.*;
 
 public class ClientGUI extends JFrame {
-    public static void main(String[] args) {
-        FlatLightLaf.setup();
-        new ClientGUI(null);
-    }
-
-    ChatClient client;
-    ClientGUIController controller;
+    public ClientGUIController controller;
+    public Set<UserDto> listOnlineUsers;
 
     JPanel panel, userPanel, onlineUserPanel;
-    ArrayList<ChatGUI> chatManager;
+    JLabel lUsername;
 
-    public ClientGUI(ChatClient client) {
-        this.client = client;
+    public ClientGUI() {
         this.controller = new ClientGUIController(this);
-        chatManager = new ArrayList<>();
-
-        ApplicationContext.setClientGUI(this);
 
         MigLayout layout = new MigLayout(
                 new LC().width(String.valueOf(Constants.CLIENT_GUI_WIDTH)).height(String.valueOf(Constants.CLIENT_GUI_HEIGHT)).debug(1)
@@ -43,10 +36,10 @@ public class ClientGUI extends JFrame {
 
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        setSize(Constants.GUI_WIDTH, Constants.GUI_HEIGHT);
         pack();
         setLocationRelativeTo(null);
-        setTitle(ApplicationContext.getUser().getUsername());
+        setTitle(ChatClient.user.getUsername());
+
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -65,7 +58,14 @@ public class ClientGUI extends JFrame {
     private void initUserPanel() {
         MigLayout layout = new MigLayout();
         userPanel = new JPanel(layout);
-        userPanel.setBackground(Color.black);
+
+        ImageIcon userIcon = new ImageIcon(Objects.requireNonNull(ClientGUI.class.getResource("/assets/user-icon.png")));
+        JLabel lUserIcon = new JLabel();
+        lUserIcon.setIcon(new ImageIcon(userIcon.getImage().getScaledInstance(32, 32, Image.SCALE_DEFAULT)));
+        userPanel.add(lUserIcon, new CC().dockWest());
+
+        lUsername = new JLabel(ChatClient.user.getUsername());
+        userPanel.add(lUsername);
 
         panel.add(userPanel, new CC().wrap().width("100%").height("150px"));
     }
@@ -78,37 +78,31 @@ public class ClientGUI extends JFrame {
 
 
     // --------------------------------------------------
-    public void updateOnlineUsersPanel() {
+    public void updateOnlineUsersPanel(Set<UserDto> listOnlineUsers) {
+        this.listOnlineUsers = listOnlineUsers;
         onlineUserPanel.removeAll();
-        for(User user : ApplicationContext.getClientConnection().onlineUsers) {
-            if(user.getId() == ApplicationContext.getUser().getId()) continue;
-            OnlineUserCell cell = new OnlineUserCell(user);
+        for(UserDto onlineUser : listOnlineUsers) {
+            if(onlineUser.getId().equals(ChatClient.user.getId())) continue;
+            OnlineUserCell cell = new OnlineUserCell(onlineUser);
             onlineUserPanel.add(cell, new CC().wrap().width("100%").height("70px"));
         }
         onlineUserPanel.updateUI();
     }
 
-    private void openChatGUIWithUser(User targetUser) {
-        ChatGUI chat = new ChatGUI(targetUser);
-
-        chatManager.add(chat);
-        chat.setVisible(true);
-    }
-
     class OnlineUserCell extends JPanel {
 
-        public User user;
+        public UserDto targetUser;
 
-        public OnlineUserCell(User user) {
-            this.user = user;
+        public OnlineUserCell(UserDto targetUser) {
+            this.targetUser = targetUser;
 
             MigLayout layout = new MigLayout("");
             setLayout(layout);
 
-            JLabel lUsername = new JLabel(user.getUsername());
+            JLabel lUsername = new JLabel(targetUser.getUsername());
             add(lUsername);
 
-            ImageIcon userIcon = new ImageIcon(ClientGUI.class.getResource("/assets/user-icon.png"));
+            ImageIcon userIcon = new ImageIcon(Objects.requireNonNull(ClientGUI.class.getResource("/assets/user-icon.png")));
             JLabel lUserIcon = new JLabel();
             lUserIcon.setIcon(new ImageIcon(userIcon.getImage().getScaledInstance(32, 32, Image.SCALE_DEFAULT)));
 
@@ -128,7 +122,7 @@ public class ClientGUI extends JFrame {
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    openChatGUIWithUser(user);
+                    controller.openChatGUIWithUser(targetUser);
                 }
             });
 
