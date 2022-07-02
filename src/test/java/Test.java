@@ -1,22 +1,9 @@
-import dao.ConversationDAO;
-import dao.MessageDAO;
-import dao.UserDAO;
-import dao.implement.ConversationDAOImpl;
-import dao.implement.MessageDAOImpl;
-import dao.implement.UserDAOImpl;
-import dto.UserDto;
-import model.Message;
-import model.MessageType;
-import model.User;
-import net.bytebuddy.utility.RandomString;
-import org.modelmapper.ModelMapper;
+import client.emojipicker.EmojiPicker;
+import client.emojipicker.EmojiTable;
+import client.emojipicker.OpenMojiFont;
 
 import javax.swing.*;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.util.logging.Handler;
+import java.awt.*;
 
 public class Test {
     public Test() throws Exception {
@@ -64,6 +51,34 @@ public class Test {
 
 //        File file = new File("D:\\Development\\Java\\ClassOOP\\ChatRealtime\\storage\\images\\39yaHqOGPhfzO1CX.png");
 //        System.out.println(file.getName());
+
+//        FlatLightLaf.setup();
+//        JFrame frame = new JFrame();
+//        JTextPane textPane = new JTextPane();
+//        textPane.setPreferredSize(new Dimension(500, 500));
+//
+//        StyledDocument doc = (StyledDocument) textPane.getDocument();
+//
+//        String withlove  = "With :heart: Nicoll lê kim hoàng trung :smile:";
+//        String result = EmojiParser.parseToUnicode(withlove);
+//
+////        ImageIcon icon = new ImageIcon(getClass().getResource("assets/send-icon.png"));
+////        ImageIcon icon = new ImageIcon(
+////                Scalr.resize(ImageIO.read(getClass().getResource("assets/send-icon.png")), 16)
+////        );
+////        textPane.insertComponent(new JLabel("hello"));
+////        textPane.insertIcon(icon);
+//
+//        textPane.insertComponent(new JLabel(result));
+//
+//        frame.add(textPane);
+//
+//        frame.setSize(500, 500);
+//        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//        frame.setVisible(true);
+
+        EmojiPicker emojiPicker = new EmojiPicker();
+        emojiPicker.setClickListener(emoji -> System.out.println(emoji));
     }
 
     public static void main(String[] args) throws Exception {

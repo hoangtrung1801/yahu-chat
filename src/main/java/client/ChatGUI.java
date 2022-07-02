@@ -1,7 +1,8 @@
 package client;
 
-import com.sun.tools.jconsole.JConsoleContext;
-import dto.ImageMessageDto;
+import client.emojipicker.EmojiPicker;
+import client.emojipicker.EmojiTable;
+import com.vdurmont.emoji.EmojiParser;
 import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import org.imgscalr.Scalr;
@@ -10,7 +11,6 @@ import utility.Constants;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.filechooser.FileView;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -25,7 +25,7 @@ public class ChatGUI extends JFrame {
     JTextPane messageArea;
     JScrollPane messageAreaScroll;
     JTextField inputField;
-    JButton sendMessageBtn, sendFileBtn, sendImageBtn;
+    JButton sendMessageBtn, sendFileBtn, sendImageBtn, emojiBtn;
 
     StyledDocument messageDocument;
 
@@ -100,8 +100,8 @@ public class ChatGUI extends JFrame {
         });
         actionPanel.add(sendFileBtn);
 
-        sendImageBtn = new JButton("Image");
         // send image
+        sendImageBtn = new JButton("Image");
         sendImageBtn.addActionListener(e -> {
             JFileChooser fileChooser = new FileChooserImage();
             fileChooser.setMultiSelectionEnabled(false);
@@ -113,6 +113,16 @@ public class ChatGUI extends JFrame {
         });
         actionPanel.add(sendImageBtn);
 
+        // emoji
+        emojiBtn = new JButton("Emoji");
+        emojiBtn.addActionListener(e -> {
+            EmojiPicker emojiPicker = new EmojiPicker();
+            emojiPicker.setClickListener(emoji -> {
+                System.out.println(emoji);
+                inputField.setText(inputField.getText() + emoji.getUnicode());
+            });
+        });
+        actionPanel.add(emojiBtn);
 
         panel.add(actionPanel);
     }

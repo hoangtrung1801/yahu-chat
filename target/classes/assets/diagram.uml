@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>D:/Development/Java/ClassOOP/ChatRealtime/src/main/java</OriginalElement>
+  <nodes>
+    <node x="429.0" y="1851.0">utilities.TextAttributeCustom</node>
+    <node x="641.0" y="647.0">model.GroupMember</node>
+    <node x="589.0" y="307.0">dao.implement.UserDAOImpl</node>
+    <node x="258.0" y="1552.0">server.ServerConnectionPool</node>
+    <node x="307.0" y="647.0">client.ApplicationContext</node>
+    <node x="823.0" y="318.0">dao.implement.MessageDAOImpl</node>
+    <node x="1029.0" y="1851.0">client.RegisterController</node>
+    <node x="1003.0" y="647.0">client.Register</node>
+    <node x="1461.0" y="1552.0">client.LoginController</node>
+    <node x="813.0" y="1552.0">utilities.HibernateUtils</node>
+    <node x="0.0" y="282.0">server.ServerConnection</node>
+    <node x="851.0" y="1166.0">client.ClientGUI</node>
+    <node x="1088.5" y="204.5">dao.GroupMemberDAO</node>
+    <node x="260.0" y="315.0">client.ClientConnection</node>
+    <node x="1323.0" y="192.0">dao.ConversationDAO</node>
+    <node x="616.0" y="1552.0">client.ChatClient</node>
+    <node x="232.0" y="1166.0">model.Conversation</node>
+    <node x="1397.0" y="1166.0">client.ChatGUIController</node>
+    <node x="1651.0" y="1851.0">client.ClientGUIController</node>
+    <node x="1049.0" y="318.0">dao.implement.GroupMemberDAOImpl</node>
+    <node x="737.0" y="1851.0">utilities.Helper</node>
+    <node x="1167.0" y="1552.0">server.ChatServer</node>
+    <node x="0.0" y="1166.0">client.Login</node>
+    <node x="1249.0" y="647.0">model.User</node>
+    <node x="1323.0" y="296.0">dao.implement.ConversationDAOImpl</node>
+    <node x="0.0" y="1851.0">utilities.SecurePassword</node>
+    <node x="1123.0" y="1166.0">model.GroupMemberId</node>
+    <node x="0.0" y="647.0">client.ChatGUI</node>
+    <node x="1274.0" y="1851.0">utilities.MessageUtil</node>
+    <node x="988.5" y="0.0">dao.DAO</node>
+    <node x="589.0" y="192.0">dao.UserDAO</node>
+    <node x="857.0" y="204.5">dao.MessageDAO</node>
+    <node x="0.0" y="1552.0">database.DatabaseConnection</node>
+    <node x="569.0" y="1166.0">model.Message</node>
+    <node x="162.0" y="0.0">utilities.SocketHandlerBase</node>
+    <node x="1586.0" y="647.0">utilities.Constants</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="dao.implement.ConversationDAOImpl" target="dao.ConversationDAO" relationship="REALIZATION">
+      <point x="0.0" y="-116.0" />
+      <point x="0.0" y="27.0" />
+    </edge>
+    <edge source="dao.ConversationDAO" target="dao.DAO" relationship="INTERFACE_GENERALIZATION">
+      <point x="0.0" y="-27.0" />
+      <point x="1474.5" y="167.0" />
+      <point x="1051.0" y="167.0" />
+      <point x="0.0" y="71.0" />
+    </edge>
+    <edge source="dao.MessageDAO" target="dao.DAO" relationship="INTERFACE_GENERALIZATION">
+      <point x="0.0" y="-14.5" />
+      <point x="926.0" y="167.0" />
+      <point x="1051.0" y="167.0" />
+      <point x="0.0" y="71.0" />
+    </edge>
+    <edge source="dao.implement.GroupMemberDAOImpl" target="dao.GroupMemberDAO" relationship="REALIZATION">
+      <point x="0.0" y="-94.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="dao.implement.MessageDAOImpl" target="dao.MessageDAO" relationship="REALIZATION">
+      <point x="0.0" y="-94.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="dao.GroupMemberDAO" target="dao.DAO" relationship="INTERFACE_GENERALIZATION">
+      <point x="0.0" y="-14.5" />
+      <point x="1176.0" y="167.0" />
+      <point x="1051.0" y="167.0" />
+      <point x="0.0" y="71.0" />
+    </edge>
+    <edge source="server.ServerConnection" target="utilities.SocketHandlerBase" relationship="GENERALIZATION">
+      <point x="0.0" y="-160.0" />
+      <point x="120.0" y="257.0" />
+      <point x="261.0" y="257.0" />
+      <point x="0.0" y="116.0" />
+    </edge>
+    <edge source="dao.UserDAO" target="dao.DAO" relationship="INTERFACE_GENERALIZATION">
+      <point x="0.0" y="-27.0" />
+      <point x="696.0" y="167.0" />
+      <point x="1051.0" y="167.0" />
+      <point x="0.0" y="71.0" />
+    </edge>
+    <edge source="client.ClientConnection" target="utilities.SocketHandlerBase" relationship="GENERALIZATION">
+      <point x="0.0" y="-127.0" />
+      <point x="402.0" y="257.0" />
+      <point x="261.0" y="257.0" />
+      <point x="0.0" y="116.0" />
+    </edge>
+    <edge source="dao.implement.UserDAOImpl" target="dao.UserDAO" relationship="REALIZATION">
+      <point x="0.0" y="-105.0" />
+      <point x="0.0" y="27.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.32803970223325063" showDependencies="true" x="931.5" y="997.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

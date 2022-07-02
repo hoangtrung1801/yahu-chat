@@ -54,5 +54,8 @@
     <orderEntry type="library" name="Maven: com.formdev:flatlaf:2.3" level="project" />
     <orderEntry type="library" name="Maven: org.imgscalr:imgscalr-lib:4.2" level="project" />
     <orderEntry type="library" name="Maven: org.modelmapper:modelmapper:3.1.0" level="project" />
+    <orderEntry type="library" name="Maven: com.vdurmont:emoji-java:5.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.json:json:20170516" level="project" />
+    <orderEntry type="library" name="Maven: com.pngencoder:pngencoder:0.13.0" level="project" />
   </component>
 </module>

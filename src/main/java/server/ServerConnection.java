@@ -59,10 +59,10 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                     textMesageEvent();
                 } else if(type.equals(Constants.IMAGE_MESSAGE_EVENT)) {
                     imageMessageEvent();
-                } else if(type.equals(Constants.FIND_CONVERSATION_WITH_USERS)) {
-                    findConversationWithUsers();
                 } else if(type.equals(Constants.FILE_MESSAGE_EVENT)) {
                     fileMessageEvent();
+                } else if(type.equals(Constants.FIND_CONVERSATION_WITH_USERS)) {
+                    findConversationWithUsers();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -232,14 +232,10 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                     return modelMapper.map(message, MessageDto.class);
                 } else if(message.getMessageType().equals(MessageType.IMAGE)) {
                     try {
-                        MessageDto messageDto = modelMapper.map(message, MessageDto.class);
-                        ImageMessageDto imageMessageDto = new ImageMessageDto(MessageType.IMAGE,
-                                message.getMessageText(),
-                                ImageIO.read(new File(message.getAttachmentUrl())),
-                                Instant.now(),
-                                messageDto.getConversation(),
-                                messageDto.getUser()
-                        );
+//                        MessageDto messageDto = modelMapper.map(message, MessageDto.class);
+                        ImageMessageDto imageMessageDto = modelMapper.map(message, ImageMessageDto.class);
+                        imageMessageDto.setImage(ImageIO.read(new File(message.getAttachmentUrl())));
+
                         return imageMessageDto;
                     } catch (Exception e) {
                         e.printStackTrace();

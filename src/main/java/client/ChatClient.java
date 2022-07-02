@@ -1,7 +1,11 @@
 package client;
 
+import client.emojipicker.OpenMojiFont;
 import com.formdev.flatlaf.FlatLightLaf;
 import model.User;
+
+import java.awt.*;
+import java.io.IOException;
 
 public class ChatClient {
 
@@ -26,7 +30,8 @@ public class ChatClient {
         new Thread(connection).start();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, FontFormatException {
+        OpenMojiFont.load();
         FlatLightLaf.setup();
         new ChatClient();
     }

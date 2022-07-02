@@ -82,11 +82,11 @@ public class ChatGUIController {
 
     public void showMessageSentBefore() {
         for(MessageDto message: messagesSentBefore) {
+            System.out.println(message);
             switch (message.getMessageType()) {
                 case TEXT -> gui.appendTextMessage(message.getUser().getUsername(), message.getMessageText());
                 case IMAGE -> gui.appendImage(message.getUser().getUsername(), ((ImageMessageDto) message).getImage());
             }
-
         }
     }
 
