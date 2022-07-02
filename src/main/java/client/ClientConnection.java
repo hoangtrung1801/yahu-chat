@@ -39,21 +39,8 @@ public class ClientConnection extends ConnectionBase implements Runnable {
                     textMessageEvent();
                 } else if(type.equals(Constants.IMAGE_MESSAGE_EVENT)) {
                     imageMessageEvent();
-//                    System.out.println("client image message event");
-//                    List<String> dataAr = Helper.unpack(data);
-//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//
-//                    int size = Integer.parseInt(dataAr.get(3));
-//                    int bytes;
-//                    byte[] buffer = new byte[4 * 1024];
-//
-//                    while (size > 0 && (bytes = ois.read(buffer, 0, Math.min(buffer.length, size))) != -1) {
-//                        baos.write(buffer, 0, bytes);
-//                        size -= bytes;
-//                    }
-//
-//
-//                    imageMessageEvent(data, baos);
+                } else if(type.equals(Constants.FILE_MESSAGE_EVENT)) {
+                    fileMessageEvent();
                 } else if(type.equals(Constants.FIND_CONVERSATION_WITH_USERS)) {
                     findConversationWithUsers();
                 }
@@ -93,6 +80,17 @@ public class ClientConnection extends ConnectionBase implements Runnable {
 
             ChatGUI chatGUI = ChatClient.clientGUI.controller.findChatGUI(imageMessageDto.getConversation().getId());
             chatGUI.controller.showImageMessage(imageMessageDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void fileMessageEvent() {
+        try {
+            FileMessageDto fileMessageDto = (FileMessageDto) ois.readObject();
+
+            ChatGUI chatGUI = ChatClient.clientGUI.controller.findChatGUI(fileMessageDto.getConversation().getId());
+            chatGUI.controller.showFileMessage(fileMessageDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -143,7 +141,7 @@ public class ClientConnection extends ConnectionBase implements Runnable {
     public void sendImageInConversation(ConversationDto conversation, BufferedImage bufferedImage) {
         /*
             IMAGE_MESSAGE_EVENT
-            Message
+            ImageMessageDto
          */
         try {
             sendData(Constants.IMAGE_MESSAGE_EVENT);
@@ -161,25 +159,27 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        try {
-//            // convert bufferedImage to byte array
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            ImageIO.write(bufferedImage, "jpg", baos);
-//            ByteArrayInputStream bios = new ByteArrayInputStream(baos.toByteArray());
-//
-//            // send event
-//            sendData(Helper.pack(Constants.IMAGE_MESSAGE_EVENT, conversation.getId()+"", ChatClient.user.getId()+"", baos.size()+""));
-//
-//            // send file
-//            byte[] buffer = new byte[4 * 1024];
-//            int len;
-//            while((len = bios.read(buffer)) != -1) {
-//                oos.write(buffer, 0 , len);
-//                oos.flush();
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+    }
+
+    public void sendFileInConversation(ConversationDto conversation, String filename, byte[] buffer) {
+        /*
+            FILE_MESSAGE_EVENT
+            FileMessageDto
+         */
+        sendData(Constants.FILE_MESSAGE_EVENT);
+
+        ModelMapper modelMapper = new ModelMapper();
+
+        FileMessageDto fileMessageDto = new FileMessageDto(
+                MessageType.FILE,
+                "",
+                filename,
+                buffer,
+                Instant.now(),
+                conversation,
+                modelMapper.map(ChatClient.user, UserDto.class)
+        );
+        sendObject(fileMessageDto);
     }
 
     public void sendFindConversationWithUsers(UserDto... users) {

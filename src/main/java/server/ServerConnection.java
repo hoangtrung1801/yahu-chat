@@ -7,10 +7,7 @@ import dao.UserDAO;
 import dao.implement.ConversationDAOImpl;
 import dao.implement.MessageDAOImpl;
 import dao.implement.UserDAOImpl;
-import dto.ConversationDto;
-import dto.ImageMessageDto;
-import dto.MessageDto;
-import dto.UserDto;
+import dto.*;
 import model.*;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
@@ -22,6 +19,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.net.Socket;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -63,6 +61,8 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                     imageMessageEvent();
                 } else if(type.equals(Constants.FIND_CONVERSATION_WITH_USERS)) {
                     findConversationWithUsers();
+                } else if(type.equals(Constants.FILE_MESSAGE_EVENT)) {
+                    fileMessageEvent();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -76,7 +76,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
     }
 
     // --------------- EVENT -----------------
-    public void userEnteredEvent() {
+    private void userEnteredEvent() {
         try {
             int userId = Integer.parseInt(ois.readUTF());
             System.out.println(userId);
@@ -87,7 +87,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
         }
     }
 
-    public void textMesageEvent() {
+    private void textMesageEvent() {
         try {
             ModelMapper modelMapper = new ModelMapper();
 
@@ -118,7 +118,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
         }
     }
 
-    public void imageMessageEvent() {
+    private void imageMessageEvent() {
         try {
             ModelMapper modelMapper = new ModelMapper();
             ImageMessageDto imageMessageDto = (ImageMessageDto) ois.readObject();
@@ -146,6 +146,44 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                 ServerConnection sc = ChatServer.connectionManager.findWithUser(receiver);
                 sc.sendData(Constants.IMAGE_MESSAGE_EVENT);
                 sc.sendObject(imageMessageDto);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void fileMessageEvent() {
+        try {
+            ModelMapper modelMapper = new ModelMapper();
+            FileMessageDto fileMessageDto = (FileMessageDto) ois.readObject();
+            byte[] buffer = fileMessageDto.getBuffer();
+
+            // generate filepath
+            String filepath = Paths.get(Constants.filesPath, fileMessageDto.getFilename()).toString();
+            String absoluteFilepath = Paths.get(
+                    Paths.get("").toAbsolutePath().toString(),
+                    filepath
+            ).toString();
+
+            // save file into storage
+            File file = new File(absoluteFilepath);
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(buffer, 0, buffer.length);
+
+            // create new message
+            Message message = modelMapper.map(fileMessageDto, Message.class);
+            message.setAttachmentUrl(filepath);
+            message = messageDAO.create(message);
+
+            fileMessageDto.setId(message.getId());
+
+            // send message to users
+            Conversation conversation = conversationDAO.readById(message.getConversation().getId());
+            for(GroupMember gm: conversation.getGroupMembers()) {
+                User receiver = gm.getUser();
+                ServerConnection sc = ChatServer.connectionManager.findWithUser(receiver);
+                sc.sendData(Constants.FILE_MESSAGE_EVENT);
+                sc.sendObject(fileMessageDto);
             }
         } catch (Exception e) {
             e.printStackTrace();

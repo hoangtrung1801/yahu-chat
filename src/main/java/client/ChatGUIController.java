@@ -1,17 +1,19 @@
 package client;
 
-import dto.ConversationDto;
-import dto.ImageMessageDto;
-import dto.MessageDto;
-import dto.UserDto;
+import dto.*;
 import model.Message;
 import model.MessageType;
 import org.modelmapper.ModelMapper;
+import utility.Constants;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.util.Arrays;
 import java.util.List;
 
 public class ChatGUIController {
@@ -42,14 +44,16 @@ public class ChatGUIController {
         ChatClient.connection.sendMessageInConversation(conversation, textMessage);
     }
 
-    public void sendFileMessage() {
+    public void sendFileMessage(File file) {
         try {
-            JFileChooser fileChooser = new JFileChooser();
-            File fileChosen;
-            if(fileChooser.showOpenDialog(gui.panel) == JFileChooser.APPROVE_OPTION) {
-                fileChosen = fileChooser.getSelectedFile();
+            if(!file.isFile()) return;
+            FileInputStream fin = new FileInputStream(file);
+            byte[] buffer = fin.readAllBytes();
+            if(buffer.length > Constants.MAX_SIZE_SOCKET) {
+                throw new Exception("Max size for file is " + Constants.MAX_SIZE_SOCKET);
             }
-//            client.clientConnection.sendFileMessage(file);
+
+            ChatClient.connection.sendFileInConversation(conversation, file.getName(), buffer);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,6 +76,10 @@ public class ChatGUIController {
         gui.appendImage(imageMessageDto.getUser().getUsername(), imageMessageDto.getImage());
     }
 
+    public void showFileMessage(FileMessageDto fileMessageDto) {
+        gui.appendFile(fileMessageDto.getUser().getUsername(), fileMessageDto.getFilename());
+    }
+
     public void showMessageSentBefore() {
         for(MessageDto message: messagesSentBefore) {
             switch (message.getMessageType()) {
@@ -81,6 +89,7 @@ public class ChatGUIController {
 
         }
     }
+
 
 
     // -------------------------------------------------------------

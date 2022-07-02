@@ -61,6 +61,9 @@ public class Test {
 //        ).toString();
 //        System.out.println(path);
 //        System.out.println(Paths.get("storage", "images").toString());
+
+//        File file = new File("D:\\Development\\Java\\ClassOOP\\ChatRealtime\\storage\\images\\39yaHqOGPhfzO1CX.png");
+//        System.out.println(file.getName());
     }
 
     public static void main(String[] args) throws Exception {

@@ -1,5 +1,6 @@
 package client;
 
+import com.sun.tools.jconsole.JConsoleContext;
 import dto.ImageMessageDto;
 import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
@@ -9,6 +10,7 @@ import utility.Constants;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileView;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -86,20 +88,31 @@ public class ChatGUI extends JFrame {
         // action panel
         actionPanel = new JPanel(new MigLayout("ins 0"));
 
+        // send file
         sendFileBtn = new JButton("File");
-        sendFileBtn.addActionListener(e -> controller.sendFileMessage());
+        sendFileBtn.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+
+            if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                controller.sendFileMessage(file);
+            }
+        });
         actionPanel.add(sendFileBtn);
 
         sendImageBtn = new JButton("Image");
-        // show file chooser
+        // send image
         sendImageBtn.addActionListener(e -> {
             JFileChooser fileChooser = new FileChooserImage();
+            fileChooser.setMultiSelectionEnabled(false);
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             if(fileChooser.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
                 File fileChosen = fileChooser.getSelectedFile();
                 controller.sendImageFile(fileChosen);
             }
         });
         actionPanel.add(sendImageBtn);
+
 
         panel.add(actionPanel);
     }
@@ -140,7 +153,6 @@ public class ChatGUI extends JFrame {
             e.printStackTrace();
         }
     }
-
     public void appendImage(String name, BufferedImage bufferedImage) {
         try {
             appendTextMessage(name, "sent a image");
@@ -161,13 +173,22 @@ public class ChatGUI extends JFrame {
         }
     }
 
+    public void appendFile(String name, String filename) {
+        try {
+            messageDocument.insertString(messageDocument.getLength(), name + ": sent a file" + filename, null);
+            insertEndlineDocument();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // ------------------------------------------------------------
     private void insertEndlineDocument() throws BadLocationException {
         messageDocument.insertString(messageDocument.getLength(), "\n", null);
     }
 
     // ------------------------------------------------------------
-    class FileChooserImage extends JFileChooser {
+    static class FileChooserImage extends JFileChooser {
         JLabel img;
         String[] extensions = {"jpg", "png", "gif", "jpeg"};
 

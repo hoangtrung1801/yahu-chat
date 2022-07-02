@@ -24,4 +24,6 @@ public class Constants {
     public static String SEPARATE_MARKER = ";";
     public static String imagesPath = Paths.get("storage", "images").toString();
     public static String filesPath = Paths.get("storage", "files").toString();
+
+    public static int MAX_SIZE_SOCKET = 65536;
 }
