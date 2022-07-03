@@ -34,5 +34,6 @@ public class ChatClient {
         OpenMojiFont.load();
         FlatLightLaf.setup();
         new ChatClient();
+
     }
 }

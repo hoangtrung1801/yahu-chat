@@ -1,132 +1,183 @@
 package client;
 
+import client.components.ConversationCell;
 import dto.UserDto;
-import net.miginfocom.layout.CC;
-import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
-import utility.Constants;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.*;
+import java.util.Set;
 
-public class ClientGUI extends JFrame {
+public class ClientGUI {
     public ClientGUIController controller;
     public Set<UserDto> listOnlineUsers;
 
-    JPanel panel, userPanel, onlineUserPanel;
-    JLabel lUsername;
+    public static void main(String[] args) {
+        ClientGUI gui = new ClientGUI();
+
+        for(int i=0;i<2;i++) {
+            ConversationCell cell = new ConversationCell();
+            gui.listConversationPane.add(cell);
+        }
+
+        gui.setVisible(true);
+    }
 
     public ClientGUI() {
         this.controller = new ClientGUIController(this);
 
-        MigLayout layout = new MigLayout(
-                new LC().width(String.valueOf(Constants.CLIENT_GUI_WIDTH)).height(String.valueOf(Constants.CLIENT_GUI_HEIGHT)).debug(1)
-        );
-        panel = new JPanel(layout);
-
-        initUserPanel();
-        initOnlineUserPanel();
-
-        setContentPane(panel);
-
-        setVisible(true);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
-        setLocationRelativeTo(null);
-        setTitle(ChatClient.user.getUsername());
-
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                if (JOptionPane.showConfirmDialog(panel,
-                        "Are you sure you want to close this window?", "Close Window?",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
-                    System.exit(0);
-                }
-            }
-        });
+        initComponents();
     }
 
-    // --------------------- initialize -------------------
-    private void initUserPanel() {
-        MigLayout layout = new MigLayout();
-        userPanel = new JPanel(layout);
-
-        ImageIcon userIcon = new ImageIcon(Objects.requireNonNull(ClientGUI.class.getResource("/assets/user-icon.png")));
-        JLabel lUserIcon = new JLabel();
-        lUserIcon.setIcon(new ImageIcon(userIcon.getImage().getScaledInstance(32, 32, Image.SCALE_DEFAULT)));
-        userPanel.add(lUserIcon, new CC().dockWest());
-
-        lUsername = new JLabel(ChatClient.user.getUsername());
-        userPanel.add(lUsername);
-
-        panel.add(userPanel, new CC().wrap().width("100%").height("150px"));
+    private void closeApp(WindowEvent e) {
+        if (JOptionPane.showConfirmDialog(this,
+                "Are you sure you want to close this window?", "Close Window?",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+            System.exit(0);
+        }
     }
-
-    private void initOnlineUserPanel() {
-        MigLayout layout = new MigLayout(new LC().debug(1));
-        onlineUserPanel = new JPanel(layout);
-        panel.add(onlineUserPanel, new CC().wrap().width("100%"));
-    }
-
-
-    // --------------------------------------------------
+    //    // --------------------------------------------------
     public void updateOnlineUsersPanel(Set<UserDto> listOnlineUsers) {
         this.listOnlineUsers = listOnlineUsers;
-        onlineUserPanel.removeAll();
+        listConversationPane.removeAll();
         for(UserDto onlineUser : listOnlineUsers) {
             if(onlineUser.getId().equals(ChatClient.user.getId())) continue;
-            OnlineUserCell cell = new OnlineUserCell(onlineUser);
-            onlineUserPanel.add(cell, new CC().wrap().width("100%").height("70px"));
+            ConversationCell cell = new ConversationCell(onlineUser);
+            listConversationPane.add(cell);
         }
-        onlineUserPanel.updateUI();
+        listConversationPane.updateUI();
     }
 
-    class OnlineUserCell extends JPanel {
 
-        public UserDto targetUser;
 
-        public OnlineUserCell(UserDto targetUser) {
-            this.targetUser = targetUser;
+    // -------------------- Design ---------------------------------
+    private void initComponents() {
+        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        Yahu = new JFrame();
+        userPane = new JPanel();
+        userImage = new JLabel();
+        username = new JLabel();
+        actionPane = new JPanel();
+        addFriendBtn = new JPanel();
+        label1 = new JLabel();
+        label2 = new JLabel();
+        listConversationScrollPane = new JScrollPane();
+        listConversationPane = new JPanel();
 
-            MigLayout layout = new MigLayout("");
-            setLayout(layout);
-
-            JLabel lUsername = new JLabel(targetUser.getUsername());
-            add(lUsername);
-
-            ImageIcon userIcon = new ImageIcon(Objects.requireNonNull(ClientGUI.class.getResource("/assets/user-icon.png")));
-            JLabel lUserIcon = new JLabel();
-            lUserIcon.setIcon(new ImageIcon(userIcon.getImage().getScaledInstance(32, 32, Image.SCALE_DEFAULT)));
-
-            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-            // hover
-            addMouseListener(new MouseAdapter() {
+        //======== Yahu ========
+        {
+            Yahu.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            Yahu.addWindowListener(new WindowAdapter() {
                 @Override
-                public void mouseEntered(MouseEvent e) {
-                    setBackground(Color.lightGray);
+                public void windowClosed(WindowEvent e) {
+                    closeApp(e);
                 }
-
                 @Override
-                public void mouseExited(MouseEvent e) {
-                    setBackground(UIManager.getColor("Panel.background"));
-                }
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    controller.openChatGUIWithUser(targetUser);
+                public void windowClosing(WindowEvent e) {
+                    closeApp(e);
                 }
             });
+            var YahuContentPane = Yahu.getContentPane();
+            YahuContentPane.setLayout(new MigLayout(
+                "hidemode 3",
+                // columns
+                "[grow,fill]",
+                // rows
+                "[50:n]" +
+                "[]" +
+                "[grow]"));
 
-            add(lUserIcon, new CC().dockWest().gapAfter("8px"));
+            //======== userPane ========
+            {
+                userPane.setLayout(new MigLayout(
+                    "insets 0,hidemode 3",
+                    // columns
+                    "[fill]" +
+                    "[fill]",
+                    // rows
+                    "[]"));
+
+                //---- userImage ----
+                userImage.setText("text");
+                userImage.setIcon(new ImageIcon(getClass().getResource("/assets/user-icon.png")));
+                userPane.add(userImage, "cell 0 0,width 50:50:50,height 50:50:50");
+
+                //---- username ----
+                username.setText("hoangtrung1801");
+                username.setFont(new Font("Segoe UI", Font.BOLD, 12));
+                userPane.add(username, "cell 1 0,aligny top,growy 0");
+            }
+            YahuContentPane.add(userPane, "cell 0 0");
+
+            //======== actionPane ========
+            {
+                actionPane.setLayout(new MigLayout(
+                    "insets 0,hidemode 3",
+                    // columns
+                    "[fill]",
+                    // rows
+                    "[fill]"));
+
+                //======== addFriendBtn ========
+                {
+                    addFriendBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    addFriendBtn.setLayout(new MigLayout(
+                        "hidemode 3,align center center,gap 0 0, insets 0",
+                        // columns
+                        "[fill]",
+                        // rows
+                        "[]" +
+                        "[]"));
+
+                    //---- label1 ----
+                    label1.setIcon(new ImageIcon(getClass().getResource("/assets/add-user.png")));
+                    addFriendBtn.add(label1, "cell 0 0,align center center,grow 0 0");
+
+                    //---- label2 ----
+                    label2.setText("Add");
+                    addFriendBtn.add(label2, "cell 0 1,alignx center,growx 0");
+                }
+                actionPane.add(addFriendBtn, "cell 0 0");
+            }
+            YahuContentPane.add(actionPane, "cell 0 1");
+
+            //======== listConversationScrollPane ========
+            {
+                listConversationScrollPane.setBorder(null);
+                listConversationScrollPane.setPreferredSize(new Dimension(300, 20));
+
+                //======== listConversationPane ========
+                {
+                    listConversationPane.setLayout(new MigLayout(
+                        "flowy,insets 0,hidemode 3",
+                        // columns
+                        "[grow,fill]",
+                        // rows
+                        "[]"));
+                }
+                listConversationScrollPane.setViewportView(listConversationPane);
+            }
+            YahuContentPane.add(listConversationScrollPane, "cell 0 2,aligny top,growy 1,hmin 0");
+            Yahu.setSize(300, 400);
+            Yahu.setLocationRelativeTo(Yahu.getOwner());
         }
+        // JFormDesigner - End of component initialization  //GEN-END:initComponents
+        setVisible(true);
     }
+
+    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    private JFrame Yahu;
+    private JPanel userPane;
+    private JLabel userImage;
+    private JLabel username;
+    private JPanel actionPane;
+    private JPanel addFriendBtn;
+    private JLabel label1;
+    private JLabel label2;
+    private JScrollPane listConversationScrollPane;
+    private JPanel listConversationPane;
+    // JFormDesigner - End of variables declaration  //GEN-END:variables
 }
