@@ -44,22 +44,9 @@ public class ChatServer {
 
     public static void sendOnlineUsersEvent() {
         /*
-            ONLINE_USERS_EVENT;userId1;userId2;...;userIdN
             ONLINE_USERS_EVENT
             List<UserDto>
          */
-
-//        String data = Helper.pack(
-//                Constants.ONLINE_USERS_EVENT,
-//                connectionManager
-//                        .getManager()
-//                        .stream().map(sc -> sc.user.getId()+"")
-//                        .collect(Collectors.toList())
-//        );
-//        for(ServerConnection sc: connectionManager.getManager()) {
-//            sc.sendData(data);
-//        }
-
         ModelMapper modelMapper = new ModelMapper();
         Set<UserDto> onlineUsers = connectionManager
                 .getManager()

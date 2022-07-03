@@ -1,6 +1,5 @@
 package server;
 
-import com.sun.xml.bind.v2.runtime.reflect.opt.Const;
 import dao.ConversationDAO;
 import dao.MessageDAO;
 import dao.UserDAO;
@@ -13,11 +12,9 @@ import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import shared.ConnectionBase;
 import utility.Constants;
-import utility.Helper;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.Socket;
@@ -26,7 +23,6 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class ServerConnection extends ConnectionBase implements Runnable {
@@ -54,7 +50,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                 System.out.println("RECEIVED: " + type);
 
                 if(type.equals(Constants.ONLINE_USERS_EVENT)) {
-                    userEnteredEvent();
+                    onlineUsersEvent();
                 } else if(type.equals(Constants.TEXT_MESSAGE_EVENT)) {
                     textMesageEvent();
                 } else if(type.equals(Constants.IMAGE_MESSAGE_EVENT)) {
@@ -76,7 +72,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
     }
 
     // --------------- EVENT -----------------
-    private void userEnteredEvent() {
+    private void onlineUsersEvent() {
         try {
             int userId = Integer.parseInt(ois.readUTF());
             System.out.println(userId);

@@ -1,17 +1,12 @@
 package client;
 
 import dto.*;
-import model.Conversation;
-import model.Message;
 import model.MessageType;
-import model.User;
 import org.modelmapper.ModelMapper;
 import shared.ConnectionBase;
 import utility.Constants;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +29,7 @@ public class ClientConnection extends ConnectionBase implements Runnable {
                 System.out.println("RECEIVED:  " + type);
 
                 if(type.equals(Constants.ONLINE_USERS_EVENT)) {
-                    userEnteredEvent();
+                    onlineUsersEvent();
                 } else if(type.equals(Constants.TEXT_MESSAGE_EVENT)) {
                     textMessageEvent();
                 } else if(type.equals(Constants.IMAGE_MESSAGE_EVENT)) {
@@ -54,7 +49,7 @@ public class ClientConnection extends ConnectionBase implements Runnable {
     }
 
     // --------------- EVENT -----------------
-    private void userEnteredEvent() {
+    private void onlineUsersEvent() {
         try {
             Set<UserDto> onlineUsers = (Set<UserDto>) ois.readObject();
             ChatClient.clientGUI.updateOnlineUsersPanel(onlineUsers);
