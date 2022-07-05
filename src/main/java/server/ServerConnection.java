@@ -51,6 +51,8 @@ public class ServerConnection extends ConnectionBase implements Runnable {
 
                 if(type.equals(Constants.ONLINE_USERS_EVENT)) {
                     onlineUsersEvent();
+                } else if(type.equals(Constants.LIST_CONVERSATIONS_EVENT)) {
+                    listConversationsEvent();
                 } else if(type.equals(Constants.TEXT_MESSAGE_EVENT)) {
                     textMesageEvent();
                 } else if(type.equals(Constants.IMAGE_MESSAGE_EVENT)) {
@@ -59,6 +61,8 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                     fileMessageEvent();
                 } else if(type.equals(Constants.FIND_CONVERSATION_WITH_USERS)) {
                     findConversationWithUsers();
+                } else if(type.equals(Constants.GET_MESSAGES_IN_CONVERSATION_EVENT)) {
+                    getMessagesInConversationEvent();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -78,6 +82,24 @@ public class ServerConnection extends ConnectionBase implements Runnable {
             System.out.println(userId);
             user = userDAO.readById(userId);
             ChatServer.sendOnlineUsersEvent();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void listConversationsEvent() {
+        try {
+            ModelMapper modelMapper = new ModelMapper();
+
+            int userId = Integer.parseInt(ois.readUTF());
+            user = userDAO.readById(userId);
+
+            Set<GroupMember> groupMembers = user.getGroupMembers();
+            List<Conversation> conversations= groupMembers.stream().map(GroupMember::getConversation).toList();
+            List<ConversationDto> conversationDtos = conversations.stream().map(conversation -> modelMapper.map(conversation, ConversationDto.class)).toList();
+
+            sendData(Constants.LIST_CONVERSATIONS_EVENT);
+            sendObject(conversationDtos);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -187,6 +209,12 @@ public class ServerConnection extends ConnectionBase implements Runnable {
     }
 
     public void findConversationWithUsers() {
+        /*
+            FIND_CONVERSATION_WITH_USERS
+            // ConversationDto
+            List<UserDto>
+            List<MessageDto>
+         */
         try {
             ModelMapper modelMapper = new ModelMapper();
             List<UserDto> userDtos = (List<UserDto>) ois.readObject();
@@ -216,13 +244,80 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                 conversation = conversationDAO.update(conversation);
             }
 
-            // convert conversation to dto
-            ConversationDto conversationDto = modelMapper.map(conversation, ConversationDto.class);
-
             // send back conversation
             sendData(Constants.FIND_CONVERSATION_WITH_USERS);
+//            sendObject(conversationDto);
+            sendObject(userDtos);
+
+            List<MessageDto> messages = conversation.getMessages().stream().map(message -> {
+                if(message.getMessageType().equals(MessageType.TEXT)) {
+                    return modelMapper.map(message, MessageDto.class);
+                } else if(message.getMessageType().equals(MessageType.IMAGE)) {
+                    try {
+//                        MessageDto messageDto = modelMapper.map(message, MessageDto.class);
+                        ImageMessageDto imageMessageDto = modelMapper.map(message, ImageMessageDto.class);
+                        imageMessageDto.setImage(ImageIO.read(new File(message.getAttachmentUrl())));
+
+                        return imageMessageDto;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }).toList();
+            sendObject(messages);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getMessagesInConversationEvent() {
+         /*
+         in:
+            GET_MESSAGE_IN_CONVERSATOIN
+            ConversationDto
+
+         out:
+         if not null:
+            GET_MESSAGE_IN_CONVERSATOIN
+            ConversationDto
+            List<MessageDto>
+
+         if null :
+            GET_MESSAGE_IN_CONVERSATOIN
+            ConversationDto
+            null
+         */
+        try {
+            ModelMapper modelMapper = new ModelMapper();
+
+            ConversationDto conversationDto = (ConversationDto) ois.readObject();
+            Conversation conversation = conversationDAO.readById(conversationDto.getId());
+
+            // send command
+            sendData(Constants.GET_MESSAGES_IN_CONVERSATION_EVENT);
             sendObject(conversationDto);
 
+            // if null then create new
+            if(conversation == null) {
+                sendObject(null);
+//                Conversation newConversation = new Conversation();
+//                newConversation.setConversationName(
+//                        users.stream().map(User::getUsername).collect(Collectors.joining("  "))
+//                );
+//                conversation = conversationDAO.create(newConversation);
+//
+//                Set<GroupMember> groupMembers = new HashSet<>();
+//                for(User user: users) {
+//                    GroupMember gmUser = new GroupMember(user, conversation, Instant.now(), null);
+//                    groupMembers.add(gmUser);
+//                }
+//
+//                conversation.setGroupMembers(groupMembers);
+//                conversation = conversationDAO.update(conversation);
+            }
+
+            // send back conversation
             List<MessageDto> messages = conversation.getMessages().stream().map(message -> {
                 if(message.getMessageType().equals(MessageType.TEXT)) {
                     return modelMapper.map(message, MessageDto.class);

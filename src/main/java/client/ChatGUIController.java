@@ -1,19 +1,16 @@
 package client;
 
+import client.components.ConversationTab;
 import dto.*;
-import model.Message;
-import model.MessageType;
+import model.Conversation;
 import org.modelmapper.ModelMapper;
 import utility.Constants;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChatGUIController {
@@ -21,30 +18,109 @@ public class ChatGUIController {
     private UserDto targetUser;
     private ConversationDto conversation;
     private List<MessageDto> messagesSentBefore;
+    private List<ConversationTab> conversationTabs;
 
     public ChatGUI gui;
 
-    public ChatGUIController(ChatGUI gui, UserDto targetUser) {
+    public ChatGUIController(ChatGUI gui) {
         this.gui = gui;
-        this.targetUser = targetUser;
+        conversationTabs = new ArrayList<>();
     }
 
-    public void initConversation() {
-        // init conversation
+    public void initConversationTab(ConversationTab conversationTab, ConversationDto conversation ) {
+        //
+        gui.getTabConversation().addTab(conversation.getConversationName(), conversationTab);
+
         ModelMapper modelMapper = new ModelMapper();
         UserDto userDto = modelMapper.map(ChatClient.user, UserDto.class);
-        ChatClient.connection.sendFindConversationWithUsers(userDto, targetUser);
+//        ChatClient.connection.sendFindConversationWithUsers(userDto, conversationTab.getTargetUser());
+        ChatClient.connection.sendGetMessagesInConversation(conversation);
+    }
+
+    public void addConversation(ConversationDto conversation) {
+        for(ConversationTab tab : conversationTabs)
+            if(tab.getConversation().equals(conversation)) return;
+
+        ConversationTab conversationTab = new ConversationTab(gui, conversation);
+        conversationTabs.add(conversationTab);
+        conversationTab.setListener(new ConversationTab.ConversationTabListener() {
+            @Override
+            public void sendTextMessage(String text) {
+                ChatGUIController.this.sendTextMessage(conversation, text);
+            }
+
+            @Override
+            public void sendImageMessage(File imageFile) {
+                ChatGUIController.this.sendImageMessage(conversation, imageFile);
+            }
+
+            @Override
+            public void sendFileMessage(File file) {
+                ChatGUIController.this.sendFileMessage(conversation, file);
+            }
+
+            @Override
+            public void sendEmojiMessage() {
+
+            }
+        });
+
+        initConversationTab(conversationTab, conversation);
+    }
+
+//    public void addConversation(UserDto targetUser) {
+//        for(ConversationTab tab : conversationTabs)
+//            if(tab.getTargetUser().equals(targetUser)) return;
+//
+//        ConversationTab conversationTab = new ConversationTab(gui, targetUser);
+//        conversationTabs.add(conversationTab);
+//        System.out.println("Set listener...");
+//
+//
+//        initConversationTab(conversationTab, null);
+//    }
+
+
+
+    public void setupMessageInConversationTwoUser(List<UserDto> users, List<MessageDto> messages) {
+        ConversationTab tab = null;
+        for(ConversationTab ctab: conversationTabs)
+            if(users.contains(ctab.getTargetUser()))
+                tab = ctab;
+
+        for(MessageDto message: messages) {
+            switch (message.getMessageType()) {
+                case TEXT -> tab.appendTextMessage(message.getUser().getUsername(), message.getMessageText());
+                case IMAGE -> tab.appendImage(message.getUser().getUsername(), ((ImageMessageDto) message).getImage());
+            }
+        }
+    }
+
+    public void setupMessageInConversation(ConversationDto conversation, List<MessageDto> messages) {
+        ConversationTab tab = null;
+        for(ConversationTab ctab: conversationTabs)
+            if(ctab.getConversation().equals(conversation))
+                tab = ctab;
+
+        if(tab == null) {
+            System.out.println("tab null");
+            return;
+        }
+
+        for(MessageDto message: messages) {
+            switch (message.getMessageType()) {
+                case TEXT -> tab.appendTextMessage(message.getUser().getUsername(), message.getMessageText());
+                case IMAGE -> tab.appendImage(message.getUser().getUsername(), ((ImageMessageDto) message).getImage());
+            }
+        }
     }
 
     // -------------------------- Action --------------------------
-    public void sendTextMessage() {
-        String textMessage = gui.inputField.getText();
-        gui.inputField.setText("");
-
-        ChatClient.connection.sendMessageInConversation(conversation, textMessage);
+    public void sendTextMessage(ConversationDto conversation, String text) {
+        ChatClient.connection.sendMessageInConversation(conversation, text);
     }
 
-    public void sendFileMessage(File file) {
+    public void sendFileMessage(ConversationDto conversation, File file) {
         try {
             if(!file.isFile()) return;
             FileInputStream fin = new FileInputStream(file);
@@ -59,7 +135,7 @@ public class ChatGUIController {
         }
     }
 
-    public void sendImageFile(File imageFile) {
+    public void sendImageMessage(ConversationDto conversation, File imageFile) {
         try {
             BufferedImage bufferedImage = ImageIO.read(imageFile);
             ChatClient.connection.sendImageInConversation(conversation, bufferedImage);
@@ -68,29 +144,44 @@ public class ChatGUIController {
         }
     }
 
-    public void showTextMessage(MessageDto messageDto) {
-        gui.appendTextMessage(messageDto.getUser().getUsername(), messageDto.getMessageText());
+    public void showTextMessage(ConversationDto conversation, MessageDto message) {
+        findConversationTab(conversation).appendTextMessage(message.getUser().getUsername(), message.getMessageText());
     }
 
-    public void showImageMessage(ImageMessageDto imageMessageDto) {
-        gui.appendImage(imageMessageDto.getUser().getUsername(), imageMessageDto.getImage());
+    public void showImageMessage(ConversationDto conversation, ImageMessageDto imageMessageDto) {
+        findConversationTab(conversation)
+                .appendImage(
+                        imageMessageDto.getUser().getUsername(),
+                        imageMessageDto.getImage()
+                );
     }
 
-    public void showFileMessage(FileMessageDto fileMessageDto) {
-        gui.appendFile(fileMessageDto.getUser().getUsername(), fileMessageDto.getFilename());
+    public void showFileMessage(ConversationDto conversation, FileMessageDto fileMessageDto) {
+        findConversationTab(conversation)
+                .appendFile(
+                        fileMessageDto.getUser().getUsername(),
+                        fileMessageDto.getFilename()
+                );
     }
 
-    public void showMessageSentBefore() {
-        for(MessageDto message: messagesSentBefore) {
-            System.out.println(message);
-            switch (message.getMessageType()) {
-                case TEXT -> gui.appendTextMessage(message.getUser().getUsername(), message.getMessageText());
-                case IMAGE -> gui.appendImage(message.getUser().getUsername(), ((ImageMessageDto) message).getImage());
-            }
-        }
+//    public void showMessageSentBefore() {
+//        for(MessageDto message: messagesSentBefore) {
+//            switch (message.getMessageType()) {
+//                case TEXT -> gui.appendTextMessage(message.getUser().getUsername(), message.getMessageText());
+//                case IMAGE -> gui.appendImage(message.getUser().getUsername(), ((ImageMessageDto) message).getImage());
+//            }
+//        }
+//    }
+//
+//    public void insertIcon(Emoji emoji) {
+//        gui.getInput().setText(gui.getInput().getText() + emoji.getUnicode());
+//    }
+
+    public ConversationTab findConversationTab(ConversationDto conversation) {
+        for(ConversationTab tab : conversationTabs)
+            if(tab.getConversation().equals(conversation)) return tab;
+        return null;
     }
-
-
 
     // -------------------------------------------------------------
     public UserDto getTargetUser() {
@@ -115,6 +206,5 @@ public class ChatGUIController {
 
     public void setMessagesSentBefore(List<MessageDto> messagesSentBefore) {
         this.messagesSentBefore = messagesSentBefore;
-        showMessageSentBefore();
     }
 }

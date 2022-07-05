@@ -1,0 +1,122 @@
+JFDML JFormDesigner: "7.0.5.4.420" Java: "11.0.15" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "insets 0,hidemode 3"
+			"$columnConstraints": "[grow,fill]"
+			"$rowConstraints": "[100][24][grow]"
+		} ) {
+			name: "this"
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "hidemode 3"
+				"$columnConstraints": "[fill][fill]"
+				"$rowConstraints": "[][][]"
+			} ) {
+				name: "panel1"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "conversation_name"
+				"text": "hoangtrung1801"
+				"font": new java.awt.Font( "Segoe UI", 3, 14 )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1,grow"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "filly,insets 0,hidemode 3,gap 2 0"
+				"$columnConstraints": "[grow,fill][100,fill]"
+				"$rowConstraints": "[grow]"
+			} ) {
+				name: "panel4"
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "fill,insets 0,hidemode 3,gap 0 2"
+					"$columnConstraints": "[fill]"
+					"$rowConstraints": "[grow][][30]"
+				} ) {
+					name: "panel5"
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane1"
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"background": new java.awt.Color( 255, 255, 255, 255 )
+						add( new FormComponent( "javax.swing.JTextPane" ) {
+							name: "messagePane"
+							"background": new java.awt.Color( 255, 255, 255, 255 )
+							"font": new java.awt.Font( "Segoe UI", 1, 14 )
+							"editable": false
+						} )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 0,grow"
+					} )
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+						"$layoutConstraints": "insets 0,hidemode 3,gap 0 0"
+						"$columnConstraints": "[fill][fill][fill]"
+						"$rowConstraints": "[]"
+					} ) {
+						name: "panel6"
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "fileBtn"
+							"text": "File"
+							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "fileAction", true ) )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "fileAction", true ) )
+						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+							"value": "cell 0 0"
+						} )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "imageBtn"
+							"text": "Image"
+							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "imageAction", true ) )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "imageAction", true ) )
+						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+							"value": "cell 1 0"
+						} )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "iconBtn"
+							"text": "Icon"
+							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "iconAction", true ) )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "iconAction", true ) )
+						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+							"value": "cell 2 0"
+						} )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 1"
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "input"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "sendTextMessage", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 2,grow"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "sendBtn"
+						"text": "Send"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "sendTextMessage", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "pad 0,cell 0 2,width 50:50,height 30:30,gapx 0 0,gapy 0 0"
+					} )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0,growy"
+				} )
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "scrollPane2"
+					"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+					add( new FormComponent( "javax.swing.JTextPane" ) {
+						name: "textPane2"
+						"background": new java.awt.Color( 255, 255, 255, 255 )
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"editable": false
+					} )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 1 0,grow"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 2,growy"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 490, 290 )
+		} )
+	}
+}

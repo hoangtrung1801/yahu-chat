@@ -10,7 +10,9 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import client.ChatClient;
+import dto.ConversationDto;
 import dto.UserDto;
+import model.Conversation;
 import net.miginfocom.swing.*;
 import org.imgscalr.Scalr;
 
@@ -29,12 +31,19 @@ public class ConversationCell extends JPanel {
     }
 
     private UserDto targetUser;
+    private ConversationDto conversation;
 
     public ConversationCell(UserDto targetUser) {
         this.targetUser = targetUser;
         initComponents();
 
         username.setText(targetUser.getUsername());
+    }
+
+    public ConversationCell(ConversationDto conversation) {
+        this.conversation = conversation;
+        initComponents();
+        username.setText(conversation.getConversationName());
     }
 
     public ConversationCell() {
@@ -50,7 +59,7 @@ public class ConversationCell extends JPanel {
     }
 
     private void openConversation(MouseEvent e) {
-        ChatClient.clientGUI.controller.openChatGUIWithUser(targetUser);
+        ChatClient.clientGUI.controller.openChatGUIWithConversation(conversation);
     }
 
     public UserDto getTargetUser() {
@@ -59,6 +68,13 @@ public class ConversationCell extends JPanel {
 
     public void setTargetUser(UserDto targetUser) {
         this.targetUser = targetUser;
+    }
+        public ConversationDto getConversation() {
+        return conversation;
+    }
+
+    public void setConversation(ConversationDto conversation) {
+        this.conversation = conversation;
     }
 
     private void initComponents() {

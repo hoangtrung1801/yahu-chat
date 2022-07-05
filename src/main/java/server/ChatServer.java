@@ -1,11 +1,14 @@
 package server;
 
+import dto.ConversationDto;
 import dto.UserDto;
 import org.modelmapper.ModelMapper;
 import utility.Constants;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,6 +59,23 @@ public class ChatServer {
         for(ServerConnection sc: connectionManager.getManager()) {
             sc.sendData(Constants.ONLINE_USERS_EVENT);
             sc.sendObject(onlineUsers);
+        }
+    }
+
+    public static void sendListConversationsEvent() {
+         /*
+            LIST_CONVERSATIONS_EVENT
+         */
+        ModelMapper modelMapper = new ModelMapper();
+        Set<UserDto> onlineUsers = connectionManager
+                .getManager()
+                .stream().map(serverConnection -> modelMapper.map(serverConnection.user, UserDto.class))
+                .collect(Collectors.toSet());
+
+        for(ServerConnection sc: connectionManager.getManager()) {
+            sc.sendData(Constants.LIST_CONVERSATIONS_EVENT);
+
+            List<ConversationDto> listConversations = new ArrayList<>();
         }
     }
 

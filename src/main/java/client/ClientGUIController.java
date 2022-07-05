@@ -1,7 +1,7 @@
 package client;
 
+import dto.ConversationDto;
 import dto.UserDto;
-import model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,22 +9,20 @@ import java.util.List;
 public class ClientGUIController {
 
     ClientGUI gui;
+    ChatGUI chatGUI;
+
     public List<ChatGUI> chatManager;
 
     public ClientGUIController(ClientGUI gui) {
         this.gui = gui;
         this.chatManager = new ArrayList<>();
+
+        chatGUI = new ChatGUI();
     }
 
-    public void openChatGUIWithUser(UserDto targetUser) {
-        ChatGUI chat = new ChatGUI();
-        ChatGUIController chatController = new ChatGUIController(chat, targetUser);
-
-        chat.controller = chatController;
-        chatManager.add(chat);
-        chatController.initConversation();;
-
-        chat.initGUI();
+    public void openChatGUIWithConversation(ConversationDto conversation) {
+        chatGUI.controller.addConversation(conversation);
+        if(!chatGUI.isVisible()) chatGUI.setVisible(true);
     }
 
     public ChatGUI findChatGUI(int convertsationId) {

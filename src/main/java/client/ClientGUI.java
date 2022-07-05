@@ -1,6 +1,7 @@
 package client;
 
 import client.components.ConversationCell;
+import dto.ConversationDto;
 import dto.UserDto;
 import net.miginfocom.swing.MigLayout;
 
@@ -8,12 +9,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 import java.util.Set;
 
-public class ClientGUI {
-    public ClientGUIController controller;
-    public Set<UserDto> listOnlineUsers;
-
+public class ClientGUI extends JFrame {
     public static void main(String[] args) {
         ClientGUI gui = new ClientGUI();
 
@@ -25,10 +24,18 @@ public class ClientGUI {
         gui.setVisible(true);
     }
 
+    public ClientGUIController controller;
+    public Set<UserDto> listOnlineUsers;
+
+    public List<ConversationDto> listConversations;
+
     public ClientGUI() {
         this.controller = new ClientGUIController(this);
-
         initComponents();
+
+        setVisible(true);
+        setTitle(ChatClient.user.getUsername());
+        username.setText(ChatClient.user.getUsername());
     }
 
     private void closeApp(WindowEvent e) {
@@ -51,12 +58,19 @@ public class ClientGUI {
         listConversationPane.updateUI();
     }
 
-
+    public void updateListConversations(List<ConversationDto> conversations) {
+        this.listConversations = conversations;
+        listConversationPane.removeAll();
+        for(ConversationDto conversation: conversations) {
+            ConversationCell cell = new ConversationCell(conversation);
+            listConversationPane.add(cell);
+        }
+        listConversationPane.updateUI();
+    }
 
     // -------------------- Design ---------------------------------
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        Yahu = new JFrame();
         userPane = new JPanel();
         userImage = new JLabel();
         username = new JLabel();
@@ -67,109 +81,106 @@ public class ClientGUI {
         listConversationScrollPane = new JScrollPane();
         listConversationPane = new JPanel();
 
-        //======== Yahu ========
-        {
-            Yahu.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-            Yahu.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    closeApp(e);
-                }
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    closeApp(e);
-                }
-            });
-            var YahuContentPane = Yahu.getContentPane();
-            YahuContentPane.setLayout(new MigLayout(
-                "hidemode 3",
-                // columns
-                "[grow,fill]",
-                // rows
-                "[50:n]" +
-                "[]" +
-                "[grow]"));
+        //======== this ========
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                closeApp(e);
+            }
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeApp(e);
+            }
+        });
+        var contentPane = getContentPane();
+        contentPane.setLayout(new MigLayout(
+            "hidemode 3",
+            // columns
+            "[grow,fill]",
+            // rows
+            "[50:n]" +
+            "[]" +
+            "[grow]"));
 
-            //======== userPane ========
+        //======== userPane ========
+        {
+            userPane.setLayout(new MigLayout(
+                "insets 0,hidemode 3",
+                // columns
+                "[fill]" +
+                "[fill]",
+                // rows
+                "[]"));
+
+            //---- userImage ----
+            userImage.setText("text");
+            userImage.setIcon(new ImageIcon(getClass().getResource("/assets/user-icon.png")));
+            userPane.add(userImage, "cell 0 0,width 50:50:50,height 50:50:50");
+
+            //---- username ----
+            username.setText("hoangtrung1801");
+            username.setFont(new Font("Segoe UI", Font.BOLD, 12));
+            userPane.add(username, "cell 1 0,aligny top,growy 0");
+        }
+        contentPane.add(userPane, "cell 0 0");
+
+        //======== actionPane ========
+        {
+            actionPane.setLayout(new MigLayout(
+                "insets 0,hidemode 3",
+                // columns
+                "[fill]",
+                // rows
+                "[fill]"));
+
+            //======== addFriendBtn ========
             {
-                userPane.setLayout(new MigLayout(
-                    "insets 0,hidemode 3",
+                addFriendBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                addFriendBtn.setLayout(new MigLayout(
+                    "hidemode 3,align center center,gap 0 0, insets 0",
                     // columns
-                    "[fill]" +
                     "[fill]",
                     // rows
+                    "[]" +
                     "[]"));
 
-                //---- userImage ----
-                userImage.setText("text");
-                userImage.setIcon(new ImageIcon(getClass().getResource("/assets/user-icon.png")));
-                userPane.add(userImage, "cell 0 0,width 50:50:50,height 50:50:50");
+                //---- label1 ----
+                label1.setIcon(new ImageIcon(getClass().getResource("/assets/add-user.png")));
+                addFriendBtn.add(label1, "cell 0 0,align center center,grow 0 0");
 
-                //---- username ----
-                username.setText("hoangtrung1801");
-                username.setFont(new Font("Segoe UI", Font.BOLD, 12));
-                userPane.add(username, "cell 1 0,aligny top,growy 0");
+                //---- label2 ----
+                label2.setText("Add");
+                addFriendBtn.add(label2, "cell 0 1,alignx center,growx 0");
             }
-            YahuContentPane.add(userPane, "cell 0 0");
-
-            //======== actionPane ========
-            {
-                actionPane.setLayout(new MigLayout(
-                    "insets 0,hidemode 3",
-                    // columns
-                    "[fill]",
-                    // rows
-                    "[fill]"));
-
-                //======== addFriendBtn ========
-                {
-                    addFriendBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    addFriendBtn.setLayout(new MigLayout(
-                        "hidemode 3,align center center,gap 0 0, insets 0",
-                        // columns
-                        "[fill]",
-                        // rows
-                        "[]" +
-                        "[]"));
-
-                    //---- label1 ----
-                    label1.setIcon(new ImageIcon(getClass().getResource("/assets/add-user.png")));
-                    addFriendBtn.add(label1, "cell 0 0,align center center,grow 0 0");
-
-                    //---- label2 ----
-                    label2.setText("Add");
-                    addFriendBtn.add(label2, "cell 0 1,alignx center,growx 0");
-                }
-                actionPane.add(addFriendBtn, "cell 0 0");
-            }
-            YahuContentPane.add(actionPane, "cell 0 1");
-
-            //======== listConversationScrollPane ========
-            {
-                listConversationScrollPane.setBorder(null);
-                listConversationScrollPane.setPreferredSize(new Dimension(300, 20));
-
-                //======== listConversationPane ========
-                {
-                    listConversationPane.setLayout(new MigLayout(
-                        "flowy,insets 0,hidemode 3",
-                        // columns
-                        "[grow,fill]",
-                        // rows
-                        "[]"));
-                }
-                listConversationScrollPane.setViewportView(listConversationPane);
-            }
-            YahuContentPane.add(listConversationScrollPane, "cell 0 2,aligny top,growy 1,hmin 0");
-            Yahu.setSize(300, 400);
-            Yahu.setLocationRelativeTo(Yahu.getOwner());
+            actionPane.add(addFriendBtn, "cell 0 0");
         }
+        contentPane.add(actionPane, "cell 0 1");
+
+        //======== listConversationScrollPane ========
+        {
+            listConversationScrollPane.setBorder(null);
+            listConversationScrollPane.setPreferredSize(new Dimension(300, 20));
+
+            //======== listConversationPane ========
+            {
+                listConversationPane.setLayout(new MigLayout(
+                    "flowy,insets 0,hidemode 3",
+                    // columns
+                    "[grow,fill]",
+                    // rows
+                    "[]" +
+                    "[]"));
+            }
+            listConversationScrollPane.setViewportView(listConversationPane);
+        }
+        contentPane.add(listConversationScrollPane, "cell 0 2,aligny top,growy 1,hmin 0");
+        setSize(300, 400);
+        setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
-        setVisible(true);
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    private JFrame Yahu;
     private JPanel userPane;
     private JLabel userImage;
     private JLabel username;

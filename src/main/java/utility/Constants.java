@@ -6,8 +6,10 @@ public class Constants {
     public static String TEXT_MESSAGE_EVENT = "TEXT_MESSAGE_EVENT";
     public static String FILE_MESSAGE_EVENT = "FILE_MESSAGE_EVENT";
     public static String ONLINE_USERS_EVENT = "ONLINE_USERS_EVENT";
+    public static String LIST_CONVERSATIONS_EVENT = "LIST_CONVERSATIONS_EVENT";
     public static String IMAGE_MESSAGE_EVENT = "IMAGE_MESSAGE_EVENT";
     public static String FIND_CONVERSATION_WITH_USERS = "FIND_CONVERSATION_WITH_USERS";
+    public static String GET_MESSAGES_IN_CONVERSATION_EVENT = "GET_MESSAGES_IN_CONVERSATION";
 
     public static String NOTIFY_USER_ENTERED = "NOTIFY_USER_ENTERED";
     public static String NOTIFY_USER_EXISTED = "NOTIFY_USER_EXISTED";

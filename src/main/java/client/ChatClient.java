@@ -25,6 +25,7 @@ public class ChatClient {
 
         // when logging successfully
         clientGUI = new ClientGUI();
+        clientGUI.setVisible(true);
 
         connection = new ClientConnection();
         new Thread(connection).start();

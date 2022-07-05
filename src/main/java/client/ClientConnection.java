@@ -1,5 +1,6 @@
 package client;
 
+import client.components.ConversationTab;
 import dto.*;
 import model.MessageType;
 import org.modelmapper.ModelMapper;
@@ -30,6 +31,8 @@ public class ClientConnection extends ConnectionBase implements Runnable {
 
                 if(type.equals(Constants.ONLINE_USERS_EVENT)) {
                     onlineUsersEvent();
+                } else if(type.equals(Constants.LIST_CONVERSATIONS_EVENT)) {
+                    listConversationsEvent();
                 } else if(type.equals(Constants.TEXT_MESSAGE_EVENT)) {
                     textMessageEvent();
                 } else if(type.equals(Constants.IMAGE_MESSAGE_EVENT)) {
@@ -38,6 +41,8 @@ public class ClientConnection extends ConnectionBase implements Runnable {
                     fileMessageEvent();
                 } else if(type.equals(Constants.FIND_CONVERSATION_WITH_USERS)) {
                     findConversationWithUsers();
+                } else if(type.equals(Constants.GET_MESSAGES_IN_CONVERSATION_EVENT)) {
+                    getMessagesInConversationEvent();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -58,12 +63,23 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         }
     }
 
+    private void listConversationsEvent() {
+        try {
+            List<ConversationDto> listConversations = (List<ConversationDto>) ois.readObject();
+            ChatClient.clientGUI.updateListConversations(listConversations);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void textMessageEvent() {
         try {
             MessageDto messageDto = (MessageDto) ois.readObject();
 
-            ChatGUI chatGUI = ChatClient.clientGUI.controller.findChatGUI(messageDto.getConversation().getId());
-            chatGUI.controller.showTextMessage(messageDto);
+            ChatGUI chatGUI = ChatClient.clientGUI.controller.chatGUI;
+            chatGUI.controller.showTextMessage(messageDto.getConversation(), messageDto);
+//            ChatGUI chatGUI = ChatClient.clientGUI.controller.findChatGUI(messageDto.getConversation().getId());
+//            chatGUI.controller.showTextMessage(messageDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -73,8 +89,8 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         try {
             ImageMessageDto imageMessageDto = (ImageMessageDto) ois.readObject();
 
-            ChatGUI chatGUI = ChatClient.clientGUI.controller.findChatGUI(imageMessageDto.getConversation().getId());
-            chatGUI.controller.showImageMessage(imageMessageDto);
+            ChatGUI chatGUI = ChatClient.clientGUI.controller.chatGUI;
+            chatGUI.controller.showImageMessage(imageMessageDto.getConversation(), imageMessageDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,8 +100,8 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         try {
             FileMessageDto fileMessageDto = (FileMessageDto) ois.readObject();
 
-            ChatGUI chatGUI = ChatClient.clientGUI.controller.findChatGUI(fileMessageDto.getConversation().getId());
-            chatGUI.controller.showFileMessage(fileMessageDto);
+            ChatGUI chatGUI = ChatClient.clientGUI.controller.chatGUI;
+            chatGUI.controller.showFileMessage(fileMessageDto.getConversation(), fileMessageDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -93,18 +109,24 @@ public class ClientConnection extends ConnectionBase implements Runnable {
 
     private void findConversationWithUsers() {
         try {
-            ConversationDto conversationDto = (ConversationDto) ois.readObject();
-            List<MessageDto> messageDtos = (List<MessageDto>) ois.readObject();
+//            ConversationDto conversation = (ConversationDto) ois.readObject();
+            List<UserDto> users = (List<UserDto>) ois.readObject();
+            List<MessageDto> messages = (List<MessageDto>) ois.readObject();
 
-            ChatGUI chatGUI = ChatClient
-                    .clientGUI
-                    .controller
-                    .chatManager.get(
-                            ChatClient.clientGUI.controller.chatManager.size() - 1
-                    );
+            ChatGUI chatGUI = ChatClient.clientGUI.controller.chatGUI;
+            chatGUI.controller.setupMessageInConversationTwoUser(users, messages);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-            chatGUI.controller.setConversation(conversationDto);
-            chatGUI.controller.setMessagesSentBefore(messageDtos);
+    private void getMessagesInConversationEvent() {
+        try {
+            ConversationDto conversation = (ConversationDto) ois.readObject();
+            List<MessageDto> messages = (List<MessageDto>) ois.readObject();
+
+            ChatGUI chatGUI = ChatClient.clientGUI.controller.chatGUI;
+            chatGUI.controller.setupMessageInConversation(conversation, messages);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,7 +138,8 @@ public class ClientConnection extends ConnectionBase implements Runnable {
             ONLINE_USERS_EVENT
             userId
          */
-        sendData(Constants.ONLINE_USERS_EVENT);
+//        sendData(Constants.ONLINE_USERS_EVENT);
+        sendData(Constants.LIST_CONVERSATIONS_EVENT);
         sendData(ChatClient.user.getId()+"");
     }
 
@@ -181,5 +204,10 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         sendData(Constants.FIND_CONVERSATION_WITH_USERS);
         sendObject(Arrays.asList(users));
     }
-}
 
+    public void sendGetMessagesInConversation(ConversationDto conversation) {
+        sendData(Constants.GET_MESSAGES_IN_CONVERSATION_EVENT);
+        sendObject(conversation);
+    }
+
+}
