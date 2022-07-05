@@ -10,6 +10,8 @@ public class FileMessageDto extends MessageDto  {
     private byte[] buffer;
     private String filename;
 
+    public FileMessageDto() {}
+
     public FileMessageDto(MessageType messageType, String messageText, String filename, byte[] buffer, Instant sentDatetime, ConversationDto conversation, UserDto user) {
         super(messageType, messageText, sentDatetime, conversation, user);
         this.filename = filename;

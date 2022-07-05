@@ -1,10 +1,12 @@
 package server;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import dto.ConversationDto;
 import dto.UserDto;
 import org.modelmapper.ModelMapper;
 import utility.Constants;
 
+import javax.swing.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -16,11 +18,26 @@ public class ChatServer {
 
     public static ServerSocket server;
     public static ServerConnectionManager connectionManager;
+    public static ChatServerGUI gui;
 
     private boolean isRunning;
 
     public ChatServer() {
-        initServer();
+            FlatLightLaf.setup();
+            gui = new ChatServerGUI();
+            gui.setListener(new ChatServerGUI.StatusListener() {
+                @Override
+                public void start() {
+                    Thread thread = new Thread(ChatServer.this::initServer);
+                    thread.start();
+                }
+
+                @Override
+                public void stop() {
+                    closeServer();
+                }
+            });
+            gui.setVisible(true);
     }
 
     private void initServer() {
@@ -30,11 +47,13 @@ public class ChatServer {
             isRunning = true;
 
             System.out.println("Server is opening at port " + Constants.PORT);
+            gui.log("Server is opening at port " + Constants.PORT);
 
             while(isRunning) {
                 Socket clientSocket = server.accept();
                 ServerConnection connection = new ServerConnection(clientSocket);
                 System.out.println("NEW CLIENT ENTERED");
+                gui.log("NEW CLIENT ENTERED");
 
                 connectionManager.add(connection);
                 new Thread(connection).start();
@@ -79,7 +98,15 @@ public class ChatServer {
         }
     }
 
-//    public static void sendDataTo
+    private void closeServer() {
+        try {
+            gui.log("Close server");
+            for(ServerConnection sc: connectionManager.getManager()) sc.close();
+            server.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         new ChatServer();

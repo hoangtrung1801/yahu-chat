@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.net.Socket;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,9 +46,10 @@ public class ServerConnection extends ConnectionBase implements Runnable {
         boolean isRunning = true;
         while(isRunning) {
             try {
-                System.out.println("RECEIVING... ");
+                System.out.println("...");
                 String type = ois.readUTF();
                 System.out.println("RECEIVED: " + type);
+                ChatServer.gui.log(user, "RECEIVED: " + type);
 
                 if(type.equals(Constants.ONLINE_USERS_EVENT)) {
                     onlineUsersEvent();
@@ -68,6 +70,9 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                 e.printStackTrace();
                 isRunning = false;
                 System.out.println("CLIENT EXISTED");
+
+                ChatServer.gui.log(user, "ERROR: " + e.getMessage());
+                ChatServer.gui.log(user, "CLIENT EXISTED");
             }
         }
 
@@ -79,7 +84,6 @@ public class ServerConnection extends ConnectionBase implements Runnable {
     private void onlineUsersEvent() {
         try {
             int userId = Integer.parseInt(ois.readUTF());
-            System.out.println(userId);
             user = userDAO.readById(userId);
             ChatServer.sendOnlineUsersEvent();
         } catch (Exception e) {
@@ -301,20 +305,6 @@ public class ServerConnection extends ConnectionBase implements Runnable {
             // if null then create new
             if(conversation == null) {
                 sendObject(null);
-//                Conversation newConversation = new Conversation();
-//                newConversation.setConversationName(
-//                        users.stream().map(User::getUsername).collect(Collectors.joining("  "))
-//                );
-//                conversation = conversationDAO.create(newConversation);
-//
-//                Set<GroupMember> groupMembers = new HashSet<>();
-//                for(User user: users) {
-//                    GroupMember gmUser = new GroupMember(user, conversation, Instant.now(), null);
-//                    groupMembers.add(gmUser);
-//                }
-//
-//                conversation.setGroupMembers(groupMembers);
-//                conversation = conversationDAO.update(conversation);
             }
 
             // send back conversation
@@ -323,11 +313,19 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                     return modelMapper.map(message, MessageDto.class);
                 } else if(message.getMessageType().equals(MessageType.IMAGE)) {
                     try {
-//                        MessageDto messageDto = modelMapper.map(message, MessageDto.class);
                         ImageMessageDto imageMessageDto = modelMapper.map(message, ImageMessageDto.class);
                         imageMessageDto.setImage(ImageIO.read(new File(message.getAttachmentUrl())));
-
                         return imageMessageDto;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else if(message.getMessageType().equals(MessageType.FILE)) {
+                    try {
+                        FileMessageDto fileMessageDto = modelMapper.map(message, FileMessageDto.class);
+                        List<String> fileNameSplit = Arrays.stream(message.getAttachmentUrl().split("/")).toList();
+                        String filename = fileNameSplit.get(fileNameSplit.size()-1);
+                        fileMessageDto.setFilename(filename);
+                        return fileMessageDto;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

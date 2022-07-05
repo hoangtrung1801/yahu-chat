@@ -62,8 +62,8 @@ public class Conversation{
         return "Conversation{" +
                 "id=" + id +
                 ", conversationName='" + conversationName + '\'' +
-                ", messages=" + messages +
-                ", groupMembers=" + groupMembers +
+//                ", messages=" + messages +
+//                ", groupMembers=" + groupMembers +
                 '}';
     }
 }

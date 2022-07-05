@@ -1,9 +1,15 @@
 import client.emojipicker.EmojiPicker;
 import client.emojipicker.EmojiTable;
 import client.emojipicker.OpenMojiFont;
+import dao.ConversationDAO;
+import dao.implement.ConversationDAOImpl;
+import model.Conversation;
+import model.Message;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
+import java.util.Set;
 
 public class Test {
     public Test() throws Exception {
@@ -77,8 +83,13 @@ public class Test {
 //        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //        frame.setVisible(true);
 
-        EmojiPicker emojiPicker = new EmojiPicker();
-        emojiPicker.setClickListener(emoji -> System.out.println(emoji));
+//        EmojiPicker emojiPicker = new EmojiPicker();
+//        emojiPicker.setClickListener(emoji -> System.out.println(emoji));
+
+        ConversationDAO conversationDAO = new ConversationDAOImpl();
+        Conversation conversation = conversationDAO.readById(1);
+        List<Message> messages = conversation.getMessages();
+        for(var message: messages) System.out.println(message);
     }
 
     public static void main(String[] args) throws Exception {

@@ -48,7 +48,7 @@ public class ChatGUI extends JFrame {
             tabConversation.setTabPlacement(SwingConstants.BOTTOM);
         }
         contentPane.add(tabConversation, "cell 0 0,growy");
-        setSize(500, 500);
+        setSize(550, 550);
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
 

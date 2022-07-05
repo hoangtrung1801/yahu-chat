@@ -111,6 +111,7 @@ public class ChatGUIController {
             switch (message.getMessageType()) {
                 case TEXT -> tab.appendTextMessage(message.getUser().getUsername(), message.getMessageText());
                 case IMAGE -> tab.appendImage(message.getUser().getUsername(), ((ImageMessageDto) message).getImage());
+                case FILE -> tab.appendFile(message.getUser().getUsername(), ((FileMessageDto) message).getFilename());
             }
         }
     }
