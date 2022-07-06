@@ -1,14 +1,16 @@
 package client;
 
-import client.components.ConversationTab;
 import dto.*;
 import model.MessageType;
+import model.User;
+import org.imgscalr.Scalr;
 import org.modelmapper.ModelMapper;
 import shared.ConnectionBase;
 import utility.Constants;
 
 import java.awt.image.BufferedImage;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -16,40 +18,43 @@ import java.util.Set;
 public class ClientConnection extends ConnectionBase implements Runnable {
     public ClientConnection() {
         super(Constants.URL, Constants.PORT);
-        sendUserEnteredEvent();
+        sendUserLogged();
     }
 
     @Override
     public void run() {
         boolean isRunning = true;
 
-        while(isRunning) {
-            try {
-                System.out.println("RECEIVING... ");
-                String type = ois.readUTF();
-                System.out.println("RECEIVED:  " + type);
+        synchronized (this) {
+            while (isRunning) {
+                try {
+                    System.out.println("RECEIVING... ");
+                    String type = ois.readUTF();
+                    System.out.println("RECEIVED:  " + type);
 
-                if(type.equals(Constants.ONLINE_USERS_EVENT)) {
-                    onlineUsersEvent();
-                } else if(type.equals(Constants.LIST_CONVERSATIONS_EVENT)) {
-                    listConversationsEvent();
-                } else if(type.equals(Constants.TEXT_MESSAGE_EVENT)) {
-                    textMessageEvent();
-                } else if(type.equals(Constants.IMAGE_MESSAGE_EVENT)) {
-                    imageMessageEvent();
-                } else if(type.equals(Constants.FILE_MESSAGE_EVENT)) {
-                    fileMessageEvent();
-                } else if(type.equals(Constants.FIND_CONVERSATION_WITH_USERS)) {
-                    findConversationWithUsers();
-                } else if(type.equals(Constants.GET_MESSAGES_IN_CONVERSATION_EVENT)) {
-                    getMessagesInConversationEvent();
+                    if (type.equals(Constants.USER_LOGGED)) {
+                        onlineUsersEvent();
+                    } else if (type.equals(Constants.LIST_CONVERSATIONS_EVENT)) {
+                        listConversationsEvent();
+                    } else if (type.equals(Constants.TEXT_MESSAGE_EVENT)) {
+                        textMessageEvent();
+                    } else if (type.equals(Constants.IMAGE_MESSAGE_EVENT)) {
+                        imageMessageEvent();
+                    } else if (type.equals(Constants.FILE_MESSAGE_EVENT)) {
+                        fileMessageEvent();
+                    } else if (type.equals(Constants.FIND_CONVERSATION_WITH_USERS)) {
+                        findConversationWithUsers();
+                    } else if (type.equals(Constants.GET_MESSAGES_IN_CONVERSATION_EVENT)) {
+                        getMessagesInConversationEvent();
+                    } else if (type.equals(Constants.FIND_CONTACT)) {
+                        findContact();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    isRunning = false;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                isRunning = false;
             }
         }
-
         close();
     }
 
@@ -66,6 +71,7 @@ public class ClientConnection extends ConnectionBase implements Runnable {
     private void listConversationsEvent() {
         try {
             List<ConversationDto> listConversations = (List<ConversationDto>) ois.readObject();
+            for(var conversation: listConversations) System.out.println(conversation);
             ChatClient.clientGUI.updateListConversations(listConversations);
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,8 +84,6 @@ public class ClientConnection extends ConnectionBase implements Runnable {
 
             ChatGUI chatGUI = ChatClient.clientGUI.controller.chatGUI;
             chatGUI.controller.showTextMessage(messageDto.getConversation(), messageDto);
-//            ChatGUI chatGUI = ChatClient.clientGUI.controller.findChatGUI(messageDto.getConversation().getId());
-//            chatGUI.controller.showTextMessage(messageDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,6 +128,7 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         try {
             ConversationDto conversation = (ConversationDto) ois.readObject();
             List<MessageDto> messages = (List<MessageDto>) ois.readObject();
+            for(var message: messages) System.out.println(message);
 
             ChatGUI chatGUI = ChatClient.clientGUI.controller.chatGUI;
             chatGUI.controller.setupMessageInConversation(conversation, messages);
@@ -132,10 +137,19 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         }
     }
 
+    private void findContact() {
+        try {
+            List<UserDto> users = (List<UserDto>) ois.readObject();
+            ChatClient.clientGUI.getNewContactGUI().foundContact(users);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // --------------- ACTION -----------------
-    public void sendUserEnteredEvent() {
+    public void sendUserLogged() {
         /*
-            ONLINE_USERS_EVENT
+            LIST_CONVERSATION_EVENT
             userId
          */
 //        sendData(Constants.ONLINE_USERS_EVENT);
@@ -210,4 +224,15 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         sendObject(conversation);
     }
 
+    public void sendFindContact(String target) {
+        sendData(Constants.FIND_CONTACT);
+        sendData(target);
+    }
+
+    public void sendNewConversationWithUser(UserDto targetUser) {
+        ModelMapper modelMapper = new ModelMapper();
+        sendData(Constants.NEW_CONVERSATION_EVENT);
+        List<UserDto> users = new ArrayList<>(Arrays.asList(modelMapper.map(ChatClient.user, UserDto.class), targetUser));
+        sendObject(users);
+    }
 }

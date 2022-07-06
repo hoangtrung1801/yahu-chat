@@ -12,6 +12,7 @@ import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import shared.ConnectionBase;
 import utility.Constants;
+import utility.HibernateUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -51,8 +52,8 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                 System.out.println("RECEIVED: " + type);
                 ChatServer.gui.log(user, "RECEIVED: " + type);
 
-                if(type.equals(Constants.ONLINE_USERS_EVENT)) {
-                    onlineUsersEvent();
+                if(type.equals(Constants.USER_LOGGED)) {
+                    userLogged();
                 } else if(type.equals(Constants.LIST_CONVERSATIONS_EVENT)) {
                     listConversationsEvent();
                 } else if(type.equals(Constants.TEXT_MESSAGE_EVENT)) {
@@ -65,6 +66,10 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                     findConversationWithUsers();
                 } else if(type.equals(Constants.GET_MESSAGES_IN_CONVERSATION_EVENT)) {
                     getMessagesInConversationEvent();
+                } else if(type.equals(Constants.NEW_CONVERSATION_EVENT)) {
+                    newConversationEvent();
+                } else if (type.equals(Constants.FIND_CONTACT)) {
+                    findContact();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -81,11 +86,10 @@ public class ServerConnection extends ConnectionBase implements Runnable {
     }
 
     // --------------- EVENT -----------------
-    private void onlineUsersEvent() {
+    private void userLogged() {
         try {
             int userId = Integer.parseInt(ois.readUTF());
             user = userDAO.readById(userId);
-            ChatServer.sendOnlineUsersEvent();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -95,12 +99,17 @@ public class ServerConnection extends ConnectionBase implements Runnable {
         try {
             ModelMapper modelMapper = new ModelMapper();
 
+            // get user information
             int userId = Integer.parseInt(ois.readUTF());
             user = userDAO.readById(userId);
+
+            // refresh
+            HibernateUtils.refresh(user);
 
             Set<GroupMember> groupMembers = user.getGroupMembers();
             List<Conversation> conversations= groupMembers.stream().map(GroupMember::getConversation).toList();
             List<ConversationDto> conversationDtos = conversations.stream().map(conversation -> modelMapper.map(conversation, ConversationDto.class)).toList();
+
 
             sendData(Constants.LIST_CONVERSATIONS_EVENT);
             sendObject(conversationDtos);
@@ -131,8 +140,10 @@ public class ServerConnection extends ConnectionBase implements Runnable {
             for(GroupMember gm: conversation.getGroupMembers()) {
                 User receiver = gm.getUser();
                 ServerConnection sc = ChatServer.connectionManager.findWithUser(receiver);
-                sc.sendData(Constants.TEXT_MESSAGE_EVENT);
-                sc.sendObject(messageDto);
+                if(sc != null) {
+                    sc.sendData(Constants.TEXT_MESSAGE_EVENT);
+                    sc.sendObject(messageDto);
+                }
             }
 
         } catch (Exception e) {
@@ -246,7 +257,11 @@ public class ServerConnection extends ConnectionBase implements Runnable {
 
                 conversation.setGroupMembers(groupMembers);
                 conversation = conversationDAO.update(conversation);
+
             }
+
+            // refresh
+            HibernateUtils.refresh(conversation);
 
             // send back conversation
             sendData(Constants.FIND_CONVERSATION_WITH_USERS);
@@ -307,6 +322,9 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                 sendObject(null);
             }
 
+            // refresh
+            HibernateUtils.refresh(conversation);
+
             // send back conversation
             List<MessageDto> messages = conversation.getMessages().stream().map(message -> {
                 if(message.getMessageType().equals(MessageType.TEXT)) {
@@ -338,5 +356,75 @@ public class ServerConnection extends ConnectionBase implements Runnable {
         }
     }
 
+    public void newConversationEvent() {
+        /*
+        in:
+            NEW_CONVERSATION_EVENT
+            List<UserDto>
+
+        out:
+            NEW_CONVERSATION_EVENT
+            Conversation
+         */
+        try {
+            ModelMapper modelMapper = new ModelMapper();
+            List<UserDto> userDtos = (List<UserDto>) ois.readObject();
+            List<User> users = userDtos.stream().map(user -> userDAO.readById(user.getId())).toList();
+
+            Conversation conversation = new Conversation();
+            conversation.setConversationName(
+                    userDtos.stream().map(UserDto::getUsername).collect(Collectors.joining(", "))
+            );
+            conversation = conversationDAO.create(conversation);
+
+//            Conversation finalConversation = conversation;
+//            users.forEach(user -> {
+//                GroupMember gm = new GroupMember(user, finalConversation, Instant.now(), null);
+//            });
+            Conversation finalConversation = conversation;
+            conversation.setGroupMembers(
+                users.stream().map(user -> new GroupMember(user, finalConversation, Instant.now(), null)).collect(Collectors.toSet())
+            );
+            conversation = conversationDAO.update(conversation);
+            if(conversation == null) {
+                throw new Error("Conversation is null");
+            }
+
+            // send
+//            sendData(Constants.NEW_CONVERSATION_EVENT);
+//            sendObject(conversationDto);
+            for(GroupMember gm: conversation.getGroupMembers()) {
+                sendListConversationEvent(gm.getUser());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void findContact() {
+        try {
+            ModelMapper modelMapper = new ModelMapper();
+            String target = ois.readUTF();
+            List<User> users = userDAO.findContact(target);
+            List<UserDto> userDtos = users.stream().map(user -> modelMapper.map(user, UserDto.class)).toList();
+
+            // send
+            sendData(Constants.FIND_CONTACT);
+            sendObject(userDtos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // --------------- ACTION -----------------
+    public void sendListConversationEvent(User user) {
+        ModelMapper modelMapper = new ModelMapper();
+        HibernateUtils.refresh(user);
+        Set<GroupMember> groupMembers = user.getGroupMembers();
+        List<Conversation> conversations= groupMembers.stream().map(GroupMember::getConversation).toList();
+        List<ConversationDto> conversationDtos = conversations.stream().map(conversation -> modelMapper.map(conversation, ConversationDto.class)).toList();
+
+        sendData(Constants.LIST_CONVERSATIONS_EVENT);
+        sendObject(conversationDtos);
+    }
 }

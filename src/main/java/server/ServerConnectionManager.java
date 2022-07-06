@@ -27,8 +27,6 @@ public class ServerConnectionManager {
     }
 
     public boolean add(ServerConnection connection) {
-        if(manager.contains(connection)) return false;
-
         manager.add(connection);
         executor.execute(connection);
 
@@ -43,7 +41,7 @@ public class ServerConnectionManager {
 
     public ServerConnection findWithUser(User user) {
         for(ServerConnection sc: manager) {
-            if(sc.user.equals(user)) return sc;
+            if(sc.user.getId().equals(user.getId())) return sc;
         }
         return null;
     }

@@ -25,6 +25,8 @@ public class Conversation{
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL)
     private Set<GroupMember> groupMembers = new LinkedHashSet<>();
 
+    public Conversation() {}
+
     public Integer getId() {
         return id;
     }

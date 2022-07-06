@@ -8,11 +8,10 @@ import java.time.Instant;
 public class GroupMember {
 
     public GroupMember() {
-        id = new GroupMemberId();
     }
 
     public GroupMember(User user, Conversation conversation, Instant joinedDatetime, Instant leftDatetime) {
-        this.id = new GroupMemberId();
+        this.id = new GroupMemberId(user.getId(), conversation.getId());
         this.user = user;
         this.conversation = conversation;
         this.joinedDatetime = joinedDatetime;

@@ -131,7 +131,8 @@ public class ChatServerGUI extends JFrame {
         setSize(500, 400);
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
-        System.out.println(statusLabel.getSize());
+
+        setTitle("Server");
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables

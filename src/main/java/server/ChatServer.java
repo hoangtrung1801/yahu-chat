@@ -5,8 +5,8 @@ import dto.ConversationDto;
 import dto.UserDto;
 import org.modelmapper.ModelMapper;
 import utility.Constants;
+import utility.HibernateUtils;
 
-import javax.swing.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -42,6 +42,7 @@ public class ChatServer {
 
     private void initServer() {
         try {
+            HibernateUtils.getEntityManager();
             server = new ServerSocket(Constants.PORT);
             connectionManager = new ServerConnectionManager();
             isRunning = true;
@@ -76,7 +77,7 @@ public class ChatServer {
                 .collect(Collectors.toSet());
 
         for(ServerConnection sc: connectionManager.getManager()) {
-            sc.sendData(Constants.ONLINE_USERS_EVENT);
+            sc.sendData(Constants.USER_LOGGED);
             sc.sendObject(onlineUsers);
         }
     }

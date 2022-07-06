@@ -44,7 +44,7 @@ public class ConversationDAOImpl implements ConversationDAO {
         HibernateUtils.beginTransaction();
         entityManager.merge(entity);
         HibernateUtils.commitTransaction();
-        return null;
+        return entity;
     }
 
     @Override

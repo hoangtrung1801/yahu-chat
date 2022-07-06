@@ -32,4 +32,8 @@ public class HibernateUtils {
         entityManager.getTransaction().commit();
     }
 
+    public static void refresh(Object o) {
+        entityManager.refresh(o);
+    }
+
 }

@@ -6,6 +6,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "user")
+@org.hibernate.annotations.NamedQuery(name = "find_contact", query = "from User user where user.username like :filter")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
