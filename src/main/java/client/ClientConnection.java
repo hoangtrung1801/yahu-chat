@@ -2,13 +2,17 @@ package client;
 
 import dto.*;
 import model.MessageType;
-import model.User;
-import org.imgscalr.Scalr;
 import org.modelmapper.ModelMapper;
 import shared.ConnectionBase;
 import utility.Constants;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.Buffer;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +52,8 @@ public class ClientConnection extends ConnectionBase implements Runnable {
                         getMessagesInConversationEvent();
                     } else if (type.equals(Constants.FIND_CONTACT)) {
                         findContact();
+                    } else if(type.equals(Constants.VIDEO_CALL_EVENT)) {
+                        videoCallEvent();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -71,7 +77,6 @@ public class ClientConnection extends ConnectionBase implements Runnable {
     private void listConversationsEvent() {
         try {
             List<ConversationDto> listConversations = (List<ConversationDto>) ois.readObject();
-            for(var conversation: listConversations) System.out.println(conversation);
             ChatClient.clientGUI.updateListConversations(listConversations);
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,7 +133,6 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         try {
             ConversationDto conversation = (ConversationDto) ois.readObject();
             List<MessageDto> messages = (List<MessageDto>) ois.readObject();
-            for(var message: messages) System.out.println(message);
 
             ChatGUI chatGUI = ChatClient.clientGUI.controller.chatGUI;
             chatGUI.controller.setupMessageInConversation(conversation, messages);
@@ -141,6 +145,19 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         try {
             List<UserDto> users = (List<UserDto>) ois.readObject();
             ChatClient.clientGUI.getNewContactGUI().foundContact(users);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void videoCallEvent() {
+        try {
+            VideoCallData videoCallData = (VideoCallData) ois.readObject();
+            byte[] image = videoCallData.getImage();
+            InputStream is = new ByteArrayInputStream(image);
+            BufferedImage buffer = ImageIO.read(is);
+
+            ChatClient.clientGUI.controller.updateVideoCall(buffer);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -234,5 +251,19 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         sendData(Constants.NEW_CONVERSATION_EVENT);
         List<UserDto> users = new ArrayList<>(Arrays.asList(modelMapper.map(ChatClient.user, UserDto.class), targetUser));
         sendObject(users);
+    }
+
+    public void sendVideoCallData(ConversationDto conversation, BufferedImage buffer) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(buffer, "jpg", baos);
+            byte[] image = baos.toByteArray();
+            VideoCallData videoCallData = new VideoCallData(conversation, image);
+
+            sendData(Constants.VIDEO_CALL_EVENT);
+            sendObject(videoCallData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

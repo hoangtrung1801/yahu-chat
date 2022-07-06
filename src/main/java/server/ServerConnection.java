@@ -70,6 +70,8 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                     newConversationEvent();
                 } else if (type.equals(Constants.FIND_CONTACT)) {
                     findContact();
+                } else if (type.equals(Constants.VIDEO_CALL_EVENT)) {
+                    videoCallEvent();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -223,7 +225,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
         }
     }
 
-    public void findConversationWithUsers() {
+    private void findConversationWithUsers() {
         /*
             FIND_CONVERSATION_WITH_USERS
             // ConversationDto
@@ -290,7 +292,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
         }
     }
 
-    public void getMessagesInConversationEvent() {
+    private void getMessagesInConversationEvent() {
          /*
          in:
             GET_MESSAGE_IN_CONVERSATOIN
@@ -356,7 +358,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
         }
     }
 
-    public void newConversationEvent() {
+    private void newConversationEvent() {
         /*
         in:
             NEW_CONVERSATION_EVENT
@@ -401,7 +403,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
         }
     }
 
-    public void findContact() {
+    private void findContact() {
         try {
             ModelMapper modelMapper = new ModelMapper();
             String target = ois.readUTF();
@@ -411,6 +413,32 @@ public class ServerConnection extends ConnectionBase implements Runnable {
             // send
             sendData(Constants.FIND_CONTACT);
             sendObject(userDtos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void videoCallEvent() {
+        /*
+        in, out:
+            VIDEO_CALL_EVENT
+            VideoCallData
+         */
+        try {
+            VideoCallData videoCallData = (VideoCallData) ois.readObject();
+            Conversation conversation = conversationDAO.readById(videoCallData.getConversation().getId());
+
+             for(GroupMember gm: conversation.getGroupMembers()) {
+                User receiver = gm.getUser();
+                if(receiver.getId().equals(user.getId())) continue;
+                ServerConnection sc = ChatServer.connectionManager.findWithUser(receiver);
+                if(sc == null) {
+                    System.out.println(receiver.getUsername() + " did not join the call!");
+                }
+                sc.sendData(Constants.VIDEO_CALL_EVENT);
+                sc.sendObject(videoCallData);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

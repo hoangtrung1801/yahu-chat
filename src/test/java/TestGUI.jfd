@@ -5,10 +5,40 @@ new FormModel {
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$layoutConstraints": "hidemode 3"
-			"$columnConstraints": "[fill][fill]"
-			"$rowConstraints": "[][][]"
+			"$columnConstraints": "[grow,fill]"
+			"$rowConstraints": "[grow]"
 		} ) {
 			name: "this"
+			"$sizePolicy": 1
+			add( new FormContainer( "javax.swing.JLayeredPane", new FormLayoutManager( class javax.swing.JLayeredPane ) ) {
+				name: "layeredPane1"
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "hidemode 3"
+					"$columnConstraints": "[fill][fill]"
+					"$rowConstraints": "[][][]"
+				} ) {
+					name: "panel2"
+					"background": new java.awt.Color( 102, 102, 102, 255 )
+				}, new FormLayoutConstraints( null ) {
+					"height": 81
+					"x": 100
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "hidemode 3"
+					"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill][fill][fill][fill]"
+					"$rowConstraints": "[][][][][][][][][]"
+				} ) {
+					name: "panel1"
+					"background": new java.awt.Color( 204, 204, 204, 255 )
+				}, new FormLayoutConstraints( null ) {
+					"x": 0
+					"y": 0
+					"width": 385
+					"height": 255
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0,growy"
+			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
 			"size": new java.awt.Dimension( 400, 300 )

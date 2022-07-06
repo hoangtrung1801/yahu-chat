@@ -3,13 +3,16 @@ package client;
 import dto.ConversationDto;
 import dto.UserDto;
 
+import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClientGUIController {
 
-    ClientGUI gui;
-    ChatGUI chatGUI;
+    protected ClientGUI gui;
+    protected ChatGUI chatGUI;
+    protected VideoCallGUI videoCallGUI;
 
     public List<ChatGUI> chatManager;
 
@@ -23,6 +26,23 @@ public class ClientGUIController {
     public void openChatGUIWithConversation(ConversationDto conversation) {
         chatGUI.controller.addConversation(conversation);
         if(!chatGUI.isVisible()) chatGUI.setVisible(true);
+    }
+
+    public void callVideoInConversation(ConversationDto conversation) {
+        if(videoCallGUI != null) {
+            videoCallGUI.setVisible(true);
+            return;
+        }
+
+        videoCallGUI = new VideoCallGUI("Call video in " + conversation.getConversationName(), conversation);
+        videoCallGUI.setVisible(true);
+
+        videoCallGUI.controller.startCall();
+    }
+
+    public void updateVideoCall(BufferedImage image) {
+        if(videoCallGUI == null) return;
+        videoCallGUI.updateImage(image);
     }
 
     public ChatGUI findChatGUI(int convertsationId) {

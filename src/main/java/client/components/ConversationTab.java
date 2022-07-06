@@ -10,8 +10,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.text.*;
 
+import client.ChatClient;
 import client.ChatGUI;
 import client.emojipicker.EmojiPicker;
 import dto.ConversationDto;
@@ -149,11 +151,35 @@ public class ConversationTab extends JPanel {
         });
     }
 
+    private void fileAction(MouseEvent e) {
+        // TODO add your code here
+    }
+
+    private void imageAction(MouseEvent e) {
+        // TODO add your code here
+    }
+
+    private void iconAction(MouseEvent e) {
+        // TODO add your code here
+    }
+
+    private void sendTextMessage(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void videoCallAction(MouseEvent e) {
+        System.out.println("Video call ");
+        ChatClient.clientGUI.controller.callVideoInConversation(conversation);
+    }
+
 
     // ---------------------------------------------------
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         panel1 = new JPanel();
+        videoCallBtn = new JPanel();
+        label1 = new JLabel();
+        label2 = new JLabel();
         conversation_name = new JLabel();
         panel4 = new JPanel();
         panel5 = new JPanel();
@@ -181,16 +207,42 @@ public class ConversationTab extends JPanel {
         //======== panel1 ========
         {
             panel1.setLayout(new MigLayout(
-                "hidemode 3",
+                "insets 0 null 0 null,hidemode 3,aligny center",
                 // columns
                 "[fill]" +
                 "[fill]",
                 // rows
-                "[]" +
-                "[]" +
                 "[]"));
+
+            //======== videoCallBtn ========
+            {
+                videoCallBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                videoCallBtn.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        videoCallAction(e);
+                    }
+                });
+                videoCallBtn.setLayout(new MigLayout(
+                    "insets 0,hidemode 3,aligny center,gapy 0",
+                    // columns
+                    "[fill]",
+                    // rows
+                    "[]" +
+                    "[]"));
+
+                //---- label1 ----
+                label1.setIcon(new ImageIcon(getClass().getResource("/assets/video-call-icon.png")));
+                videoCallBtn.add(label1, "cell 0 0");
+
+                //---- label2 ----
+                label2.setText("Video call");
+                label2.setFont(label2.getFont().deriveFont(label2.getFont().getStyle() | Font.BOLD));
+                videoCallBtn.add(label2, "cell 0 1");
+            }
+            panel1.add(videoCallBtn, "cell 0 0");
         }
-        add(panel1, "cell 0 0");
+        add(panel1, "cell 0 0,growy");
 
         //---- conversation_name ----
         conversation_name.setText("hoangtrung1801");
@@ -199,6 +251,9 @@ public class ConversationTab extends JPanel {
 
         //======== panel4 ========
         {
+            panel4.setBorder(new CompoundBorder(
+                new TitledBorder(""),
+                new EmptyBorder(2, 0, 2, 0)));
             panel4.setLayout(new MigLayout(
                 "filly,insets 0,hidemode 3,gap 2 0",
                 // columns
@@ -209,6 +264,7 @@ public class ConversationTab extends JPanel {
 
             //======== panel5 ========
             {
+                panel5.setBorder(null);
                 panel5.setLayout(new MigLayout(
                     "fill,insets 0,hidemode 3,gap 0 2",
                     // columns
@@ -244,28 +300,46 @@ public class ConversationTab extends JPanel {
 
                     //---- fileBtn ----
                     fileBtn.setText("File");
+                    fileBtn.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            fileAction(e);
+                        }
+                    });
                     fileBtn.addActionListener(e -> fileAction(e));
                     panel6.add(fileBtn, "cell 0 0");
 
                     //---- imageBtn ----
                     imageBtn.setText("Image");
+                    imageBtn.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            imageAction(e);
+                        }
+                    });
                     imageBtn.addActionListener(e -> imageAction(e));
                     panel6.add(imageBtn, "cell 1 0");
 
                     //---- iconBtn ----
                     iconBtn.setText("Icon");
+                    iconBtn.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            iconAction(e);
+                        }
+                    });
                     iconBtn.addActionListener(e -> iconAction(e));
                     panel6.add(iconBtn, "cell 2 0");
                 }
                 panel5.add(panel6, "cell 0 1");
 
                 //---- input ----
-                input.addActionListener(e -> textMessageAction(e));
+                input.addActionListener(e -> sendTextMessage(e));
                 panel5.add(input, "cell 0 2,grow");
 
                 //---- sendBtn ----
                 sendBtn.setText("Send");
-                sendBtn.addActionListener(e -> textMessageAction(e));
+                sendBtn.addActionListener(e -> sendTextMessage(e));
                 panel5.add(sendBtn, "pad 0,cell 0 2,width 50:50,height 30:30,gapx 0 0,gapy 0 0");
             }
             panel4.add(panel5, "cell 0 0,growy");
@@ -294,6 +368,9 @@ public class ConversationTab extends JPanel {
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JPanel panel1;
+    private JPanel videoCallBtn;
+    private JLabel label1;
+    private JLabel label2;
     private JLabel conversation_name;
     private JPanel panel4;
     private JPanel panel5;

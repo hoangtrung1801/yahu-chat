@@ -1,15 +1,12 @@
-import client.emojipicker.EmojiPicker;
-import client.emojipicker.EmojiTable;
-import client.emojipicker.OpenMojiFont;
-import dao.ConversationDAO;
-import dao.implement.ConversationDAOImpl;
-import model.Conversation;
-import model.Message;
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamPanel;
+import com.github.sarxos.webcam.WebcamResolution;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.List;
-import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class Test {
     public Test() throws Exception {
@@ -17,79 +14,48 @@ public class Test {
     }
 
     public void run() throws Exception {
-//        ModelMapper modelMapper = new ModelMapper();
-//
-//        UserDAO userDAO = new UserDAOImpl();
-//        User user = userDAO.readById(2);
-//
-//        UserDto userDto = modelMapper.map(user, UserDto.class);
-//        userDto.setUsername("hoangtrung");
-//        System.out.println(userDto);
-//
-//        User skeUser = userDAO.readById(2);
-//        modelMapper.map(userDto, skeUser);
-//        System.out.println(skeUser);
+        Webcam webcam = Webcam.getDefault();
+        webcam.setViewSize(WebcamResolution.VGA.getSize());
 
-//        MessageDAO messageDAO = new MessageDAOImpl();
-//        UserDAO userDAO = new UserDAOImpl();
-//        ConversationDAO conversationDAO = new ConversationDAOImpl();
-//        Message message = new Message(MessageType.TEXT, "hello", Instant.now());
-//        message.setUser(userDAO.readById(2));
-//        message.setConversation(conversationDAO.readById(1));
-//        message = messageDAO.create(message);
-//        System.out.println(message);
+        WebcamPanel panel = new WebcamPanel(webcam);
+//        panel.setFPSDisplayed(true);
+//        panel.setDisplayDebugInfo(true);
+//        panel.setImageSizeDisplayed(true);
+        panel.setMirrored(true);
 
-//        JFileChooser fileChooser = new JFileChooser();
-//        if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-//            File file = fileChooser.getSelectedFile();
-//            System.out.println(file.getAbsolutePath());
-//        }
+        JFrame frame = new JFrame();
+        frame.add(panel);
+        frame.pack();
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
 
-//        String path = Paths.get("").toAbsolutePath().toString() + "\\storage\\images\\";
-//        String path = Paths.get(
-//                Paths.get("").toAbsolutePath().toString(),
-//                "storage",
-//                "images",
-//                RandomString.make(16) + ".png"
-//        ).toString();
-//        System.out.println(path);
-//        System.out.println(Paths.get("storage", "images").toString());
+//        Webcam webcam1 = Webcam.getDefault();
+//        WebcamPanel panel1 = new WebcamPanel(webcam);
+//        panel1.setMirrored(true);
+//
+//        JFrame frame1 = new JFrame();
+//        frame1.add(panel1);
+//        frame1.pack();
+//        frame1.setVisible(true);
+//        frame1.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//        frame1.setLocationRelativeTo(null);
 
-//        File file = new File("D:\\Development\\Java\\ClassOOP\\ChatRealtime\\storage\\images\\39yaHqOGPhfzO1CX.png");
-//        System.out.println(file.getName());
+//        Runnable task = new Task();
+//        ScheduledExecutorService timeWorker = new ScheduledThreadPoolExecutor(1);
+//        ScheduledFuture<?> scheduledFuture = timeWorker.scheduleWithFixedDelay(
+//                task,
+//                0,
+//                1,
+//                TimeUnit.SECONDS
+//        );
+    }
 
-//        FlatLightLaf.setup();
-//        JFrame frame = new JFrame();
-//        JTextPane textPane = new JTextPane();
-//        textPane.setPreferredSize(new Dimension(500, 500));
-//
-//        StyledDocument doc = (StyledDocument) textPane.getDocument();
-//
-//        String withlove  = "With :heart: Nicoll lê kim hoàng trung :smile:";
-//        String result = EmojiParser.parseToUnicode(withlove);
-//
-////        ImageIcon icon = new ImageIcon(getClass().getResource("assets/send-icon.png"));
-////        ImageIcon icon = new ImageIcon(
-////                Scalr.resize(ImageIO.read(getClass().getResource("assets/send-icon.png")), 16)
-////        );
-////        textPane.insertComponent(new JLabel("hello"));
-////        textPane.insertIcon(icon);
-//
-//        textPane.insertComponent(new JLabel(result));
-//
-//        frame.add(textPane);
-//
-//        frame.setSize(500, 500);
-//        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//        frame.setVisible(true);
-
-//        EmojiPicker emojiPicker = new EmojiPicker();
-//        emojiPicker.setClickListener(emoji -> System.out.println(emoji));
-
-        ConversationDAO conversationDAO = new ConversationDAOImpl();
-        Conversation conversation = conversationDAO.readById(1);
-        List<Message> messages = conversation.getMessages();
-        for(var message: messages) System.out.println(message);
+    private class Task implements Runnable {
+        @Override
+        public void run() {
+            System.out.println("running...");
+        }
     }
 
     public static void main(String[] args) throws Exception {
