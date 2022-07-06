@@ -30,6 +30,7 @@ public class FileChooserImage extends JFileChooser {
                 protected Image doInBackground() throws Exception {
                     if (evt.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) {
                         File f = getSelectedFile();
+                        if(f.isDirectory()) return null;
                         BufferedImage bim = ImageIO.read(f);
 
                         return Scalr.resize(bim, 180);

@@ -4,7 +4,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import dto.ConversationDto;
 import dto.UserDto;
 import org.modelmapper.ModelMapper;
-import utility.Constants;
+import shared.Constants;
 import utility.HibernateUtils;
 
 import java.net.ServerSocket;

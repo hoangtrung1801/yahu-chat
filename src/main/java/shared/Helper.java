@@ -1,6 +1,7 @@
-package utility;
+package shared;
 
 import net.bytebuddy.utility.RandomString;
+import shared.Constants;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;

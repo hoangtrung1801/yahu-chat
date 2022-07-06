@@ -2,9 +2,8 @@ package client;
 
 import client.components.ConversationTab;
 import dto.*;
-import model.Conversation;
 import org.modelmapper.ModelMapper;
-import utility.Constants;
+import shared.Constants;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

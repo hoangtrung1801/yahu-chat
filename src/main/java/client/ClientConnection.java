@@ -4,15 +4,13 @@ import dto.*;
 import model.MessageType;
 import org.modelmapper.ModelMapper;
 import shared.ConnectionBase;
-import utility.Constants;
+import shared.Constants;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.Buffer;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -6,7 +6,7 @@ new FormModel {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 			"$layoutConstraints": "insets 0,hidemode 3"
 			"$columnConstraints": "[grow,fill]"
-			"$rowConstraints": "[100][24][grow]"
+			"$rowConstraints": "[60][24][grow]"
 		} ) {
 			name: "this"
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
@@ -27,7 +27,7 @@ new FormModel {
 						name: "label1"
 						"icon": new com.jformdesigner.model.SwingIcon( 0, "/assets/video-call-icon.png" )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 0"
+						"value": "cell 0 0,alignx center,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label2"
@@ -37,7 +37,7 @@ new FormModel {
 						"value": "cell 0 1"
 					} )
 				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-					"value": "cell 0 0"
+					"value": "cell 0 0,alignx center,growx 0"
 				} )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 0,growy"
@@ -50,7 +50,7 @@ new FormModel {
 				"value": "cell 0 1,grow"
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
-				"$layoutConstraints": "filly,insets 0,hidemode 3,gap 2 0"
+				"$layoutConstraints": "filly,insets 0,hidemode 3,gap 5 0"
 				"$columnConstraints": "[grow,fill][100,fill]"
 				"$rowConstraints": "[grow]"
 			} ) {
@@ -77,32 +77,33 @@ new FormModel {
 						"value": "cell 0 0,grow"
 					} )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
-						"$layoutConstraints": "insets 0,hidemode 3,gap 0 0"
+						"$layoutConstraints": "insets 05 0 5 0,hidemode 3,gap 10 0"
 						"$columnConstraints": "[fill][fill][fill]"
 						"$rowConstraints": "[]"
 					} ) {
 						name: "panel6"
-						add( new FormComponent( "javax.swing.JButton" ) {
+						add( new FormComponent( "javax.swing.JLabel" ) {
 							name: "fileBtn"
-							"text": "File"
-							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "fileAction", true ) )
-							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "fileAction", true ) )
+							"icon": new com.jformdesigner.model.SwingIcon( 0, "/assets/attachment-icon.png" )
+							"iconTextGap": 0
+							"cursor": &Cursor0 new java.awt.Cursor( 12 )
+							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "fileAction", false ) )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 0 0"
 						} )
-						add( new FormComponent( "javax.swing.JButton" ) {
+						add( new FormComponent( "javax.swing.JLabel" ) {
 							name: "imageBtn"
-							"text": "Image"
-							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "imageAction", true ) )
-							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "imageAction", true ) )
+							"cursor": #Cursor0
+							"icon": new com.jformdesigner.model.SwingIcon( 0, "/assets/image-icon.png" )
+							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "imageAction", false ) )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 1 0"
 						} )
-						add( new FormComponent( "javax.swing.JButton" ) {
+						add( new FormComponent( "javax.swing.JLabel" ) {
 							name: "iconBtn"
-							"text": "Icon"
-							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "iconAction", true ) )
-							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "iconAction", true ) )
+							"cursor": #Cursor0
+							"icon": new com.jformdesigner.model.SwingIcon( 0, "/assets/icon-icon.png" )
+							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "iconAction", false ) )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 2 0"
 						} )
@@ -111,18 +112,17 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "input"
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "sendTextMessage", true ) )
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "textMessageAction", true ) )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "textMessageAction", false ) )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 2,grow"
+						"value": "cell 0 2,grow,gapx null 5"
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "sendBtn"
+						"iconTextGap": 0
 						"text": "Send"
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "sendTextMessage", true ) )
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "textMessageAction", true ) )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "textMessageAction", false ) )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "pad 0,cell 0 2,width 50:50,height 30:30,gapx 0 0,gapy 0 0"
+						"value": "pad 0,cell 0 2,growy,height 30:30,gapx 0 0,gapy 0 0"
 					} )
 				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 					"value": "cell 0 0,growy"

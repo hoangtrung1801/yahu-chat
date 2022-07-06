@@ -116,7 +116,7 @@ public class ConversationTab extends JPanel {
 
     // ------------------ ACTION -----------------------
 
-    private void fileAction(ActionEvent e) {
+    private void fileAction() {
         JFileChooser fileChooser = new JFileChooser();
 
         if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
@@ -125,7 +125,7 @@ public class ConversationTab extends JPanel {
         }
     }
 
-    private void imageAction(ActionEvent e) {
+    private void imageAction() {
         if(listener == null) {
             System.out.println("Listener is null ?? ");
         }
@@ -139,7 +139,7 @@ public class ConversationTab extends JPanel {
         }
     }
 
-    private void textMessageAction(ActionEvent e) {
+    private void textMessageAction() {
         if(listener == null) {
             System.out.println("Listener is null ?? ");
         }
@@ -148,34 +148,17 @@ public class ConversationTab extends JPanel {
         listener.sendTextMessage(text);
     }
 
-    private void iconAction(ActionEvent e) {
+    private void iconAction() {
         EmojiPicker emojiPicker = new EmojiPicker();
         emojiPicker.setClickListener(emoji -> {
             input.setText(input.getText() + emoji.getUnicode());
         });
     }
 
-    private void fileAction(MouseEvent e) {
-        // TODO add your code here
-    }
-
-    private void imageAction(MouseEvent e) {
-        // TODO add your code here
-    }
-
-    private void iconAction(MouseEvent e) {
-        // TODO add your code here
-    }
-
-    private void sendTextMessage(ActionEvent e) {
-        // TODO add your code here
-    }
-
     private void videoCallAction(MouseEvent e) {
         System.out.println("Video call ");
         ChatClient.clientGUI.controller.callVideoInConversation(conversation);
     }
-
 
     // ---------------------------------------------------
     private void initComponents() {
@@ -190,9 +173,9 @@ public class ConversationTab extends JPanel {
         scrollPane1 = new JScrollPane();
         messagePane = new JTextPane();
         panel6 = new JPanel();
-        fileBtn = new JButton();
-        imageBtn = new JButton();
-        iconBtn = new JButton();
+        fileBtn = new JLabel();
+        imageBtn = new JLabel();
+        iconBtn = new JLabel();
         input = new JTextField();
         sendBtn = new JButton();
         scrollPane2 = new JScrollPane();
@@ -204,7 +187,7 @@ public class ConversationTab extends JPanel {
             // columns
             "[grow,fill]",
             // rows
-            "[100]" +
+            "[60]" +
             "[24]" +
             "[grow]"));
 
@@ -237,14 +220,14 @@ public class ConversationTab extends JPanel {
 
                 //---- label1 ----
                 label1.setIcon(new ImageIcon(getClass().getResource("/assets/video-call-icon.png")));
-                videoCallBtn.add(label1, "cell 0 0");
+                videoCallBtn.add(label1, "cell 0 0,alignx center,growx 0");
 
                 //---- label2 ----
                 label2.setText("Video call");
                 label2.setFont(label2.getFont().deriveFont(label2.getFont().getStyle() | Font.BOLD));
                 videoCallBtn.add(label2, "cell 0 1");
             }
-            panel1.add(videoCallBtn, "cell 0 0");
+            panel1.add(videoCallBtn, "cell 0 0,alignx center,growx 0");
         }
         add(panel1, "cell 0 0,growy");
 
@@ -259,7 +242,7 @@ public class ConversationTab extends JPanel {
                 new TitledBorder(""),
                 new EmptyBorder(2, 0, 2, 0)));
             panel4.setLayout(new MigLayout(
-                "filly,insets 0,hidemode 3,gap 2 0",
+                "filly,insets 0,hidemode 3,gap 5 0",
                 // columns
                 "[grow,fill]" +
                 "[100,fill]",
@@ -294,7 +277,7 @@ public class ConversationTab extends JPanel {
                 //======== panel6 ========
                 {
                     panel6.setLayout(new MigLayout(
-                        "insets 0,hidemode 3,gap 0 0",
+                        "insets 05 0 5 0,hidemode 3,gap 10 0",
                         // columns
                         "[fill]" +
                         "[fill]" +
@@ -303,54 +286,50 @@ public class ConversationTab extends JPanel {
                         "[]"));
 
                     //---- fileBtn ----
-                    fileBtn.setText("File");
+                    fileBtn.setIcon(new ImageIcon(getClass().getResource("/assets/attachment-icon.png")));
+                    fileBtn.setIconTextGap(0);
+                    fileBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     fileBtn.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            fileAction(e);
+                            fileAction();
                         }
                     });
-                    fileBtn.addActionListener(e -> fileAction(e));
                     panel6.add(fileBtn, "cell 0 0");
 
                     //---- imageBtn ----
-                    imageBtn.setText("Image");
+                    imageBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    imageBtn.setIcon(new ImageIcon(getClass().getResource("/assets/image-icon.png")));
                     imageBtn.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            imageAction(e);
+                            imageAction();
                         }
                     });
-                    imageBtn.addActionListener(e -> imageAction(e));
                     panel6.add(imageBtn, "cell 1 0");
 
                     //---- iconBtn ----
-                    iconBtn.setText("Icon");
+                    iconBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    iconBtn.setIcon(new ImageIcon(getClass().getResource("/assets/icon-icon.png")));
                     iconBtn.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            iconAction(e);
+                            iconAction();
                         }
                     });
-                    iconBtn.addActionListener(e -> iconAction(e));
                     panel6.add(iconBtn, "cell 2 0");
                 }
                 panel5.add(panel6, "cell 0 1");
 
                 //---- input ----
-                input.addActionListener(e -> {
-			sendTextMessage(e);
-			textMessageAction(e);
-		});
-                panel5.add(input, "cell 0 2,grow");
+                input.addActionListener(e -> textMessageAction());
+                panel5.add(input, "cell 0 2,grow,gapx null 5");
 
                 //---- sendBtn ----
+                sendBtn.setIconTextGap(0);
                 sendBtn.setText("Send");
-                sendBtn.addActionListener(e -> {
-			sendTextMessage(e);
-			textMessageAction(e);
-		});
-                panel5.add(sendBtn, "pad 0,cell 0 2,width 50:50,height 30:30,gapx 0 0,gapy 0 0");
+                sendBtn.addActionListener(e -> textMessageAction());
+                panel5.add(sendBtn, "pad 0,cell 0 2,growy,height 30:30,gapx 0 0,gapy 0 0");
             }
             panel4.add(panel5, "cell 0 0,growy");
 
@@ -391,9 +370,9 @@ public class ConversationTab extends JPanel {
     private JScrollPane scrollPane1;
     private JTextPane messagePane;
     private JPanel panel6;
-    private JButton fileBtn;
-    private JButton imageBtn;
-    private JButton iconBtn;
+    private JLabel fileBtn;
+    private JLabel imageBtn;
+    private JLabel iconBtn;
     private JTextField input;
     private JButton sendBtn;
     private JScrollPane scrollPane2;

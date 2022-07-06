@@ -11,7 +11,7 @@ import model.*;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import shared.ConnectionBase;
-import utility.Constants;
+import shared.Constants;
 import utility.HibernateUtils;
 
 import javax.imageio.ImageIO;
@@ -435,6 +435,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                 ServerConnection sc = ChatServer.connectionManager.findWithUser(receiver);
                 if(sc == null) {
                     System.out.println(receiver.getUsername() + " did not join the call!");
+                    ChatServer.gui.log(receiver.getUsername() + " did not join the call!");
                 }
                 sc.sendData(Constants.VIDEO_CALL_EVENT);
                 sc.sendObject(videoCallData);
