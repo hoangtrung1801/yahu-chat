@@ -126,6 +126,10 @@ public class ConversationTab extends JPanel {
     }
 
     private void imageAction(ActionEvent e) {
+        if(listener == null) {
+            System.out.println("Listener is null ?? ");
+        }
+        
         JFileChooser fileChooser = new FileChooserImage();
         fileChooser.setMultiSelectionEnabled(false);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -334,12 +338,18 @@ public class ConversationTab extends JPanel {
                 panel5.add(panel6, "cell 0 1");
 
                 //---- input ----
-                input.addActionListener(e -> sendTextMessage(e));
+                input.addActionListener(e -> {
+			sendTextMessage(e);
+			textMessageAction(e);
+		});
                 panel5.add(input, "cell 0 2,grow");
 
                 //---- sendBtn ----
                 sendBtn.setText("Send");
-                sendBtn.addActionListener(e -> sendTextMessage(e));
+                sendBtn.addActionListener(e -> {
+			sendTextMessage(e);
+			textMessageAction(e);
+		});
                 panel5.add(sendBtn, "pad 0,cell 0 2,width 50:50,height 30:30,gapx 0 0,gapy 0 0");
             }
             panel4.add(panel5, "cell 0 0,growy");
@@ -363,7 +373,11 @@ public class ConversationTab extends JPanel {
             conversation_name.setText(targetUser.getUsername());
         if(conversation != null)
             conversation_name.setText(conversation.getConversationName());
+
         messageDocument = messagePane.getStyledDocument();
+
+        DefaultCaret caret = (DefaultCaret) messagePane.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables

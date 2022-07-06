@@ -75,7 +75,7 @@ public class VideoPanel extends JPanel {
 			g2.drawLine(0, 0, getWidth(), getHeight());
 			g2.drawLine(0, getHeight(), getWidth(), 0);
 
-			String str = image == null ? "Connecting To Server" : "No Image";
+			String str = image == null ? "Connecting..." : "No Image";
 			FontMetrics metrics = g2.getFontMetrics(getFont());
 			int w = metrics.stringWidth(str);
 			int h = metrics.getHeight();
