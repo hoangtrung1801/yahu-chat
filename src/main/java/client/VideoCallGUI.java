@@ -6,6 +6,8 @@ import dto.ConversationDto;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
 public class VideoCallGUI extends JFrame {
@@ -20,6 +22,15 @@ public class VideoCallGUI extends JFrame {
 		this.controller = new VideoCallController(this, conversation);
 		this.window = new JFrame(name);
 		this.videoPannel = new VideoPanel();
+
+		this.window.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				super.windowClosing(e);
+				window.setVisible(false);
+				window.dispose();
+			}
+		});
 
 		this.videoPannel.setPreferredSize(dimension);
 		this.window.add(videoPannel);

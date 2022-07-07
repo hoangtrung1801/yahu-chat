@@ -138,6 +138,7 @@ public class ChatGUIController {
         ConversationTab tab = findConversationTab(conversation);
         if(tab == null) {
             // TODO new message (have not read yet); show notify
+            ChatClient.clientGUI.findConversationCell(conversation).markNotRead();
         } else {
             tab.appendTextMessage(message);
         }
@@ -145,28 +146,13 @@ public class ChatGUIController {
 
     public void showImageMessage(ConversationDto conversation, ImageMessageDto imageMessageDto) {
         findConversationTab(conversation)
-                .appendImage(
-                        imageMessageDto
-                );
+                .appendImage(imageMessageDto);
     }
 
     public void showFileMessage(ConversationDto conversation, FileMessageDto fileMessageDto) {
         findConversationTab(conversation)
                 .appendFile(fileMessageDto);
     }
-
-//    public void showMessageSentBefore() {
-//        for(MessageDto message: messagesSentBefore) {
-//            switch (message.getMessageType()) {
-//                case TEXT -> gui.appendTextMessage(message.getUser().getUsername(), message.getMessageText());
-//                case IMAGE -> gui.appendImage(message.getUser().getUsername(), ((ImageMessageDto) message).getImage());
-//            }
-//        }
-//    }
-//
-//    public void insertIcon(Emoji emoji) {
-//        gui.getInput().setText(gui.getInput().getText() + emoji.getUnicode());
-//    }
 
     public ConversationTab findConversationTab(ConversationDto conversation) {
         for(ConversationTab tab : conversationTabs)

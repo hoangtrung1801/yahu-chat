@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +29,7 @@ public class ClientGUI extends JFrame {
     public ClientGUIController controller;
     public Set<UserDto> listOnlineUsers;
 
-    public List<ConversationDto> listConversations;
+    public List<ConversationCell> listConversationCells;
 
     public ClientGUI() {
         this.controller = new ClientGUIController(this);
@@ -48,31 +49,28 @@ public class ClientGUI extends JFrame {
         }
     }
     //    // --------------------------------------------------
-    public void updateOnlineUsersPanel(Set<UserDto> listOnlineUsers) {
-        this.listOnlineUsers = listOnlineUsers;
-        listConversationPane.removeAll();
-        for(UserDto onlineUser : listOnlineUsers) {
-            if(onlineUser.getId().equals(ChatClient.user.getId())) continue;
-            ConversationCell cell = new ConversationCell(onlineUser);
-            listConversationPane.add(cell);
-        }
-        listConversationPane.updateUI();
-    }
-
-    public void updateListConversations(List<ConversationDto> conversations) {
-        this.listConversations = conversations;
-        listConversationPane.removeAll();
-        for(ConversationDto conversation: conversations) {
-            ConversationCell cell = new ConversationCell(conversation);
-            listConversationPane.add(cell);
-        }
-        listConversationPane.updateUI();
-    }
-
     private void addContactAction(MouseEvent e) {
         if(newContactGUI == null)
             newContactGUI = new NewContactGUI();
         newContactGUI.setVisible(true);
+    }
+
+    public void updateListConversations(List<ConversationDto> conversations) {
+        this.listConversationCells = new ArrayList<>();
+        listConversationPane.removeAll();
+        for(ConversationDto conversation: conversations) {
+            ConversationCell cell = new ConversationCell(conversation);
+            listConversationPane.add(cell);
+            listConversationCells.add(cell);
+        }
+        listConversationPane.updateUI();
+    }
+
+    public ConversationCell findConversationCell(ConversationDto conversation) {
+        for(var cell : listConversationCells) {
+            if(cell.getConversation().equals(conversation)) return cell;
+        }
+        return null;
     }
 
     // -------------------- Design ---------------------------------

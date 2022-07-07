@@ -66,8 +66,8 @@ public class ClientConnection extends ConnectionBase implements Runnable {
     // --------------- EVENT -----------------
     private void onlineUsersEvent() {
         try {
-            Set<UserDto> onlineUsers = (Set<UserDto>) ois.readObject();
-            ChatClient.clientGUI.updateOnlineUsersPanel(onlineUsers);
+//            Set<UserDto> onlineUsers = (Set<UserDto>) ois.readObject();
+//            ChatClient.clientGUI.updateOnlineUsersPanel(onlineUsers);
         } catch (Exception e) {
             e.printStackTrace();
         }
