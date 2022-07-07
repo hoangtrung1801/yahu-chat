@@ -27,7 +27,8 @@ public class ClientGUI extends JFrame {
     }
 
     public ClientGUIController controller;
-    public Set<UserDto> listOnlineUsers;
+    private NewContactGUI newContactGUI;
+    private NewGroupUsersGUI newGroupUsersGUI;
 
     public List<ConversationCell> listConversationCells;
 
@@ -55,6 +56,11 @@ public class ClientGUI extends JFrame {
         newContactGUI.setVisible(true);
     }
 
+    private void addGroupUsersAction() {
+        if(newGroupUsersGUI == null) newGroupUsersGUI = new NewGroupUsersGUI();
+        newGroupUsersGUI.setVisible(true);
+    }
+
     public void updateListConversations(List<ConversationDto> conversations) {
         this.listConversationCells = new ArrayList<>();
         listConversationPane.removeAll();
@@ -73,6 +79,7 @@ public class ClientGUI extends JFrame {
         return null;
     }
 
+
     // -------------------- Design ---------------------------------
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -83,6 +90,9 @@ public class ClientGUI extends JFrame {
         addContactBtn = new JPanel();
         label1 = new JLabel();
         label2 = new JLabel();
+        addGroupUsersBtn = new JPanel();
+        label3 = new JLabel();
+        label4 = new JLabel();
         listConversationScrollPane = new JScrollPane();
         listConversationPane = new JPanel();
 
@@ -133,7 +143,7 @@ public class ClientGUI extends JFrame {
         //======== actionPane ========
         {
             actionPane.setLayout(new MigLayout(
-                "insets 0,hidemode 3",
+                "insets 0,hidemode 3,gapx 16",
                 // columns
                 "[fill]",
                 // rows
@@ -161,10 +171,37 @@ public class ClientGUI extends JFrame {
                 addContactBtn.add(label1, "cell 0 0,align center center,grow 0 0");
 
                 //---- label2 ----
-                label2.setText("Add");
+                label2.setText("Add Friend");
                 addContactBtn.add(label2, "cell 0 1,alignx center,growx 0");
             }
             actionPane.add(addContactBtn, "cell 0 0");
+
+            //======== addGroupUsersBtn ========
+            {
+                addGroupUsersBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                addGroupUsersBtn.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        addGroupUsersAction();
+                    }
+                });
+                addGroupUsersBtn.setLayout(new MigLayout(
+                    "hidemode 3,align center center,gap 0 0, insets 0",
+                    // columns
+                    "[fill]",
+                    // rows
+                    "[]" +
+                    "[]"));
+
+                //---- label3 ----
+                label3.setIcon(new ImageIcon(getClass().getResource("/assets/add-group-users.png")));
+                addGroupUsersBtn.add(label3, "cell 0 0,align center center,grow 0 0");
+
+                //---- label4 ----
+                label4.setText("Add Group");
+                addGroupUsersBtn.add(label4, "cell 0 1,alignx center,growx 0");
+            }
+            actionPane.add(addGroupUsersBtn, "cell 1 0");
         }
         contentPane.add(actionPane, "cell 0 1");
 
@@ -199,11 +236,17 @@ public class ClientGUI extends JFrame {
     private JPanel addContactBtn;
     private JLabel label1;
     private JLabel label2;
+    private JPanel addGroupUsersBtn;
+    private JLabel label3;
+    private JLabel label4;
     private JScrollPane listConversationScrollPane;
     private JPanel listConversationPane;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
-    private NewContactGUI newContactGUI;
 
     public NewContactGUI getNewContactGUI() {return newContactGUI;};
+
+    public NewGroupUsersGUI getNewGroupUsersGUI() {
+        return newGroupUsersGUI;
+    }
 }

@@ -1,0 +1,169 @@
+JFDML JFormDesigner: "7.0.5.4.420" Java: "11.0.15" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "hidemode 3"
+			"$columnConstraints": "[grow,fill]"
+			"$rowConstraints": "[][][][][grow][][grow][]"
+		} ) {
+			name: "this"
+			"$sizePolicy": 1
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "Add new group"
+				"font": new java.awt.Font( "Segoe UI", 1, 18 )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0,alignx center,growx 0"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "insets 0,hidemode 3"
+				"$columnConstraints": "[fill][grow,fill]"
+				"$rowConstraints": "[]"
+			} ) {
+				name: "panel2"
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label5"
+					"text": "Name:"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0"
+				} )
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "lConversationName"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 1 0"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "Find users: "
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 2"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "insets 0 20 0 20,hidemode 3"
+				"$columnConstraints": "[grow,fill][fill]"
+				"$rowConstraints": "[]"
+			} ) {
+				name: "panel1"
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "input"
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0"
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button1"
+					"text": "Find"
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "findUser", false ) )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 1 0"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 3"
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane1"
+				"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "flowy,insets 0 20 0 20,hidemode 3,aligny top"
+					"$columnConstraints": "[grow,fill]"
+					"$rowConstraints": "[]"
+				} ) {
+					name: "newUserContainer"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 4,growy"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label3"
+				"text": "Users in  group:"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 5"
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane2"
+				"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "flowy,insets 0 20 0 20,hidemode 3,aligny top"
+					"$columnConstraints": "[grow,fill]"
+					"$rowConstraints": "[]"
+				} ) {
+					name: "listUsersInGroup"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 6,growy"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "addNewGroupBtn"
+				"text": "Confirm"
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "confirmAddNewGroup", false ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 7,alignx center,growx 0"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 300, 400 )
+		} )
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "insets 0,hidemode 3"
+			"$columnConstraints": "[fill][grow,fill][fill]"
+			"$rowConstraints": "[]"
+		} ) {
+			name: "userInGroupItem"
+			auxiliary() {
+				"JavaCodeGenerator.className": "UserInGroupItem"
+			}
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label4"
+				"text": "+"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "usernameInNewUser"
+				"text": "text"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 0"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "button2"
+				"text": "X"
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "removeUserInGroupAction", false ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 2 0,width 30:30"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 462 )
+			"size": new java.awt.Dimension( 244, 30 )
+		} )
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "insets 0,hidemode 3"
+			"$columnConstraints": "[grow,fill][fill]"
+			"$rowConstraints": "[]"
+		} ) {
+			name: "newContactItem"
+			auxiliary() {
+				"JavaCodeGenerator.className": "NewContactItem"
+			}
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "username"
+				"text": "hoangtrung1801"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "addUserBtn"
+				"text": "ADD"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "addUserAction", false ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 0"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 416 )
+			"size": new java.awt.Dimension( 244, 30 )
+		} )
+	}
+}

@@ -37,7 +37,7 @@ new FormModel {
 				"value": "cell 0 0"
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
-				"$layoutConstraints": "insets 0,hidemode 3"
+				"$layoutConstraints": "insets 0,hidemode 3,gapx 16"
 				"$columnConstraints": "[fill]"
 				"$rowConstraints": "[fill]"
 			} ) {
@@ -48,7 +48,7 @@ new FormModel {
 					"$rowConstraints": "[][]"
 				} ) {
 					name: "addContactBtn"
-					"cursor": new java.awt.Cursor( 12 )
+					"cursor": &Cursor0 new java.awt.Cursor( 12 )
 					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "addContactAction", true ) )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label1"
@@ -58,12 +58,35 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label2"
-						"text": "Add"
+						"text": "Add Friend"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 1,alignx center,growx 0"
 					} )
 				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 					"value": "cell 0 0"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "hidemode 3,align center center,gap 0 0, insets 0"
+					"$columnConstraints": "[fill]"
+					"$rowConstraints": "[][]"
+				} ) {
+					name: "addGroupUsersBtn"
+					"cursor": #Cursor0
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "addGroupUsersAction", false ) )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label3"
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/assets/add-group-users.png" )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 0,align center center,grow 0 0"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label4"
+						"text": "Add Group"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 1,alignx center,growx 0"
+					} )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 1 0"
 				} )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 1"

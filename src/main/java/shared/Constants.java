@@ -12,6 +12,7 @@ public class Constants {
     public static String GET_MESSAGES_IN_CONVERSATION_EVENT = "GET_MESSAGES_IN_CONVERSATION_EVENT";
     public static String NEW_CONVERSATION_EVENT = "NEW_CONVERSATION_EVENT";
     public static String FIND_CONTACT = "FIND_CONTACT";
+    public static String FIND_USER_NEW_GROUP = "FIND_USER_NEW_GROUP";
     public static String VIDEO_CALL_EVENT = "VIDEO_CALL_EVENT";
     public static String REQUEST_DOWNLOAD_FILE = "REQUEST_DOWNLOAD_FILE";
 

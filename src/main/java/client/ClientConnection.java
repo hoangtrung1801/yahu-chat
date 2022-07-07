@@ -2,6 +2,8 @@ package client;
 
 import dto.*;
 import model.MessageType;
+import model.User;
+import org.imgscalr.Scalr;
 import org.modelmapper.ModelMapper;
 import shared.ConnectionBase;
 import shared.Constants;
@@ -14,7 +16,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ClientConnection extends ConnectionBase implements Runnable {
     public ClientConnection() {
@@ -33,9 +35,7 @@ public class ClientConnection extends ConnectionBase implements Runnable {
                     String type = ois.readUTF();
                     System.out.println("RECEIVED:  " + type);
 
-                    if (type.equals(Constants.USER_LOGGED)) {
-                        onlineUsersEvent();
-                    } else if (type.equals(Constants.LIST_CONVERSATIONS_EVENT)) {
+                    if (type.equals(Constants.LIST_CONVERSATIONS_EVENT)) {
                         listConversationsEvent();
                     } else if (type.equals(Constants.TEXT_MESSAGE_EVENT)) {
                         textMessageEvent();
@@ -53,6 +53,8 @@ public class ClientConnection extends ConnectionBase implements Runnable {
                         videoCallEvent();
                     } else if(type.equals(Constants.REQUEST_DOWNLOAD_FILE)) {
                         requestDownloadFile();
+                    } else if(type.equals(Constants.FIND_USER_NEW_GROUP)) {
+                        findUserNewGroup();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -64,15 +66,6 @@ public class ClientConnection extends ConnectionBase implements Runnable {
     }
 
     // --------------- EVENT -----------------
-    private void onlineUsersEvent() {
-        try {
-//            Set<UserDto> onlineUsers = (Set<UserDto>) ois.readObject();
-//            ChatClient.clientGUI.updateOnlineUsersPanel(onlineUsers);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void listConversationsEvent() {
         try {
             List<ConversationDto> listConversations = (List<ConversationDto>) ois.readObject();
@@ -144,6 +137,15 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         try {
             List<UserDto> users = (List<UserDto>) ois.readObject();
             ChatClient.clientGUI.getNewContactGUI().foundContact(users);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void findUserNewGroup() {
+        try {
+            List<UserDto> userDtos = (List<UserDto>) ois.readObject();
+            ChatClient.clientGUI.getNewGroupUsersGUI().foundUsers(userDtos);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -260,11 +262,24 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         sendData(target);
     }
 
+    public void sendFindUserNewGroup(String target) {
+        sendData(Constants.FIND_USER_NEW_GROUP);
+        sendData(target);
+    }
+
     public void sendNewConversationWithUser(UserDto targetUser) {
         ModelMapper modelMapper = new ModelMapper();
-        sendData(Constants.NEW_CONVERSATION_EVENT);
         List<UserDto> users = new ArrayList<>(Arrays.asList(modelMapper.map(ChatClient.user, UserDto.class), targetUser));
+
+        sendData(Constants.NEW_CONVERSATION_EVENT);
         sendObject(users);
+        sendData(users.stream().map(UserDto::getUsername).collect(Collectors.joining(Constants.conversationBtw2SplitChar)));
+    }
+
+    public void sendNewConversationWithMutilUser(List<UserDto> users, String conversationName) {
+        sendData(Constants.NEW_CONVERSATION_EVENT);
+        sendObject(users);
+        sendData(conversationName);
     }
 
     public void sendVideoCallData(ConversationDto conversation, BufferedImage buffer) {

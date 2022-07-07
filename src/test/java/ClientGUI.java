@@ -42,6 +42,9 @@ public class ClientGUI extends JFrame {
         }
     }
 
+    private void addGroupUsersAction() {
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         userPane = new JPanel();
@@ -51,6 +54,9 @@ public class ClientGUI extends JFrame {
         addFriendBtn = new JPanel();
         label1 = new JLabel();
         label2 = new JLabel();
+        addGroupUsersBtn = new JPanel();
+        label4 = new JLabel();
+        label5 = new JLabel();
         listConversationScrollPane = new JScrollPane();
         listConversationPane = new JPanel();
 
@@ -101,8 +107,10 @@ public class ClientGUI extends JFrame {
         //======== actionPane ========
         {
             actionPane.setLayout(new MigLayout(
-                "insets 0,hidemode 3",
+                "insets 0,hidemode 3,gapx 16",
                 // columns
+                "[fill]" +
+                "[fill]" +
                 "[fill]",
                 // rows
                 "[fill]"));
@@ -123,10 +131,37 @@ public class ClientGUI extends JFrame {
                 addFriendBtn.add(label1, "cell 0 0,align center center,grow 0 0");
 
                 //---- label2 ----
-                label2.setText("asdasd");
+                label2.setText("Add Friend");
                 addFriendBtn.add(label2, "cell 0 1,alignx center,growx 0");
             }
             actionPane.add(addFriendBtn, "cell 0 0");
+
+            //======== addGroupUsersBtn ========
+            {
+                addGroupUsersBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                addGroupUsersBtn.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        addGroupUsersAction();
+                    }
+                });
+                addGroupUsersBtn.setLayout(new MigLayout(
+                    "hidemode 3,align center center,gap 0 0, insets 0",
+                    // columns
+                    "[fill]",
+                    // rows
+                    "[]" +
+                    "[]"));
+
+                //---- label4 ----
+                label4.setIcon(new ImageIcon(getClass().getResource("/assets/add-group-users.png")));
+                addGroupUsersBtn.add(label4, "cell 0 0,align center center,grow 0 0");
+
+                //---- label5 ----
+                label5.setText("Add Group");
+                addGroupUsersBtn.add(label5, "cell 0 1,alignx center,growx 0");
+            }
+            actionPane.add(addGroupUsersBtn, "cell 1 0");
         }
         contentPane.add(actionPane, "cell 0 1");
 
@@ -160,6 +195,9 @@ public class ClientGUI extends JFrame {
     private JPanel addFriendBtn;
     private JLabel label1;
     private JLabel label2;
+    private JPanel addGroupUsersBtn;
+    private JLabel label4;
+    private JLabel label5;
     private JScrollPane listConversationScrollPane;
     private JPanel listConversationPane;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
