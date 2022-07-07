@@ -105,6 +105,20 @@ public class ChatGUIController {
         }
     }
 
+    public void setupUsersInConversation(ConversationDto conversation, List<UserDto> users) {
+        ConversationTab tab = null;
+        for(ConversationTab ctab: conversationTabs)
+            if(ctab.getConversation().equals(conversation))
+                tab = ctab;
+
+        if(tab == null) {
+            System.out.println("tab null");
+            return;
+        }
+
+        tab.showListUsersInConversation(users);
+    }
+
     // -------------------------- Action --------------------------
     public void sendTextMessage(ConversationDto conversation, String text) {
         ChatClient.connection.sendMessageInConversation(conversation, text);

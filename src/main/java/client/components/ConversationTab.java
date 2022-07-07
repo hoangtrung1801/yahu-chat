@@ -196,6 +196,18 @@ public class ConversationTab extends JPanel {
         }
     }
 
+    public void showListUsersInConversation(List<UserDto> users) {
+        try {
+            StyledDocument document = listUsersInConversationPane.getStyledDocument();
+            for (UserDto user : users) {
+                document.insertString(document.getLength(), "+ " + user.getUsername(), null);
+                document.insertString(document.getLength(), "\n", null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // ---------------------------------------------------
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -215,7 +227,7 @@ public class ConversationTab extends JPanel {
         input = new JTextField();
         sendBtn = new JButton();
         scrollPane2 = new JScrollPane();
-        textPane2 = new JTextPane();
+        listUsersInConversationPane = new JTextPane();
 
         //======== this ========
         setFont(new Font("Yu Gothic UI", Font.BOLD, 12));
@@ -376,12 +388,12 @@ public class ConversationTab extends JPanel {
             {
                 scrollPane2.setBorder(null);
 
-                //---- textPane2 ----
-                textPane2.setBackground(Color.white);
-                textPane2.setBorder(null);
-                textPane2.setEditable(false);
-                textPane2.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
-                scrollPane2.setViewportView(textPane2);
+                //---- listUsersInConversationPane ----
+                listUsersInConversationPane.setBackground(Color.white);
+                listUsersInConversationPane.setBorder(null);
+                listUsersInConversationPane.setEditable(false);
+                listUsersInConversationPane.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
+                scrollPane2.setViewportView(listUsersInConversationPane);
             }
             panel4.add(scrollPane2, "cell 1 0,grow");
         }
@@ -418,7 +430,7 @@ public class ConversationTab extends JPanel {
     private JTextField input;
     private JButton sendBtn;
     private JScrollPane scrollPane2;
-    private JTextPane textPane2;
+    private JTextPane listUsersInConversationPane;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private class  FileLabel extends JLabel {

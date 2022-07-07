@@ -47,6 +47,8 @@ public class ClientConnection extends ConnectionBase implements Runnable {
                         findConversationWithUsers();
                     } else if (type.equals(Constants.GET_MESSAGES_IN_CONVERSATION_EVENT)) {
                         getMessagesInConversationEvent();
+                    } else if (type.equals(Constants.GET_USERS_IN_CONVERSATION_EVENT)) {
+                        getUsersInConversationEvent();
                     } else if (type.equals(Constants.FIND_CONTACT)) {
                         findContact();
                     } else if(type.equals(Constants.VIDEO_CALL_EVENT)) {
@@ -128,6 +130,18 @@ public class ClientConnection extends ConnectionBase implements Runnable {
 
             ChatGUI chatGUI = ChatClient.clientGUI.controller.chatGUI;
             chatGUI.controller.setupMessageInConversation(conversation, messages);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getUsersInConversationEvent() {
+        try {
+            ConversationDto conversation = (ConversationDto) ois.readObject();
+            List<UserDto> users = (List<UserDto>) ois.readObject();
+
+            ChatGUI chatGUI = ChatClient.clientGUI.controller.chatGUI;
+            chatGUI.controller.setupUsersInConversation(conversation, users);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -256,6 +270,11 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         sendData(Constants.GET_MESSAGES_IN_CONVERSATION_EVENT);
         sendObject(conversation);
     }
+
+//    public void sendGetsUsersInConversation(ConversationDto conversation) {
+//        sendData(Constants.GET_USERS_IN_CONVERSATION_EVENT);
+//        sendObject(conversation);
+//    }
 
     public void sendFindContact(String target) {
         sendData(Constants.FIND_CONTACT);

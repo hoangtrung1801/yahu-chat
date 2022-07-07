@@ -349,6 +349,23 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                 return null;
             }).toList();
             sendObject(messages);
+
+            // KF
+            // get users in conversation event
+            /*
+            in:
+                get_users_in_conversation
+                ConversationDto
+            out:
+                get_users_in_conversation
+                ConversationDto
+                List<UserDto>
+             */
+            List<User> users = conversation.getGroupMembers().stream().map(gm -> gm.getUser()).toList();
+            List<UserDto> userDtos = users.stream().map(user -> modelMapper.map(user, UserDto.class)).toList();
+            sendData(Constants.GET_USERS_IN_CONVERSATION_EVENT);
+            sendObject(conversationDto);
+            sendObject(userDtos);
         } catch (Exception e) {
             e.printStackTrace();
         }

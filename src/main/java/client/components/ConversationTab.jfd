@@ -134,7 +134,7 @@ new FormModel {
 					name: "scrollPane2"
 					"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
 					add( new FormComponent( "javax.swing.JTextPane" ) {
-						name: "textPane2"
+						name: "listUsersInConversationPane"
 						"background": new java.awt.Color( 255, 255, 255, 255 )
 						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
 						"editable": false
