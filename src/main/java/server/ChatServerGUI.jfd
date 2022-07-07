@@ -10,7 +10,7 @@ new FormModel {
 		} ) {
 			name: "this"
 			"$sizePolicy": 1
-			"defaultCloseOperation": 2
+			"defaultCloseOperation": 3
 			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 				name: "logScrollPane"
 				"border": new javax.swing.border.CompoundBorder( new javax.swing.border.TitledBorder( "Log" ), new javax.swing.border.EmptyBorder( 1, 0, 0, 0 ) )

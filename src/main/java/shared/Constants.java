@@ -23,12 +23,14 @@ public class Constants {
     public static int CHAT_GUI_HEIGHT = 600;
     public static int CLIENT_GUI_WIDTH = 300;
     public static int CLIENT_GUI_HEIGHT = 600;
+    public static int MAX_SIZE_SOCKET = 65536;
+
     public static int PORT = 3000;
     public static String URL = "localhost";
 
     public static String SEPARATE_MARKER = ";";
     public static String imagesPath = Paths.get("storage", "images").toString();
     public static String filesPath = Paths.get("storage", "files").toString();
+    public static String conversationBtw2SplitChar = "/";
 
-    public static int MAX_SIZE_SOCKET = 65536;
 }

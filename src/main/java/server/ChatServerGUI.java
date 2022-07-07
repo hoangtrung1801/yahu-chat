@@ -53,7 +53,7 @@ public class ChatServerGUI extends JFrame {
 
     public void log(User user, String message) {
         try {
-            document.insertString(document.getLength(), user.getUsername() + "> " +  message + "\n", null);
+            document.insertString(document.getLength(), (user == null ? "" : user.getUsername()) + "> " +  message + "\n", null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -82,7 +82,7 @@ public class ChatServerGUI extends JFrame {
         statusLabel = new StatusLabel();
 
         //======== this ========
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         var contentPane = getContentPane();
         contentPane.setLayout(new MigLayout(
             "hidemode 3",

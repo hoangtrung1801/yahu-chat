@@ -1,7 +1,9 @@
 package shared;
 
+import client.ChatClient;
+import dto.ConversationDto;
+import dto.UserDto;
 import net.bytebuddy.utility.RandomString;
-import shared.Constants;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -42,5 +44,19 @@ public class Helper {
                 Constants.imagesPath,
                 RandomString.make(16) + ".png"
         ).toString();
+    }
+
+    public static String getConversationNameFromConversation(ConversationDto conversation, UserDto user) {
+        String conversationName = conversation.getConversationName();
+        List<String> conversationNameSplitted = Arrays.stream(conversationName.split(Constants.conversationBtw2SplitChar)).toList();
+        if(conversationNameSplitted.size() == 2) {
+            if(conversationNameSplitted.get(0).equals(user.getUsername())) {
+                return conversationNameSplitted.get(1);
+            } else {
+                return conversationNameSplitted.get(0);
+            }
+        } else {
+            return conversation.getConversationName();
+        }
     }
 }

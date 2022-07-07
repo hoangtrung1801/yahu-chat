@@ -25,6 +25,12 @@ public class ChatGUI extends JFrame {
         init();
     }
 
+    public void requestFocusInTab(ConversationTab tab) {
+        // if conversation tab have already opened
+        tabConversation.setSelectedIndex(controller.conversationTabs.indexOf(tab));
+        tabConversation.requestFocus();
+    }
+
     public void init() {
         initComponents();
     }

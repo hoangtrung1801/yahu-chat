@@ -15,8 +15,13 @@ import dto.UserDto;
 import model.Conversation;
 import net.miginfocom.swing.*;
 import org.imgscalr.Scalr;
+import org.modelmapper.ModelMapper;
+import shared.Constants;
+import shared.Helper;
 
 import java.awt.event.MouseAdapter;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author unknown
@@ -37,13 +42,30 @@ public class ConversationCell extends JPanel {
         this.targetUser = targetUser;
         initComponents();
 
+        // conversation name
+        // if having only 2 user, get specific name
         username.setText(targetUser.getUsername());
     }
 
     public ConversationCell(ConversationDto conversation) {
         this.conversation = conversation;
         initComponents();
-        username.setText(conversation.getConversationName());
+
+        // conversation name
+        // if having only 2 user, get specific name
+        ModelMapper modelMapper = new ModelMapper();
+        username.setText(Helper.getConversationNameFromConversation(conversation, modelMapper.map(ChatClient.user, UserDto.class)));
+//        String conversationName = conversation.getConversationName();
+//        List<String> conversationNameSplitted = Arrays.stream(conversationName.split(Constants.conversationBtw2SplitChar)).toList();
+//        if(conversationNameSplitted.size() == 2) {
+//            if(conversationNameSplitted.get(0).equals(ChatClient.user.getUsername())) {
+//                username.setText(conversationNameSplitted.get(1));
+//            } else {
+//                username.setText(conversationNameSplitted.get(0));
+//            }
+//        } else {
+//            username.setText(conversation.getConversationName());
+//        }
     }
 
     public ConversationCell() {

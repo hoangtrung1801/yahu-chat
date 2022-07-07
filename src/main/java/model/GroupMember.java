@@ -77,4 +77,14 @@ public class GroupMember {
         this.leftDatetime = leftDatetime;
     }
 
+    @Override
+    public String toString() {
+        return "GroupMember{" +
+                "id=" + id +
+                ", user=" + user.getUsername() +
+                ", conversation=" + conversation.getConversationName() +
+                ", joinedDatetime=" + joinedDatetime +
+                ", leftDatetime=" + leftDatetime +
+                '}';
+    }
 }

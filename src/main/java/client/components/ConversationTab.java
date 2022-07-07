@@ -18,9 +18,14 @@ import client.ChatGUI;
 import client.emojipicker.EmojiPicker;
 import dto.ConversationDto;
 import dto.GroupMemberDto;
+import dto.MessageDto;
 import dto.UserDto;
+import model.Message;
 import net.miginfocom.swing.*;
 import org.imgscalr.Scalr;
+import org.modelmapper.ModelMapper;
+import shared.Helper;
+import utility.MessageAttributeSet;
 
 /**
  * @author unknown
@@ -30,7 +35,6 @@ public class ConversationTab extends JPanel {
         JFrame frame = new JFrame();
 
         ConversationTab conversationTab = new ConversationTab();
-        conversationTab.appendTextMessage("hoangtrung", "hello");
 
         frame.setContentPane(conversationTab);
 
@@ -75,6 +79,24 @@ public class ConversationTab extends JPanel {
     public void appendTextMessage(String name, String textMessage) {
         try {
             messageDocument.insertString(messageDocument.getLength(), name + ": " + textMessage, null);
+            insertEndlineDocument();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void appendTextMessage(MessageDto message) {
+        try {
+            SimpleAttributeSet styleUsername;
+            if(message.getUser().getUsername().equals(ChatClient.user.getUsername())) {
+                // if being current user
+                styleUsername = MessageAttributeSet.getAttrForUsername();
+            } else {
+                // target user
+                styleUsername = MessageAttributeSet.getAttrForTargetUsername();
+            }
+            messageDocument.insertString(messageDocument.getLength(), message.getUser().getUsername() + ": ", styleUsername);
+            messageDocument.insertString(messageDocument.getLength(), message.getMessageText(), MessageAttributeSet.getAttrForMessageText());
             insertEndlineDocument();
         } catch (Exception e) {
             e.printStackTrace();
@@ -133,7 +155,7 @@ public class ConversationTab extends JPanel {
         JFileChooser fileChooser = new FileChooserImage();
         fileChooser.setMultiSelectionEnabled(false);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+        if(fileChooser.showOpenDialog(this) == JFileChooser.FILES_ONLY) {
             File fileChosen = fileChooser.getSelectedFile();
             listener.sendImageMessage(fileChosen);
         }
@@ -350,8 +372,10 @@ public class ConversationTab extends JPanel {
 
         if(targetUser != null)
             conversation_name.setText(targetUser.getUsername());
-        if(conversation != null)
-            conversation_name.setText(conversation.getConversationName());
+        if(conversation != null) {
+            ModelMapper modelMapper = new ModelMapper();
+            conversation_name.setText(Helper.getConversationNameFromConversation(conversation, modelMapper.map(ChatClient.user, UserDto.class)));
+        }
 
         messageDocument = messagePane.getStyledDocument();
 

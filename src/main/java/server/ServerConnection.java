@@ -375,7 +375,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
 
             Conversation conversation = new Conversation();
             conversation.setConversationName(
-                    userDtos.stream().map(UserDto::getUsername).collect(Collectors.joining(", "))
+                    userDtos.stream().map(UserDto::getUsername).collect(Collectors.joining(Constants.conversationBtw2SplitChar))
             );
             conversation = conversationDAO.create(conversation);
 

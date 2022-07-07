@@ -4,6 +4,7 @@ import client.components.ConversationTab;
 import dto.*;
 import org.modelmapper.ModelMapper;
 import shared.Constants;
+import shared.Helper;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -16,8 +17,8 @@ public class ChatGUIController {
 
     private UserDto targetUser;
     private ConversationDto conversation;
-    private List<MessageDto> messagesSentBefore;
-    private List<ConversationTab> conversationTabs;
+    protected List<MessageDto> messagesSentBefore;
+    protected List<ConversationTab> conversationTabs;
 
     public ChatGUI gui;
 
@@ -28,17 +29,20 @@ public class ChatGUIController {
 
     public void initConversationTab(ConversationTab conversationTab, ConversationDto conversation ) {
         //
-        gui.getTabConversation().addTab(conversation.getConversationName(), conversationTab);
-
         ModelMapper modelMapper = new ModelMapper();
-        UserDto userDto = modelMapper.map(ChatClient.user, UserDto.class);
-//        ChatClient.connection.sendFindConversationWithUsers(userDto, conversationTab.getTargetUser());
+        gui.getTabConversation().addTab(Helper.getConversationNameFromConversation(conversation, modelMapper.map(ChatClient.user, UserDto.class)), conversationTab);
+        gui.requestFocusInTab(conversationTab);
+
         ChatClient.connection.sendGetMessagesInConversation(conversation);
     }
 
     public void addConversation(ConversationDto conversation) {
         for(ConversationTab tab : conversationTabs)
-            if(tab.getConversation().equals(conversation)) return;
+            if(tab.getConversation().equals(conversation)) {
+                // if conversation tab have already opened
+                gui.requestFocusInTab(tab);
+                return;
+            }
 
         ConversationTab conversationTab = new ConversationTab(gui, conversation);
         conversationTabs.add(conversationTab);
@@ -67,33 +71,19 @@ public class ChatGUIController {
         initConversationTab(conversationTab, conversation);
     }
 
-//    public void addConversation(UserDto targetUser) {
-//        for(ConversationTab tab : conversationTabs)
-//            if(tab.getTargetUser().equals(targetUser)) return;
+//    public void setupMessageInConversationTwoUser(List<UserDto> users, List<MessageDto> messages) {
+//        ConversationTab tab = null;
+//        for(ConversationTab ctab: conversationTabs)
+//            if(users.contains(ctab.getTargetUser()))
+//                tab = ctab;
 //
-//        ConversationTab conversationTab = new ConversationTab(gui, targetUser);
-//        conversationTabs.add(conversationTab);
-//        System.out.println("Set listener...");
-//
-//
-//        initConversationTab(conversationTab, null);
+//        for(MessageDto message: messages) {
+//            switch (message.getMessageType()) {
+//                case TEXT -> tab.appendTextMessage(message.getUser().getUsername(), message.getMessageText());
+//                case IMAGE -> tab.appendImage(message.getUser().getUsername(), ((ImageMessageDto) message).getImage());
+//            }
+//        }
 //    }
-
-
-
-    public void setupMessageInConversationTwoUser(List<UserDto> users, List<MessageDto> messages) {
-        ConversationTab tab = null;
-        for(ConversationTab ctab: conversationTabs)
-            if(users.contains(ctab.getTargetUser()))
-                tab = ctab;
-
-        for(MessageDto message: messages) {
-            switch (message.getMessageType()) {
-                case TEXT -> tab.appendTextMessage(message.getUser().getUsername(), message.getMessageText());
-                case IMAGE -> tab.appendImage(message.getUser().getUsername(), ((ImageMessageDto) message).getImage());
-            }
-        }
-    }
 
     public void setupMessageInConversation(ConversationDto conversation, List<MessageDto> messages) {
         ConversationTab tab = null;
@@ -108,7 +98,7 @@ public class ChatGUIController {
 
         for(MessageDto message: messages) {
             switch (message.getMessageType()) {
-                case TEXT -> tab.appendTextMessage(message.getUser().getUsername(), message.getMessageText());
+                case TEXT -> tab.appendTextMessage(message);
                 case IMAGE -> tab.appendImage(message.getUser().getUsername(), ((ImageMessageDto) message).getImage());
                 case FILE -> tab.appendFile(message.getUser().getUsername(), ((FileMessageDto) message).getFilename());
             }
@@ -145,7 +135,12 @@ public class ChatGUIController {
     }
 
     public void showTextMessage(ConversationDto conversation, MessageDto message) {
-        findConversationTab(conversation).appendTextMessage(message.getUser().getUsername(), message.getMessageText());
+        ConversationTab tab = findConversationTab(conversation);
+        if(tab == null) {
+            // TODO new message (have not read yet); show notify
+        } else {
+            tab.appendTextMessage(message);
+        }
     }
 
     public void showImageMessage(ConversationDto conversation, ImageMessageDto imageMessageDto) {

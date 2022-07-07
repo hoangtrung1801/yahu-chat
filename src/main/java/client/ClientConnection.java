@@ -121,7 +121,7 @@ public class ClientConnection extends ConnectionBase implements Runnable {
             List<MessageDto> messages = (List<MessageDto>) ois.readObject();
 
             ChatGUI chatGUI = ChatClient.clientGUI.controller.chatGUI;
-            chatGUI.controller.setupMessageInConversationTwoUser(users, messages);
+//            chatGUI.controller.setupMessageInConversationTwoUser(users, messages);
         } catch (Exception e) {
             e.printStackTrace();
         }
