@@ -8,18 +8,17 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.filechooser.FileView;
 import javax.swing.text.*;
 
 import client.ChatClient;
 import client.ChatGUI;
 import client.emojipicker.EmojiPicker;
-import dto.ConversationDto;
-import dto.GroupMemberDto;
-import dto.MessageDto;
-import dto.UserDto;
+import dto.*;
 import model.Message;
 import net.miginfocom.swing.*;
 import org.imgscalr.Scalr;
@@ -76,26 +75,18 @@ public class ConversationTab extends JPanel {
 
     // ---------------- message area ---------------------------
 
-    public void appendTextMessage(String name, String textMessage) {
-        try {
-            messageDocument.insertString(messageDocument.getLength(), name + ": " + textMessage, null);
-            insertEndlineDocument();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void appendTextMessage(MessageDto message) {
         try {
             SimpleAttributeSet styleUsername;
             if(message.getUser().getUsername().equals(ChatClient.user.getUsername())) {
                 // if being current user
                 styleUsername = MessageAttributeSet.getAttrForUsername();
+                messageDocument.insertString(messageDocument.getLength(), message.getUser().getUsername() + " (you): ", styleUsername);
             } else {
                 // target user
                 styleUsername = MessageAttributeSet.getAttrForTargetUsername();
+                messageDocument.insertString(messageDocument.getLength(), message.getUser().getUsername() + ": ", styleUsername);
             }
-            messageDocument.insertString(messageDocument.getLength(), message.getUser().getUsername() + ": ", styleUsername);
             messageDocument.insertString(messageDocument.getLength(), message.getMessageText(), MessageAttributeSet.getAttrForMessageText());
             insertEndlineDocument();
         } catch (Exception e) {
@@ -103,29 +94,40 @@ public class ConversationTab extends JPanel {
         }
     }
 
-    public void appendImage(String name, BufferedImage bufferedImage) {
+    public void appendImage(ImageMessageDto message) {
         try {
-            appendTextMessage(name, "sent a image");
+            message.setMessageText("Sent image");
+            appendTextMessage(message);
 
             Style style = messageDocument.addStyle("image", null);
 
             SimpleAttributeSet attr = new SimpleAttributeSet();
             StyleConstants.setAlignment(attr, StyleConstants.ALIGN_CENTER);
-
-            ImageIcon imageIcon = new ImageIcon(Scalr.resize(bufferedImage, 300));
-
+            ImageIcon imageIcon = new ImageIcon(Scalr.resize(message.getImage(), 300));
             StyleConstants.setIcon(style, imageIcon);
+
             messageDocument.insertString(messageDocument.getLength(), "\t", style);
             insertEndlineDocument();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void appendFile(String name, String filename) {
+    public void appendFile(FileMessageDto message) {
         try {
-            messageDocument.insertString(messageDocument.getLength(), name + ": sent a file" + filename, null);
+            SimpleAttributeSet styleUsername;
+            if(message.getUser().getUsername().equals(ChatClient.user.getUsername())) {
+                // if being current user
+                styleUsername = MessageAttributeSet.getAttrForUsername();
+                messageDocument.insertString(messageDocument.getLength(), message.getUser().getUsername() + " (you): ", styleUsername);
+            } else {
+                // target user
+                styleUsername = MessageAttributeSet.getAttrForTargetUsername();
+                messageDocument.insertString(messageDocument.getLength(), message.getUser().getUsername() + ": ", styleUsername);
+            }
+//            messageDocument.insertString(messageDocument.getLength(), message.getFilename(), MessageAttributeSet.getAttrForMessageText());
+            FileLabel fileLabel = new FileLabel(message.getFilename());
+            messagePane.insertComponent(fileLabel);
             insertEndlineDocument();
         } catch (Exception e) {
             e.printStackTrace();
@@ -178,8 +180,20 @@ public class ConversationTab extends JPanel {
     }
 
     private void videoCallAction(MouseEvent e) {
-        System.out.println("Video call ");
         ChatClient.clientGUI.controller.callVideoInConversation(conversation);
+    }
+
+    protected void requestDownloadFile(String filename) {
+        List<String> filenameSplitted = Arrays.stream(filename.split("\\\\")).toList();
+        String filenameOut = filenameSplitted.get(filenameSplitted.size() - 1);
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        if(fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            ChatClient.connection.sendRequestDownloadFile(filename, file.getAbsolutePath() + "/" + filenameOut);
+        }
     }
 
     // ---------------------------------------------------
@@ -204,6 +218,7 @@ public class ConversationTab extends JPanel {
         textPane2 = new JTextPane();
 
         //======== this ========
+        setFont(new Font("Yu Gothic UI", Font.BOLD, 12));
         setLayout(new MigLayout(
             "insets 0,hidemode 3",
             // columns
@@ -219,7 +234,7 @@ public class ConversationTab extends JPanel {
                 "insets 0 null 0 null,hidemode 3,aligny center",
                 // columns
                 "[fill]" +
-                "[fill]",
+                "[79,fill]",
                 // rows
                 "[]"));
 
@@ -246,7 +261,7 @@ public class ConversationTab extends JPanel {
 
                 //---- label2 ----
                 label2.setText("Video call");
-                label2.setFont(label2.getFont().deriveFont(label2.getFont().getStyle() | Font.BOLD));
+                label2.setFont(new Font("Yu Gothic UI", Font.BOLD, 12));
                 videoCallBtn.add(label2, "cell 0 1");
             }
             panel1.add(videoCallBtn, "cell 0 0,alignx center,growx 0");
@@ -255,7 +270,7 @@ public class ConversationTab extends JPanel {
 
         //---- conversation_name ----
         conversation_name.setText("hoangtrung1801");
-        conversation_name.setFont(new Font("Segoe UI", Font.BOLD | Font.ITALIC, 14));
+        conversation_name.setFont(new Font("Yu Gothic UI", Font.BOLD | Font.ITALIC, 14));
         add(conversation_name, "cell 0 1,grow");
 
         //======== panel4 ========
@@ -290,7 +305,7 @@ public class ConversationTab extends JPanel {
 
                     //---- messagePane ----
                     messagePane.setBackground(Color.white);
-                    messagePane.setFont(new Font("Segoe UI", Font.BOLD, 14));
+                    messagePane.setFont(new Font("Yu Gothic Medium", Font.BOLD, 14));
                     messagePane.setEditable(false);
                     scrollPane1.setViewportView(messagePane);
                 }
@@ -344,12 +359,14 @@ public class ConversationTab extends JPanel {
                 panel5.add(panel6, "cell 0 1");
 
                 //---- input ----
+                input.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
                 input.addActionListener(e -> textMessageAction());
                 panel5.add(input, "cell 0 2,grow,gapx null 5");
 
                 //---- sendBtn ----
                 sendBtn.setIconTextGap(0);
                 sendBtn.setText("Send");
+                sendBtn.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
                 sendBtn.addActionListener(e -> textMessageAction());
                 panel5.add(sendBtn, "pad 0,cell 0 2,growy,height 30:30,gapx 0 0,gapy 0 0");
             }
@@ -363,6 +380,7 @@ public class ConversationTab extends JPanel {
                 textPane2.setBackground(Color.white);
                 textPane2.setBorder(null);
                 textPane2.setEditable(false);
+                textPane2.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
                 scrollPane2.setViewportView(textPane2);
             }
             panel4.add(scrollPane2, "cell 1 0,grow");
@@ -403,6 +421,37 @@ public class ConversationTab extends JPanel {
     private JTextPane textPane2;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
+    private class  FileLabel extends JLabel {
+        private String filename;
+        public FileLabel() {}
+
+        public FileLabel(String filename) {
+            super();
+            this.filename = filename;
+
+            List<String> filenameSplitted = Arrays.stream(filename.split("\\\\")).toList();
+            setText("<HTML><u style=\"font-style: italic; color: #808080\">" + filenameSplitted.get(filenameSplitted.size()-1) + "</u></HTML>");
+
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            setAlignmentY(0.85f);
+
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    requestDownloadFile(filename);
+                }
+            });
+        }
+
+        public String getFilename() {
+            return filename;
+        }
+
+        public void setFilename(String filename) {
+            this.filename = filename;
+        }
+    }
+
 
     public UserDto getTargetUser() {
         return targetUser;
@@ -430,5 +479,9 @@ public class ConversationTab extends JPanel {
 
     public void setListener(ConversationTabListener listener) {
         this.listener = listener;
+    }
+
+    public JTextPane getMessagePane() {
+        return messagePane;
     }
 }

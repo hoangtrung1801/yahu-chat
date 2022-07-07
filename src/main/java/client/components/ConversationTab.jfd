@@ -9,9 +9,10 @@ new FormModel {
 			"$rowConstraints": "[60][24][grow]"
 		} ) {
 			name: "this"
+			"font": new java.awt.Font( "Yu Gothic UI", 1, 12 )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 				"$layoutConstraints": "insets 0 null 0 null,hidemode 3,aligny center"
-				"$columnConstraints": "[fill][fill]"
+				"$columnConstraints": "[fill][79,fill]"
 				"$rowConstraints": "[]"
 			} ) {
 				name: "panel1"
@@ -32,7 +33,7 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label2"
 						"text": "Video call"
-						"font": new com.jformdesigner.model.SwingDerivedFont( null, 1, 0, false )
+						"font": new java.awt.Font( "Yu Gothic UI", 1, 12 )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 1"
 					} )
@@ -45,7 +46,7 @@ new FormModel {
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "conversation_name"
 				"text": "hoangtrung1801"
-				"font": new java.awt.Font( "Segoe UI", 3, 14 )
+				"font": new java.awt.Font( "Yu Gothic UI", 3, 14 )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 1,grow"
 			} )
@@ -70,7 +71,7 @@ new FormModel {
 						add( new FormComponent( "javax.swing.JTextPane" ) {
 							name: "messagePane"
 							"background": new java.awt.Color( 255, 255, 255, 255 )
-							"font": new java.awt.Font( "Segoe UI", 1, 14 )
+							"font": new java.awt.Font( "Yu Gothic Medium", 1, 14 )
 							"editable": false
 						} )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
@@ -112,6 +113,7 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "input"
+						"font": new java.awt.Font( "Yu Gothic UI", 0, 12 )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "textMessageAction", false ) )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 2,grow,gapx null 5"
@@ -120,6 +122,7 @@ new FormModel {
 						name: "sendBtn"
 						"iconTextGap": 0
 						"text": "Send"
+						"font": new java.awt.Font( "Yu Gothic UI", 0, 12 )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "textMessageAction", false ) )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "pad 0,cell 0 2,growy,height 30:30,gapx 0 0,gapy 0 0"
@@ -135,6 +138,7 @@ new FormModel {
 						"background": new java.awt.Color( 255, 255, 255, 255 )
 						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
 						"editable": false
+						"font": new java.awt.Font( "Yu Gothic UI", 0, 12 )
 					} )
 				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 					"value": "cell 1 0,grow"

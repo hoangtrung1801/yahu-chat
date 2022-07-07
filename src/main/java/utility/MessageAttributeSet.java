@@ -4,33 +4,34 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
 
-public class TextAttributeCustom {
+public class MessageAttributeSet {
 
-    public static SimpleAttributeSet getAttrTimestamp() {
+    public static SimpleAttributeSet getAttrForTimestamp() {
         SimpleAttributeSet attr = new SimpleAttributeSet();
         StyleConstants.setForeground(attr, Color.lightGray);
         return attr;
     }
 
-    public static SimpleAttributeSet getAttrUsername() {
+    public static SimpleAttributeSet getAttrForUsername() {
         SimpleAttributeSet attr = new SimpleAttributeSet();
         StyleConstants.setBold(attr, true);
-        StyleConstants.setForeground(attr, new Color(0x03A9F4));
+        StyleConstants.setForeground(attr, new Color(0xA4A4A4));
 
         return attr;
     }
 
-    public static SimpleAttributeSet getAttrMessage() {
+    public static SimpleAttributeSet getAttrForTargetUsername() {
         SimpleAttributeSet attr = new SimpleAttributeSet();
-//        StyleConstants.setForeground(attr, Color.darkGray);
+        StyleConstants.setBold(attr, true);
+        StyleConstants.setForeground(attr, new Color(0x3817C9));
 
         return attr;
     }
 
-    public static SimpleAttributeSet getAttrUserEntered() {
+    public static SimpleAttributeSet getAttrForMessageText() {
         SimpleAttributeSet attr = new SimpleAttributeSet();
-        StyleConstants.setBold(attr, true);
-        StyleConstants.setForeground(attr, new Color(0x4CAF50));
+        StyleConstants.setBold(attr, false);
+        StyleConstants.setForeground(attr, new Color(0x000000));
 
         return attr;
     }

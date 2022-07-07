@@ -7,10 +7,9 @@ import shared.ConnectionBase;
 import shared.Constants;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +51,8 @@ public class ClientConnection extends ConnectionBase implements Runnable {
                         findContact();
                     } else if(type.equals(Constants.VIDEO_CALL_EVENT)) {
                         videoCallEvent();
+                    } else if(type.equals(Constants.REQUEST_DOWNLOAD_FILE)) {
+                        requestDownloadFile();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -161,6 +162,21 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         }
     }
 
+    private void requestDownloadFile() {
+        try {
+            FileRespone fileRespone = (FileRespone) ois.readObject();
+            byte[] fileBuffer = fileRespone.getFileBuffer();
+
+            FileOutputStream fos = new FileOutputStream(new File(fileRespone.getFilenameOut()));
+            fos.write(fileBuffer, 0, fileBuffer.length);
+            JOptionPane.showMessageDialog(null, "Download successfull");
+
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // --------------- ACTION -----------------
     public void sendUserLogged() {
         /*
@@ -263,5 +279,13 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendRequestDownloadFile(String filename, String filenameOut) {
+        ModelMapper modelMapper = new ModelMapper();
+        FileRequest fileRequest = new FileRequest(modelMapper.map(ChatClient.user, UserDto.class), filename, filenameOut);
+
+        sendData(Constants.REQUEST_DOWNLOAD_FILE);
+        sendObject(fileRequest);
     }
 }

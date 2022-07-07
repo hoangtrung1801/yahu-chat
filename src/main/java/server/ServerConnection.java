@@ -17,6 +17,7 @@ import utility.HibernateUtils;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.Socket;
 import java.nio.file.Paths;
@@ -72,6 +73,8 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                     findContact();
                 } else if (type.equals(Constants.VIDEO_CALL_EVENT)) {
                     videoCallEvent();
+                } else if (type.equals(Constants.REQUEST_DOWNLOAD_FILE)) {
+                    requestDownloadFile();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -179,6 +182,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
             for(GroupMember gm: conversation.getGroupMembers()) {
                 User receiver = gm.getUser();
                 ServerConnection sc = ChatServer.connectionManager.findWithUser(receiver);
+                if(sc == null) continue;
                 sc.sendData(Constants.IMAGE_MESSAGE_EVENT);
                 sc.sendObject(imageMessageDto);
             }
@@ -186,7 +190,6 @@ public class ServerConnection extends ConnectionBase implements Runnable {
             e.printStackTrace();
         }
     }
-
     private void fileMessageEvent() {
         try {
             ModelMapper modelMapper = new ModelMapper();
@@ -210,6 +213,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
             message.setAttachmentUrl(filepath);
             message = messageDAO.create(message);
 
+            fileMessageDto.setFilename(filepath);
             fileMessageDto.setId(message.getId());
 
             // send message to users
@@ -217,6 +221,7 @@ public class ServerConnection extends ConnectionBase implements Runnable {
             for(GroupMember gm: conversation.getGroupMembers()) {
                 User receiver = gm.getUser();
                 ServerConnection sc = ChatServer.connectionManager.findWithUser(receiver);
+                if(sc == null) continue;
                 sc.sendData(Constants.FILE_MESSAGE_EVENT);
                 sc.sendObject(fileMessageDto);
             }
@@ -441,6 +446,25 @@ public class ServerConnection extends ConnectionBase implements Runnable {
                 sc.sendObject(videoCallData);
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void requestDownloadFile() {
+        try {
+            FileRequest fileRequest = (FileRequest) ois.readObject();
+            String filename = fileRequest.getFilename();
+            FileInputStream fis = new FileInputStream(new File(filename));
+
+            byte[] fileBuffer = fis.readAllBytes();
+
+            FileRespone fileRespone = new FileRespone(fileRequest.getUser(), fileRequest.getFilenameOut(), fileBuffer);
+
+            sendData(Constants.REQUEST_DOWNLOAD_FILE);
+            sendObject(fileRespone);
+
+            fis.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

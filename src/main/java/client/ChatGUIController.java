@@ -99,8 +99,8 @@ public class ChatGUIController {
         for(MessageDto message: messages) {
             switch (message.getMessageType()) {
                 case TEXT -> tab.appendTextMessage(message);
-                case IMAGE -> tab.appendImage(message.getUser().getUsername(), ((ImageMessageDto) message).getImage());
-                case FILE -> tab.appendFile(message.getUser().getUsername(), ((FileMessageDto) message).getFilename());
+                case IMAGE -> tab.appendImage((ImageMessageDto) message);
+                case FILE -> tab.appendFile((FileMessageDto) message);
             }
         }
     }
@@ -146,17 +146,13 @@ public class ChatGUIController {
     public void showImageMessage(ConversationDto conversation, ImageMessageDto imageMessageDto) {
         findConversationTab(conversation)
                 .appendImage(
-                        imageMessageDto.getUser().getUsername(),
-                        imageMessageDto.getImage()
+                        imageMessageDto
                 );
     }
 
     public void showFileMessage(ConversationDto conversation, FileMessageDto fileMessageDto) {
         findConversationTab(conversation)
-                .appendFile(
-                        fileMessageDto.getUser().getUsername(),
-                        fileMessageDto.getFilename()
-                );
+                .appendFile(fileMessageDto);
     }
 
 //    public void showMessageSentBefore() {

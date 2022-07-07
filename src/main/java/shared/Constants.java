@@ -13,6 +13,7 @@ public class Constants {
     public static String NEW_CONVERSATION_EVENT = "NEW_CONVERSATION_EVENT";
     public static String FIND_CONTACT = "FIND_CONTACT";
     public static String VIDEO_CALL_EVENT = "VIDEO_CALL_EVENT";
+    public static String REQUEST_DOWNLOAD_FILE = "REQUEST_DOWNLOAD_FILE";
 
     public static String NOTIFY_USER_ENTERED = "NOTIFY_USER_ENTERED";
     public static String NOTIFY_USER_EXISTED = "NOTIFY_USER_EXISTED";
