@@ -1,0 +1,154 @@
+JFDML JFormDesigner: "7.0.5.4.420" Java: "11.0.15" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "insets 0,hidemode 3"
+			"$columnConstraints": "[grow,fill]"
+			"$rowConstraints": "[60][24][grow]"
+		} ) {
+			name: "this"
+			"font": new java.awt.Font( "Yu Gothic UI", 1, 12 )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "insets 0 null 0 null,hidemode 3,aligny center"
+				"$columnConstraints": "[fill][79,fill]"
+				"$rowConstraints": "[]"
+			} ) {
+				name: "panel1"
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$columnConstraints": "[fill]"
+					"$rowConstraints": "[][]"
+					"$layoutConstraints": "insets 0,hidemode 3,aligny center,gapy 0"
+				} ) {
+					name: "videoCallBtn"
+					"cursor": new java.awt.Cursor( 12 )
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "videoCallAction", true ) )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label1"
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/assets/video-call-icon.png" )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 0,alignx center,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label2"
+						"text": "Video call"
+						"font": new java.awt.Font( "Yu Gothic UI", 1, 12 )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 1"
+					} )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0,alignx center,growx 0"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0,growy"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "conversation_name"
+				"text": "hoangtrung1801"
+				"font": new java.awt.Font( "Yu Gothic UI", 3, 14 )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1,grow"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "filly,insets 0,hidemode 3,gap 5 0"
+				"$columnConstraints": "[grow,fill][100,fill]"
+				"$rowConstraints": "[grow]"
+			} ) {
+				name: "panel4"
+				"border": new javax.swing.border.CompoundBorder( new javax.swing.border.TitledBorder( "" ), new javax.swing.border.EmptyBorder( 2, 0, 2, 0 ) )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "fill,insets 0,hidemode 3,gap 0 2"
+					"$columnConstraints": "[fill]"
+					"$rowConstraints": "[grow][][30]"
+				} ) {
+					name: "panel5"
+					"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+						name: "scrollPane1"
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"background": new java.awt.Color( 255, 255, 255, 255 )
+						add( new FormComponent( "javax.swing.JTextPane" ) {
+							name: "messagePane"
+							"background": new java.awt.Color( 255, 255, 255, 255 )
+							"font": new java.awt.Font( "Yu Gothic Medium", 1, 14 )
+							"editable": false
+						} )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 0,grow"
+					} )
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+						"$layoutConstraints": "insets 05 0 5 0,hidemode 3,gap 10 0"
+						"$columnConstraints": "[fill][fill][fill]"
+						"$rowConstraints": "[]"
+					} ) {
+						name: "panel6"
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "fileBtn"
+							"icon": new com.jformdesigner.model.SwingIcon( 0, "/assets/attachment-icon.png" )
+							"iconTextGap": 0
+							"cursor": &Cursor0 new java.awt.Cursor( 12 )
+							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "fileAction", false ) )
+						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+							"value": "cell 0 0"
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "imageBtn"
+							"cursor": #Cursor0
+							"icon": new com.jformdesigner.model.SwingIcon( 0, "/assets/image-icon.png" )
+							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "imageAction", false ) )
+						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+							"value": "cell 1 0"
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "iconBtn"
+							"cursor": #Cursor0
+							"icon": new com.jformdesigner.model.SwingIcon( 0, "/assets/icon-icon.png" )
+							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "iconAction", false ) )
+						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+							"value": "cell 2 0"
+						} )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 1"
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "input"
+						"font": new java.awt.Font( "Yu Gothic UI", 0, 12 )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "textMessageAction", false ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 2,grow,gapx null 5"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "sendBtn"
+						"iconTextGap": 0
+						"text": "Send"
+						"font": new java.awt.Font( "Yu Gothic UI", 0, 12 )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "textMessageAction", false ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "pad 0,cell 0 2,growy,height 30:30,gapx 0 0,gapy 0 0"
+					} )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0,growy"
+				} )
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "scrollPane2"
+					"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+					add( new FormComponent( "javax.swing.JTextPane" ) {
+						name: "textPane2"
+						"background": new java.awt.Color( 255, 255, 255, 255 )
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"editable": false
+						"font": new java.awt.Font( "Yu Gothic UI", 0, 12 )
+					} )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 1 0,grow"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 2,growy"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 490, 290 )
+		} )
+	}
+}
