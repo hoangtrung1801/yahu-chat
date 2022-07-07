@@ -9,41 +9,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class VideoPanel extends JPanel {
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-
-        VideoPanel panel = new VideoPanel();
-        panel.setPreferredSize(new Dimension(500, 500));
-
-        frame.setContentPane(panel);
-        frame.pack();
-        frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		Runnable task = new Runnable() {
-			@Override
-			public void run() {
-				BufferedImage image = null;
-				System.out.println("update image");
-				try {
-					image = ImageIO.read(getClass().getResource("/assets/onthemoon.png"));
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-				panel.updateImage(image);
-			}
-		};
-		ScheduledExecutorService timeWorker = new ScheduledThreadPoolExecutor(1);
-        ScheduledFuture<?> scheduledFuture = timeWorker.scheduleWithFixedDelay(
-                task,
-                0,
-                1,
-                TimeUnit.SECONDS
-        );
-    }
-
 	protected BufferedImage image;
-	protected final ExecutorService worker = Executors.newSingleThreadExecutor();
+	public final ExecutorService worker = Executors.newSingleThreadExecutor();
 
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -103,7 +70,6 @@ public class VideoPanel extends JPanel {
 
 	public void updateImage(final BufferedImage update) {
 		worker.execute(new Runnable() {
-
 			@Override
 			public void run() {
 				// image = scaleUPMaker.make(update);

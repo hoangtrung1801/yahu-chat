@@ -39,7 +39,7 @@ public class VideoCallController {
         }
     }
 
-    void startCall() {
+    public void startCall() {
         Runnable videoCallTask = new VideoCallTask();
         videoCallFuture = timeWorker.scheduleWithFixedDelay(
                 videoCallTask,
@@ -47,6 +47,12 @@ public class VideoCallController {
                 1000/FPS,
                 TimeUnit.MILLISECONDS
         );
+    }
+
+    public void closeCall() {
+        webcam.close();
+        videoCallFuture.cancel(true);
+        timeWorker.shutdown();
     }
 
     private class VideoCallTask implements Runnable {

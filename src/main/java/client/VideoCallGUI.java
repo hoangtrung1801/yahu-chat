@@ -25,16 +25,16 @@ public class VideoCallGUI extends JFrame {
 
 		this.window.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent e) {
-				super.windowClosing(e);
-				window.setVisible(false);
-				window.dispose();
+			public void windowClosed(WindowEvent e) {
+				System.out.println("Close window");
+				close();
 			}
 		});
 
 		this.videoPannel.setPreferredSize(dimension);
 		this.window.add(videoPannel);
 		this.window.pack();
+		this.window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
 	public void setVisible(boolean visible) {
@@ -48,5 +48,6 @@ public class VideoCallGUI extends JFrame {
 	public void close(){
 		window.dispose();
 		videoPannel.close();
+		controller.closeCall();
 	}
 }

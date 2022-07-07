@@ -29,7 +29,7 @@ public class ClientGUIController {
     }
 
     public void callVideoInConversation(ConversationDto conversation) {
-        if(videoCallGUI != null) {
+        if(videoCallGUI != null && videoCallGUI.window.isDisplayable()) {
             videoCallGUI.setVisible(true);
             return;
         }
