@@ -7,9 +7,12 @@ package client.components;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.filechooser.FileView;
@@ -18,6 +21,7 @@ import javax.swing.text.*;
 import client.ChatClient;
 import client.ChatGUI;
 import client.emojipicker.EmojiPicker;
+import client.stickerpicker.StickerPicker;
 import dto.*;
 import model.Message;
 import net.miginfocom.swing.*;
@@ -153,7 +157,7 @@ public class ConversationTab extends JPanel {
         if(listener == null) {
             System.out.println("Listener is null ?? ");
         }
-        
+
         JFileChooser fileChooser = new FileChooserImage();
         fileChooser.setMultiSelectionEnabled(false);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -208,6 +212,19 @@ public class ConversationTab extends JPanel {
         }
     }
 
+    private void stickerAction() {
+        StickerPicker stickerPicker = new StickerPicker();
+        stickerPicker.setListener(sticker -> {
+            try {
+                InputStream is = new ByteArrayInputStream(sticker.getStickerImage());
+                ChatClient.connection.sendImageInConversation(conversation, ImageIO.read(is));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        stickerPicker.setVisible(true);
+    }
+
     // ---------------------------------------------------
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -224,6 +241,7 @@ public class ConversationTab extends JPanel {
         fileBtn = new JLabel();
         imageBtn = new JLabel();
         iconBtn = new JLabel();
+        stickerBtn = new JLabel();
         input = new JTextField();
         sendBtn = new JButton();
         scrollPane2 = new JScrollPane();
@@ -330,6 +348,7 @@ public class ConversationTab extends JPanel {
                         // columns
                         "[fill]" +
                         "[fill]" +
+                        "[fill]" +
                         "[fill]",
                         // rows
                         "[]"));
@@ -367,6 +386,17 @@ public class ConversationTab extends JPanel {
                         }
                     });
                     panel6.add(iconBtn, "cell 2 0");
+
+                    //---- stickerBtn ----
+                    stickerBtn.setIcon(new ImageIcon(getClass().getResource("/assets/sticker-icon.png")));
+                    stickerBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    stickerBtn.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            stickerAction();
+                        }
+                    });
+                    panel6.add(stickerBtn, "cell 3 0");
                 }
                 panel5.add(panel6, "cell 0 1");
 
@@ -427,6 +457,7 @@ public class ConversationTab extends JPanel {
     private JLabel fileBtn;
     private JLabel imageBtn;
     private JLabel iconBtn;
+    private JLabel stickerBtn;
     private JTextField input;
     private JButton sendBtn;
     private JScrollPane scrollPane2;

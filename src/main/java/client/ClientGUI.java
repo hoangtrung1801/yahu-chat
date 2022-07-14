@@ -5,7 +5,9 @@ import client.components.ConversationCell;
 import dto.ConversationDto;
 import dto.UserDto;
 import net.miginfocom.swing.MigLayout;
+import org.imgscalr.Scalr;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -130,7 +132,16 @@ public class ClientGUI extends JFrame {
 
             //---- userImage ----
             userImage.setText("text");
-            userImage.setIcon(new ImageIcon(getClass().getResource("/assets/user-icon.png")));
+            try {
+                userImage.setIcon(
+                        new ImageIcon(Scalr.resize(
+                                ImageIO.read(getClass().getResource("/assets/user-icon.png")),
+                                50
+                        ))
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             userPane.add(userImage, "cell 0 0,width 50:50:50,height 50:50:50");
 
             //---- username ----
@@ -194,7 +205,9 @@ public class ClientGUI extends JFrame {
                     "[]"));
 
                 //---- label3 ----
-                label3.setIcon(new ImageIcon(getClass().getResource("/assets/add-group-users.png")));
+                label3.setIcon(new ImageIcon(
+                        getClass().getResource("/assets/add-group-users.png"))
+                );
                 addGroupUsersBtn.add(label3, "cell 0 0,align center center,grow 0 0");
 
                 //---- label4 ----

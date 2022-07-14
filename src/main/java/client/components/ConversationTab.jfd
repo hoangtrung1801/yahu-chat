@@ -79,7 +79,7 @@ new FormModel {
 					} )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 						"$layoutConstraints": "insets 05 0 5 0,hidemode 3,gap 10 0"
-						"$columnConstraints": "[fill][fill][fill]"
+						"$columnConstraints": "[fill][fill][fill][fill]"
 						"$rowConstraints": "[]"
 					} ) {
 						name: "panel6"
@@ -107,6 +107,14 @@ new FormModel {
 							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "iconAction", false ) )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 2 0"
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "stickerBtn"
+							"icon": new com.jformdesigner.model.SwingIcon( 0, "/assets/sticker-icon.png" )
+							"cursor": new java.awt.Cursor( 12 )
+							addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "stickerAction", false ) )
+						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+							"value": "cell 3 0"
 						} )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 1"

@@ -240,6 +240,29 @@ public class ClientConnection extends ConnectionBase implements Runnable {
         }
     }
 
+    public void sendStickerInConversation(ConversationDto conversation, BufferedImage bufferedImage) {
+        /*
+            IMAGE_MESSAGE_EVENT
+            ImageMessageDto
+         */
+        try {
+            sendData(Constants.IMAGE_MESSAGE_EVENT);
+
+            ModelMapper modelMapper = new ModelMapper();
+            ImageMessageDto imageMessageDto = new ImageMessageDto(
+                    MessageType.IMAGE,
+                    "",
+                    bufferedImage,
+                    Instant.now(),
+                    conversation,
+                    modelMapper.map(ChatClient.user, UserDto.class)
+            );
+            sendObject(imageMessageDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void sendFileInConversation(ConversationDto conversation, String filename, byte[] buffer) {
         /*
             FILE_MESSAGE_EVENT

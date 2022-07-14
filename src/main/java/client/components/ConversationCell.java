@@ -8,9 +8,11 @@ import client.ChatClient;
 import dto.ConversationDto;
 import dto.UserDto;
 import net.miginfocom.swing.MigLayout;
+import org.imgscalr.Scalr;
 import org.modelmapper.ModelMapper;
 import shared.Helper;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -123,7 +125,16 @@ public class ConversationCell extends JPanel {
 
         //---- label1 ----
         label1.setText("text");
-        label1.setIcon(new ImageIcon(getClass().getResource("/assets/user-icon.png")));
+        try {
+            label1.setIcon(
+                    new ImageIcon(Scalr.resize(
+                            ImageIO.read(getClass().getResource("/assets/user-icon.png")),
+                            20
+                    ))
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         add(label1, "cell 0 0,width 20:20:20,height 20:20:20");
 
         //---- username ----
